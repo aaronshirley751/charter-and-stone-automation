@@ -2,4 +2,5 @@ requests
 markdown
 beautifulsoup4
 python-docx
+python-dotenv
 feedparser

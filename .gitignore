@@ -1,6 +1,13 @@
-venv/
+# Environments
+.env
+
+# Python
 __pycache__/
 *.pyc
-_INBOX/*.processed
+*.pyo
+*.pyd
+
+# Workspace
+src/_INBOX/*
+\!src/_INBOX/.gitkeep
 *.log
-.env
