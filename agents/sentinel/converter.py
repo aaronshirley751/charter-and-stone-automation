@@ -204,6 +204,21 @@ def convert_md_to_branded_docx(md_file_path):
         print(f"❌ Error: {error}")
 
 
+def process_inbox():
+    """Process all markdown files in the inbox folder (called by daemon)"""
+    if not os.path.exists(WATCH_FOLDER):
+        os.makedirs(WATCH_FOLDER)
+    
+    files_found = [f for f in os.listdir(WATCH_FOLDER) if f.endswith(".md")]
+    if files_found:
+        print(f"📂 Found {len(files_found)} file(s) to process")
+        for file in files_found:
+            full_path = os.path.join(WATCH_FOLDER, file)
+            convert_md_to_branded_docx(full_path)
+    else:
+        print("📭 Inbox empty")
+
+
 if __name__ == "__main__":
     if not os.path.exists(WATCH_FOLDER):
         os.makedirs(WATCH_FOLDER)
