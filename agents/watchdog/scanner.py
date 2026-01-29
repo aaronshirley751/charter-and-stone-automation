@@ -3,8 +3,9 @@ import os
 import json
 import requests
 import feedparser
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import time
 
 # PATH SETUP: Add root to sys.path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -157,7 +158,16 @@ def scan_feeds():
             link = entry.link
             
             if link in history: continue
-
+            
+            # FRESHNESS FILTER: Skip articles older than 30 days
+            if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                article_date = datetime(*entry.published_parsed[:6])
+                age_days = (datetime.now() - article_date).days
+                
+                if age_days > 30:
+                    print(f"⏭️  Skipping old news ({age_days} days): {title[:60]}...")
+                    continue
+            
             signal_type, keyword, priority = analyze_signal(title)
             
             if signal_type:

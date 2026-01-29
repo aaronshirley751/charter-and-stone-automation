@@ -3,6 +3,7 @@ import os
 import time
 import schedule
 import logging
+import logging.handlers
 from datetime import datetime
 import io
 
@@ -20,6 +21,7 @@ if sys.stderr.encoding != 'utf-8':
 # Import Agents using new paths
 from agents.watchdog import scanner as watchdog
 from agents.orchestrator import bridge as orchestrator
+from agents.sentinel import converter as sentinel
 
 # =============================================================================
 # CONFIGURATION
@@ -28,13 +30,14 @@ from agents.orchestrator import bridge as orchestrator
 # How often to run (in minutes)
 WATCHDOG_INTERVAL = 60   # Scan for news every hour
 ORCHESTRATOR_INTERVAL = 15 # Check the inbox every 15 mins
+SENTINEL_INTERVAL = 5    # Process inbox every 5 minutes
 
-# Logging Setup
+# Logging Setup with Rotating File Handler
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - [DAEMON] - %(message)s',
     handlers=[
-        logging.FileHandler("daemon.log", encoding='utf-8'),
+        logging.handlers.RotatingFileHandler("daemon.log", maxBytes=5*1024*1024, backupCount=2, encoding='utf-8'),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -60,6 +63,14 @@ def run_orchestrator():
     except Exception as e:
         logging.error(f"❌ Orchestrator crashed: {e}")
 
+def run_sentinel():
+    logging.info("📨 Sentinel processing inbox...")
+    try:
+        sentinel.process_inbox()
+        logging.info("✅ Sentinel processing complete.")
+    except Exception as e:
+        logging.error(f"❌ Sentinel crashed: {e}")
+
 # =============================================================================
 # MAIN LOOP
 # =============================================================================
@@ -75,14 +86,16 @@ def start_engine():
     # 1. Schedule the Jobs
     schedule.every(WATCHDOG_INTERVAL).minutes.do(run_watchdog)
     schedule.every(ORCHESTRATOR_INTERVAL).minutes.do(run_orchestrator)
+    schedule.every(SENTINEL_INTERVAL).minutes.do(run_sentinel)
     
     # 2. Run immediately on startup (so you know it works)
     logging.info("🚀 Startup: Running initial pass...")
     run_orchestrator() # Run bridge first to clear inbox
+    run_sentinel()     # Process any pending inbox items
     run_watchdog()     # Then scan for new leads
     
     # 3. Enter the Loop
-    logging.info(f"⏳ Standing by. Watchdog: {WATCHDOG_INTERVAL}m | Bridge: {ORCHESTRATOR_INTERVAL}m")
+    logging.info(f"⏳ Standing by. Watchdog: {WATCHDOG_INTERVAL}m | Bridge: {ORCHESTRATOR_INTERVAL}m | Sentinel: {SENTINEL_INTERVAL}m")
     
     while True:
         schedule.run_pending()

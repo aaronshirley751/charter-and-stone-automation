@@ -4,10 +4,16 @@ Monitors a local folder for Markdown files, converts them to branded Word docume
 and publishes notifications to Microsoft Teams via Webhook.
 """
 
+import sys
 import os
 import time
 import urllib.parse
 from datetime import datetime
+
+# PATH SETUP: Add root to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, "../../"))
+sys.path.append(project_root)
 
 # Third-party imports
 import requests
@@ -17,8 +23,11 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Import Shared Auth
+from shared.auth import get_graph_headers
+
+# Load environment variables from project root
+load_dotenv(os.path.join(project_root, ".env"))
 
 # ================= CONFIGURATION =================
 
