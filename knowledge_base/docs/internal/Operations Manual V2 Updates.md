@@ -1,0 +1,1131 @@
+---
+original_file: "Operations Manual V2 Updates"
+processed_date: 2026-01-29T22:15:36.504965
+type: document_extraction
+---
+
+# Document Extraction: Operations Manual V2 Updates
+
+# OPERATIONS_MANUAL.md - V2.0 UPDATES
+
+**Charter & Stone Automation Stack**  
+**Version:** 2.0 (Hybrid Intelligence Architecture)  
+**Last Updated:** January 29, 2026  
+**Platform:** Raspberry Pi 5 (Heath, TX) + Windows Laptop (Rockwall, TX) + Microsoft 365 Cloud Services
+
+---
+
+## 1. SYSTEM ARCHITECTURE
+
+### 1.1 The Split-Brain Model
+
+Charter & Stone operates as a **distributed hybrid intelligence system** where specialized components work in concert across physical and cloud infrastructure. This architecture separates **operational execution** (the "Body") from **strategic intelligence** (the "Brain"), connected by a shared memory system.
+
+**System Components:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    CHARTER & STONE ECOSYSTEM                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  ┌──────────────────┐        ┌──────────────────┐              │
+│  │   THE FACTORY    │        │      THE HQ      │              │
+│  │   (Raspberry Pi) │◄──────►│  (Windows Laptop)│              │
+│  │                  │  Cloud  │                  │              │
+│  │  • Watchdog      │        │  • Claude Desktop│              │
+│  │  • Sentinel      │        │  • Planner MCP   │              │
+│  │  • Mechanic      │        │  • Strategic UI  │              │
+│  └────────┬─────────┘        └────────┬─────────┘              │
+│           │                           │                         │
+│           │      ┌────────────────────┘                         │
+│           │      │                                              │
+│           └──────▼──────────┐                                   │
+│                  │           │                                   │
+│           ┌──────▼──────────▼─────┐                             │
+│           │    THE ORACLE          │                             │
+│           │  (Knowledge Base)      │                             │
+│           │                        │                             │
+│           │  ~/knowledge_base/     │                             │
+│           │  • Signals             │                             │
+│           │  • Prospects           │                             │
+│           │  • Documents           │                             │
+│           └────────────────────────┘                             │
+│                                                                   │
+│           ┌─────────────────────────┐                            │
+│           │   MICROSOFT 365 CLOUD   │                            │
+│           │                         │                            │
+│           │  • SharePoint (Sync)    │                            │
+│           │  • Planner (Tasks)      │                            │
+│           │  • Teams (Alerts)       │                            │
+│           └─────────────────────────┘                            │
+│                                                                   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 1.2 The Factory (Server-Side / Raspberry Pi)
+
+**Hardware:** Raspberry Pi 5, 8GB RAM, Heath, TX  
+**Operating System:** Raspberry Pi OS (64-bit, Debian-based)  
+**Role:** Autonomous operational execution - the "Body"  
+**Runtime:** 24/7 background daemon via `systemd`
+
+**Responsibilities:**
+- **News Monitoring:** Watchdog scans RSS feeds every 30 minutes
+- **Document Processing:** Sentinel converts Markdown to branded Word documents
+- **System Health:** Mechanic monitors disk space, memory, daemon status every 60 minutes
+- **Data Persistence:** Writes all intelligence to The Oracle (knowledge_base/)
+- **Cloud Sync:** Pushes processed documents to SharePoint via Rclone
+
+**Key Characteristics:**
+- **Headless Operation:** No GUI, runs silently in background
+- **Event-Driven:** Responds to file system changes (inotify) and scheduled intervals
+- **Self-Healing:** Auto-restarts on failure, clears stale mounts on boot
+- **Local-First:** All processing happens locally before cloud sync
+
+**Network Requirements:**
+- Static IP: `192.168.7.189` (configured in router DHCP reservation)
+- Outbound HTTPS (443) for API calls
+- Accessible via SMB: `\\192.168.7.189\Sentinel_Input\` (Windows file sharing)
+
+---
+
+### 1.3 The HQ (Client-Side / Windows Laptop)
+
+**Hardware:** Windows 11 Laptop, Rockwall, TX  
+**Role:** Strategic intelligence interface - the "Brain"  
+**Runtime:** On-demand (launched by user)
+
+**Responsibilities:**
+- **Task Management:** Query, create, update Planner tasks via Planner MCP
+- **Strategic Querying:** Natural language questions to The Oracle (future Phase 2)
+- **Human Interface:** Claude Desktop provides conversational UI
+- **Decision Support:** Review intelligence, make strategic calls, assign work
+
+**Key Characteristics:**
+- **Pull-Based:** Retrieves data from cloud (Microsoft Graph API)
+- **Interactive:** Requires user at keyboard for authentication and queries
+- **Stateless:** No persistent background processes (all state in cloud/Pi)
+- **Secure:** Uses Microsoft Device Code Flow for delegated permissions
+
+**Software Stack:**
+- **Claude Desktop:** Primary interface for AI interaction
+- **Planner MCP Server:** Python service connecting Claude to Microsoft Planner
+  - Location: `C:\Users\tasms\CharterStone\PlannerMCP\`
+  - Virtual Environment: `venv/` (isolated Python dependencies)
+  - Authentication: Device Code Flow (interactive browser login)
+
+---
+
+### 1.4 Data Flow Architecture
+
+**Outbound (Factory → Cloud):**
+```
+Watchdog finds signal
+    ↓
+Save to knowledge_base/signals/
+    ↓
+Create Planner task
+    ↓
+Post Teams notification
+    ↓
+Rclone syncs knowledge_base/ to SharePoint
+```
+
+**Inbound (HQ ← Cloud):**
+```
+User asks Claude: "What's happening with WVU?"
+    ↓
+Claude calls Planner MCP: list_tasks()
+    ↓
+Planner MCP queries Microsoft Graph API
+    ↓
+API returns task data from cloud
+    ↓
+Claude synthesizes response for user
+```
+
+**Shared Memory (The Oracle):**
+```
+Factory writes:
+    knowledge_base/signals/2026-01-29_wvu_layoffs.md
+        ↓
+    Rclone syncs to SharePoint
+        ↓
+    HQ (future) reads via MCP search_knowledge_base tool
+```
+
+---
+
+### 1.5 Monorepo Structure (Updated)
+
+```
+charter-stone-automation/
+├── agents/
+│   ├── daemon/           # 24/7 Scheduler (Pi only)
+│   ├── watchdog/         # News Scanner (Pi only)
+│   ├── sentinel/         # Document Converter (Pi only)
+│   ├── mechanic/         # Health Monitor (Pi only) [NEW]
+│   └── orchestrator/     # 990 Analysis & Router (Pi only)
+│
+├── knowledge_base/       # THE ORACLE (Shared Memory) [NEW]
+│   ├── signals/
+│   │   ├── distress/     # Crisis signals from Watchdog
+│   │   └── forecast/     # Growth signals from Watchdog
+│   ├── prospects/        # University dossiers
+│   ├── docs/
+│   │   ├── internal/     # Processed documents (text-only)
+│   │   ├── research/     # Market intelligence
+│   │   └── templates/    # Engagement playbooks
+│   └── metadata/
+│       ├── index.json    # File catalog with search metadata
+│       └── tags.json     # Standardized taxonomy
+│
+├── shared/
+│   ├── auth.py           # Central Authentication Module
+│   ├── planner_client.py # Microsoft Planner API Wrapper
+│   └── config.py         # Environment Variables
+│
+├── systemd/
+│   └── charterstone.service  # Production Service Definition (Pi)
+│
+└── requirements.txt      # Python Dependencies
+```
+
+**Key Changes from V1.0:**
+- Added `knowledge_base/` directory (The Oracle)
+- Added `agents/mechanic/` (reliability monitoring)
+- Sentinel now writes to both SharePoint (Word docs) and Oracle (plain text)
+- Watchdog now archives full article text before creating tasks
+
+---
+
+## 2. THE ORACLE (CENTRALIZED KNOWLEDGE BASE)
+
+### 2.1 What Is The Oracle?
+
+**The Oracle** is Charter & Stone's institutional memory system - a structured repository of all accumulated intelligence that enables natural language querying of historical data.
+
+**Purpose:**
+- **Persistent Memory:** Every signal, document, and prospect analysis is preserved
+- **Future Retrieval:** Enables RAG (Retrieval-Augmented Generation) for instant recall
+- **Competitive Advantage:** We remember everything competitors forget
+
+**Location:**
+- **Primary:** `/home/aaronshirley751/charter-stone-automation/knowledge_base/` (Pi)
+- **Backup:** SharePoint via Rclone bidirectional sync
+- **Future Access:** Windows laptop via MCP search tool (Phase 2)
+
+**Storage Format:**
+- **Markdown (.md):** Structured text with YAML frontmatter for metadata
+- **Plain Text (.txt):** Document archives for full-text search
+- **JSON:** Metadata indexes and taxonomies
+
+---
+
+### 2.2 Directory Structure
+
+```
+knowledge_base/
+│
+├── signals/                    # Raw intelligence from Watchdog
+│   ├── distress/               # Crisis signals (layoffs, budget cuts, closures)
+│   │   ├── 2026-01-29_wvu_layoffs.md
+│   │   ├── 2026-01-28_brandeis_president_resigns.md
+│   │   └── ...
+│   └── forecast/               # Growth signals (expansions, new programs)
+│       ├── 2026-01-27_nau_2b_expansion.md
+│       └── ...
+│
+├── prospects/                  # University dossiers (one folder per institution)
+│   ├── university_of_dallas/
+│   │   ├── profile.md          # Overview, mission, demographics
+│   │   ├── financials_irs990_2023.md
+│   │   ├── contact_history.md  # Touchpoints, attempts, responses
+│   │   └── news_archive.md     # Collected articles
+│   └── ...
+│
+├── docs/                       # Processed internal documents
+│   ├── internal/               # Sentinel output (text-only versions)
+│   │   ├── operations_manual.txt
+│   │   ├── business_plan_v1.txt
+│   │   └── ...
+│   ├── research/               # Market intelligence
+│   │   ├── competitor_analysis.txt
+│   │   └── state_financial_aid_programs.txt
+│   └── templates/              # Engagement playbooks
+│       ├── first_contact_email.txt
+│       └── proposal_template.txt
+│
+└── metadata/                   # Searchable indexes
+    ├── index.json              # File catalog (path, tags, word count)
+    └── tags.json               # Standardized taxonomy
+```
+
+---
+
+### 2.3 File Naming Conventions
+
+**Signals (Watchdog Output):**
+- **Format:** `YYYY-MM-DD_institution-slug_event-type.md`
+- **Example:** `2026-01-29_wvu_layoffs.md`
+- **Rules:**
+  - Date = signal detection timestamp
+  - Institution slug = lowercase, hyphens, no spaces
+  - Event type = brief descriptor (layoffs, expansion, closure)
+
+**Documents (Sentinel Output):**
+- **Format:** `descriptive-name.txt`
+- **Example:** `operations_manual.txt`
+- **Rules:**
+  - Descriptive names, lowercase, hyphens
+  - Plain text extraction from original .docx
+  - Organized by category (internal/research/templates)
+
+**Prospects (Deep Dive Output):**
+- **Format:** One directory per institution
+- **Example:** `university_of_dallas/`
+- **Standard Files:**
+  - `profile.md` - Institutional overview
+  - `financials_irs990_YYYY.md` - IRS 990 data by year
+  - `contact_history.md` - Engagement timeline
+  - `news_archive.md` - Collected news mentions
+
+---
+
+### 2.4 Standard Operating Procedure (SOP)
+
+**For Users (Non-Technical):**
+
+**To Feed The Oracle:**
+1. Drop a Markdown file (`.md`) into the **Sentinel Inbox**:
+   - Network Path: `\\192.168.7.189\Sentinel_Input\`
+   - Or: `C:\Users\tasms\OneDrive\Desktop` → Sentinel monitors both
+2. Sentinel automatically:
+   - Converts to branded Word document
+   - Uploads to SharePoint
+   - Extracts plain text version
+   - Archives to `knowledge_base/docs/internal/`
+3. Verify: Check Teams for "New Strategy Asset Published" notification
+
+**To Query The Oracle (Future - Phase 2):**
+1. Open Claude Desktop
+2. Ask natural language question:
+   - "What universities in Texas are experiencing budget crises?"
+   - "What's the latest on West Virginia University?"
+   - "Show me our GTM playbook"
+3. Claude searches `knowledge_base/` and synthesizes answer
+
+**For Agents (Automated):**
+
+**Watchdog → Oracle:**
+```python
+# After detecting signal, save full article text
+signal_path = save_signal_to_oracle(
+    category='distress',
+    institution='West Virginia University',
+    event_type='layoffs',
+    article_text=full_article_content
+)
+# Returns: knowledge_base/signals/distress/2026-01-29_wvu_layoffs.md
+```
+
+**Sentinel → Oracle:**
+```python
+# After creating .docx, extract text for AI
+text_version = extract_text_from_docx(final_path)
+archive_path = save_to_oracle(
+    category='internal',
+    filename='operations_manual.txt',
+    content=text_version
+)
+# Returns: knowledge_base/docs/internal/operations_manual.txt
+```
+
+---
+
+### 2.5 Sync & Backup Strategy
+
+**Bidirectional Sync:**
+- **Frequency:** Every 5 minutes (Rclone daemon on Pi)
+- **Direction:** Pi ↔ SharePoint (both ways)
+- **Conflict Resolution:** Newest file wins (timestamp-based)
+
+**Backup Locations:**
+1. **Primary:** Pi local storage (`/home/aaronshirley751/charter-stone-automation/knowledge_base/`)
+2. **Cloud:** SharePoint (`/Strategy-Intel/knowledge_base/`)
+3. **Disaster Recovery:** Weekly snapshot to external USB drive (manual, future automation)
+
+**Data Retention:**
+- **Signals:** Indefinite (all historical data preserved)
+- **Documents:** Indefinite
+- **Metadata:** Regenerated nightly from file scan
+
+---
+
+## 3. THE STAFF (AGENTS) - UPDATED ROSTER
+
+### 3.1 WATCHDOG (News Scanner) - V2.0
+
+**Location:** `agents/watchdog/`  
+**Purpose:** Monitors higher education news sources for institutional signals  
+**Runtime:** Every 30 minutes (daemon-controlled, Pi only)
+
+**NEW in V2.0: Memory Function**
+
+**Enhanced Workflow:**
+1. Fetch RSS feeds and parse for trigger keywords
+2. Extract institution name, event type, source URL
+3. **[NEW]** Scrape full article text from source URL
+4. **[NEW]** Save complete article to `knowledge_base/signals/[category]/`
+   - Filename: `YYYY-MM-DD_institution-slug_event-type.md`
+   - Includes: Full article text, metadata (source, date, classification)
+5. Create summary task in Planner "Watchdog Inbox" bucket
+6. Post notification to Teams
+
+**File Format Example:**
+```markdown
+---
+date_detected: 2026-01-29
+institution: West Virginia University
+category: distress
+signal_type: layoffs
+source_url: https://insidehighered.com/article/wvu-layoffs
+watchdog_version: 2.0
+---
+
+# West Virginia University - Faculty Layoffs
+
+## Summary
+WVU board approves cuts to 169 faculty positions across 32 degree programs...
+
+## Full Article
+[Complete scraped article text here...]
+
+## Analysis
+Tier: Tier 1 - Restructuring Giant
+Opportunity Score: 8/10
+Recommended Action: Immediate outreach to Provost office
+```
+
+**Key Enhancement:**
+Previously, Watchdog only created Planner tasks with brief summaries. Now it archives the **complete source material** for future reference, enabling The Oracle to answer detailed questions months later.
+
+---
+
+### 3.2 SENTINEL (Document Converter & Librarian) - V2.0
+
+**Location:** `agents/sentinel/`  
+**Purpose:** Converts Markdown to branded documents AND archives knowledge  
+**Runtime:** Continuous (inotify monitoring, Pi only)
+
+**NEW in V2.0: Dual Output**
+
+**Enhanced Workflow:**
+1. Detect `.md` file in `_INBOX/`
+2. Convert to branded Word document (`.docx`)
+3. Upload `.docx` to SharePoint via Rclone mount
+4. **[NEW]** Extract plain text from `.docx` (strip formatting)
+5. **[NEW]** Save plain text to `knowledge_base/docs/internal/`
+   - Filename: `original-name.txt`
+   - Purpose: Enable full-text search by The Oracle
+6. Wait 20 seconds for SharePoint sync
+7. Post Teams notification with document link
+8. Rename original `.md` to `.md.processed`
+
+**Dual Role:**
+- **Document Formatter:** Creates human-readable branded Word files
+- **AI Librarian:** Preserves searchable text for machine intelligence
+
+**File Conversion Logic:**
+```python
+# Original Sentinel (V1.0)
+md_file → branded_docx → SharePoint
+
+# Enhanced Sentinel (V2.0)
+md_file → branded_docx → SharePoint
+        ↓
+        → plain_text → knowledge_base/docs/internal/
+```
+
+**Output Example:**
+```
+Input:  operations_manual.md
+Output: 
+  1. Report_operations_manual_20260129_1530.docx (SharePoint)
+  2. operations_manual.txt (knowledge_base/docs/internal/)
+```
+
+---
+
+### 3.3 THE MECHANIC (Reliability Engineer) - NEW AGENT
+
+**Location:** `agents/mechanic/`  
+**Purpose:** Autonomous system health monitoring and self-healing  
+**Runtime:** Every 60 minutes (daemon-controlled, Pi only)
+
+**Responsibilities:**
+1. **Disk Space Monitoring:**
+   - Check `/home` partition usage
+   - Check Rclone mount point usage
+   - Alert if >80% full (via Teams)
+
+2. **Memory Monitoring:**
+   - Check system RAM usage
+   - Check daemon process memory footprint
+   - Alert if swap file in use (indicator of memory pressure)
+
+3. **Daemon Health:**
+   - Verify `charterstone.service` is active
+   - Check for error patterns in systemd journal
+   - Attempt auto-restart if service crashed
+
+4. **Mount Integrity:**
+   - Verify Rclone mount is accessible
+   - Test read/write operations
+   - Force remount if mount is stale
+
+5. **Token Expiration:**
+   - Check Microsoft Graph token cache
+   - Warn if token expires in <7 days
+   - Send proactive alert to refresh authentication
+
+**Output Format (Teams Alert):**
+```
+🔧 MECHANIC HEALTH REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+System: Pi 5 (Heath, TX)
+Time: 2026-01-29 14:00:00
+
+✓ Service Status: Active (Uptime: 7d 4h)
+✓ Disk Usage: 45% (Safe)
+✓ Memory: 2.1GB / 8GB (26%)
+✓ Rclone Mount: Accessible
+✓ Token Expiry: 62 days remaining
+
+⚠ WARNING: 2 ERROR entries in last hour
+   → View logs: journalctl -u charterstone -n 50
+```
+
+**Self-Healing Actions:**
+- If service stopped → Attempt `systemctl start`
+- If mount stale → Execute `fusermount -uz` + remount
+- If disk >90% full → Archive old logs, compress old signals
+- If errors >10/hour → Escalate alert to Aaron (SMS future feature)
+
+**Configuration:**
+```python
+# agents/mechanic/config.py
+DISK_WARN_THRESHOLD = 80   # %
+DISK_CRITICAL_THRESHOLD = 90   # %
+MEMORY_WARN_THRESHOLD = 75   # %
+ERROR_RATE_THRESHOLD = 10   # errors per hour
+TOKEN_EXPIRY_WARN_DAYS = 7   # days
+```
+
+---
+
+### 3.4 ORCHESTRATOR (990 Analysis & Router)
+
+**Location:** `agents/orchestrator/`  
+**Purpose:** Enriches university prospect tasks with financial intelligence  
+**Runtime:** Every 60 minutes (daemon-controlled, Pi only)
+
+**No changes in V2.0** - functionality remains the same:
+- Scan "Watchdog Inbox" for new tasks
+- Query ProPublica API for IRS 990 data
+- Enrich task with financial snapshot
+- Move to "Strategy & Intel" bucket
+- Auto-assign to Aaron
+
+**Future Enhancement (Phase 2):**
+- Save complete 990 data to `knowledge_base/prospects/[institution]/financials_irs990_YYYY.md`
+- Enable Oracle queries like "Show me all universities with declining revenue"
+
+---
+
+## 4. MANAGEMENT CONSOLE (PLANNER MCP)
+
+### 4.1 Overview
+
+The **Planner MCP Server** is the executive interface layer, enabling strategic task management through natural language conversation with Claude Desktop. It bridges the gap between human intelligence (strategic decisions) and machine execution (automated workflows).
+
+**Location:** `C:\Users\tasms\CharterStone\PlannerMCP\`  
+**Runtime:** On-demand (launched by Claude Desktop)  
+**Platform:** Windows 11 laptop only (not on Pi)
+
+**Purpose:**
+- Provide Claude Desktop with read/write access to Microsoft Planner
+- Enable conversational project management ("What tasks are in Strategy bucket?")
+- Support automated task creation/updates from AI agents (future)
+
+---
+
+### 4.2 Architecture
+
+**Components:**
+```
+PlannerMCP/
+├── venv/                    # Isolated Python environment
+│   ├── Scripts/
+│   │   └── python.exe      # Python 3.13
+│   └── Lib/
+│       └── site-packages/  # Dependencies (msal, httpx, mcp)
+├── server.py                # Main MCP server (upgraded V2.0)
+├── .env                     # Environment variables (optional)
+└── server.py.backup         # Previous version (rollback safety)
+```
+
+**Integration with Claude Desktop:**
+```json
+// C:\Users\tasms\AppData\Roaming\Claude\claude_desktop_config.json
+{
+  "mcpServers": {
+    "planner": {
+      "command": "C:\\Users\\tasms\\CharterStone\\PlannerMCP\\venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\Users\\tasms\\CharterStone\\PlannerMCP\\server.py"
+      ],
+      "env": {
+        "AZURE_CLIENT_ID": "your-azure-app-id",
+        "PLANNER_PLAN_ID": "your-plan-id",
+        "PLANNER_GROUP_ID": "your-group-id"
+      }
+    }
+  }
+}
+```
+
+---
+
+### 4.3 Authentication (Device Code Flow)
+
+**Method:** Microsoft Device Code Flow  
+**Why:** Enables delegated permissions (acts as Aaron, not as application)  
+**Security:** More secure than client secrets (no stored credentials)
+
+**Authentication Sequence:**
+1. Claude Desktop launches MCP server on first use
+2. Server checks for cached token (`~/.planner_mcp_token_cache.json`)
+3. If no token, server generates device code
+4. User sees prompt in terminal or log file:
+   ```
+   Visit: https://microsoft.com/devicelogin
+   Enter code: ABCD-1234
+   ```
+5. User opens browser, enters code, signs in with Microsoft 365 account
+6. Server receives token, caches for ~90 days
+7. All subsequent requests use cached token (no re-authentication)
+
+**Token Lifecycle:**
+- **Lifespan:** ~90 days (automatic refresh handled by MSAL library)
+- **Expiration Handling:** Auto-refresh when <5 minutes remaining
+- **Manual Reset:** Delete `~/.planner_mcp_token_cache.json` to force re-auth
+
+**Required Permissions (Microsoft Graph API):**
+- `Tasks.ReadWrite` - Create, read, update Planner tasks
+- `Group.Read.All` - Access team/group information
+- `User.Read` - Read user profile (for assignments)
+
+---
+
+### 4.4 Capabilities (Tools)
+
+**Available Functions:**
+
+**1. list_tasks**
+- **Purpose:** Retrieve all incomplete tasks from Launch Operations plan
+- **Usage:** "List all tasks in the Strategy & Intel bucket"
+- **Returns:** Array of task titles and IDs
+
+**2. get_task_details** (NEW in V2.0)
+- **Purpose:** Retrieve complete information for a specific task
+- **Usage:** "Get details for task [ID]"
+- **Returns:**
+  - Full description
+  - Bucket name
+  - Checklist items
+  - Assigned users
+  - Created/due dates
+  - Progress percentage
+
+**3. create_task** (ENHANCED in V2.0)
+- **Purpose:** Create new task with full metadata
+- **Usage:** "Create task titled 'X' in bucket Y with description Z"
+- **Parameters:**
+  - `title` (required)
+  - `bucket_name` (default: "Strategy & Intel")
+  - `description` (optional, now supports multi-line)
+  - `due_date` (optional, ISO 8601 format)
+  - `assigned_to` (optional, email address)
+
+**4. update_task** (NEW in V2.0)
+- **Purpose:** Modify existing task properties
+- **Usage:** "Update task [ID] to 75% complete"
+- **Parameters:**
+  - `task_id` (required)
+  - `title` (optional)
+  - `percent_complete` (optional, 0-100)
+  - `description` (optional)
+  - `due_date` (optional)
+
+---
+
+### 4.5 Usage Examples
+
+**Basic Query:**
+```
+User: "What tasks are in the Digital Teammates bucket?"
+Claude: [calls list_tasks, filters results]
+       "You have 9 agent role definitions in that bucket..."
+```
+
+**Task Investigation:**
+```
+User: "What's in my Oracle task?"
+Claude: [calls get_task_details with Oracle task ID]
+       "The Oracle task has a 3-phase architecture:
+        Phase 1: Data Ingestion (Watchdog + Sentinel)
+        Phase 2: MCP Search Tool
+        Phase 3: Web Interface..."
+```
+
+**Task Creation:**
+```
+User: "Create a task to deploy Orchestrator v2"
+Claude: [calls create_task]
+       "Created 'Deploy Orchestrator v2' in Strategy & Intel bucket"
+```
+
+**Progress Updates:**
+```
+User: "Mark the Oracle task as 25% complete"
+Claude: [calls update_task with percent_complete=25]
+       "Task updated successfully!"
+```
+
+---
+
+### 4.6 Operational Notes
+
+**Performance:**
+- **List Tasks:** ~500ms latency (Graph API round trip)
+- **Get Details:** ~1000ms (requires 2 API calls: task + details)
+- **Create Task:** ~800ms
+- **Update Task:** ~1200ms (requires fetching current ETag first)
+
+**Rate Limits:**
+- Microsoft Graph throttles at ~2000 requests/minute
+- Not an issue for interactive use
+- Relevant only for bulk operations (e.g., creating 50+ tasks)
+
+**Logs:**
+- **MCP Server:** `C:\Users\tasms\.planner_mcp.log`
+- **Claude Desktop:** `C:\Users\tasms\AppData\Roaming\Claude\logs\mcp.log`
+
+**Common Issues:**
+
+**Issue:** "Task not found" error  
+**Cause:** Task ID typo or task was completed/deleted  
+**Fix:** Verify ID with list_tasks, check if task is marked 100% complete
+
+**Issue:** "Unauthorized" error  
+**Cause:** Token expired or permissions revoked  
+**Fix:** Delete `~/.planner_mcp_token_cache.json`, restart Claude Desktop, re-authenticate
+
+**Issue:** Server timeout on first request  
+**Cause:** Device code flow waiting for user authentication  
+**Fix:** Check logs for device code URL, complete browser authentication
+
+---
+
+### 4.7 Future Enhancements (Phase 2)
+
+**Planned Features:**
+1. **Bidirectional Sync:**
+   - Agents on Pi can create/update tasks via Planner MCP
+   - Currently: Only HQ (Windows) can modify tasks
+
+2. **Task Templates:**
+   - Pre-defined task structures for common workflows
+   - Example: "Create university prospect task for [name]"
+
+3. **Bulk Operations:**
+   - "Archive all completed tasks older than 30 days"
+   - "Generate weekly progress report"
+
+4. **Search Integration:**
+   - "Find all tasks mentioning West Virginia"
+   - Currently: Must list all, then filter manually
+
+---
+
+## 5. DEPLOYMENT UPDATES
+
+### 5.1 Factory Deployment (Raspberry Pi) - No Changes
+
+Deployment process remains identical to V1.0:
+- Clone repository to `/home/aaronshirley751/charter-stone-automation`
+- Create virtual environment and install dependencies
+- Authenticate Microsoft Graph (device code flow)
+- Install systemd service
+- Verify operation
+
+**New Step (V2.0 only):**
+```bash
+# Create knowledge_base directory structure
+cd /home/aaronshirley751/charter-stone-automation
+mkdir -p knowledge_base/{signals/{distress,forecast},prospects,docs/{internal,research,templates},metadata}
+```
+
+---
+
+### 5.2 HQ Deployment (Windows Laptop)
+
+**Prerequisites:**
+- Windows 11
+- Python 3.13+ installed
+- Claude Desktop installed
+- Microsoft 365 account with Planner access
+
+**Installation Steps:**
+
+**Step 1: Install Planner MCP Server**
+```powershell
+# Download server files to designated location
+cd C:\Users\tasms\CharterStone\PlannerMCP
+
+# Create virtual environment
+python -m venv venv
+
+# Activate environment
+.\venv\Scripts\activate
+
+# Install dependencies
+pip install msal httpx mcp python-dotenv
+```
+
+**Step 2: Configure Claude Desktop**
+```powershell
+# Open config file
+notepad C:\Users\tasms\AppData\Roaming\Claude\claude_desktop_config.json
+```
+
+Add Planner MCP server entry (see Section 4.2 for JSON structure)
+
+**Step 3: Initial Authentication**
+```powershell
+# Test server manually to trigger device code flow
+cd C:\Users\tasms\CharterStone\PlannerMCP
+.\venv\Scripts\python.exe server.py
+```
+
+Expected output:
+```
+Visit: https://microsoft.com/devicelogin
+Enter code: ABCD-1234
+```
+
+Complete authentication in browser, then press Ctrl+C to stop test server.
+
+**Step 4: Verify Integration**
+1. Close all Claude Desktop windows
+2. Reopen Claude Desktop
+3. Send message: "List all tasks in Launch Operations"
+4. Claude should respond with task list (confirms MCP working)
+
+---
+
+### 5.3 Verification Checklist
+
+**Factory (Pi):**
+- [ ] `charterstone.service` shows `active (running)`
+- [ ] `knowledge_base/` directory exists with subdirectories
+- [ ] Rclone mount accessible: `ls /home/aaronshirley751/charterstone-mount`
+- [ ] Watchdog creates files in `knowledge_base/signals/` on new signals
+- [ ] Sentinel creates files in `knowledge_base/docs/internal/` on processing
+- [ ] Mechanic posts health report to Teams every 60 minutes
+
+**HQ (Windows):**
+- [ ] Planner MCP virtual environment created
+- [ ] Dependencies installed (check with `pip list`)
+- [ ] `claude_desktop_config.json` updated
+- [ ] Token cache exists: `~/.planner_mcp_token_cache.json`
+- [ ] Claude can list tasks without errors
+- [ ] Claude can get task details (test with known task ID)
+- [ ] Claude can create test task
+- [ ] Claude can update test task
+
+---
+
+## 6. MAINTENANCE UPDATES
+
+### 6.1 Daily Operations
+
+**Factory (Pi):**
+- **Automatic:** All agents run on schedule, no daily action required
+- **Monitoring:** Check Teams for Mechanic health reports
+- **Alerts:** Respond to critical warnings (disk space, authentication expiry)
+
+**HQ (Windows):**
+- **As-Needed:** Launch Claude Desktop when strategic work required
+- **Authentication:** Re-authenticate if prompted (every ~90 days)
+
+---
+
+### 6.2 Weekly Tasks
+
+**Deduplication (Planner):**
+```bash
+# SSH to Pi
+ssh aaronshirley751@192.168.7.189
+
+# Run janitor
+cd /home/aaronshirley751/charter-stone-automation
+source venv/bin/activate
+python3 shared/janitor.py
+```
+
+**Health Check (Pi):**
+```bash
+# Run comprehensive health check
+bash shared/healthcheck.sh
+```
+
+**Token Verification (HQ):**
+```powershell
+# Check token expiration
+# If <7 days, Mechanic will alert proactively
+```
+
+---
+
+### 6.3 Monthly Tasks
+
+**Backup Verification:**
+- Verify `knowledge_base/` is syncing to SharePoint
+- Check SharePoint storage quota (<5GB used of 1TB allocated)
+- Manual backup to external drive (optional)
+
+**Log Rotation:**
+```bash
+# On Pi
+sudo journalctl --vacuum-time=30d
+```
+
+**Dependency Updates:**
+```bash
+# On Pi
+cd /home/aaronshirley751/charter-stone-automation
+source venv/bin/activate
+pip list --outdated
+pip install --upgrade [package-name]
+```
+
+```powershell
+# On Windows
+cd C:\Users\tasms\CharterStone\PlannerMCP
+.\venv\Scripts\activate
+pip list --outdated
+pip install --upgrade [package-name]
+```
+
+---
+
+### 6.4 Troubleshooting Updates
+
+**New Issues in V2.0:**
+
+**Issue:** knowledge_base/ files not appearing in SharePoint  
+**Cause:** Rclone sync delay or mount issue  
+**Fix:**
+```bash
+# Force immediate sync
+rclone sync /home/aaronshirley751/charter-stone-automation/knowledge_base/ charterstone:knowledge_base/
+
+# If persists, remount
+sudo systemctl restart charterstone.service
+```
+
+**Issue:** Planner MCP server not responding in Claude  
+**Cause:** Server crashed or authentication expired  
+**Fix:**
+```powershell
+# Check logs
+notepad C:\Users\tasms\.planner_mcp.log
+
+# If auth error, delete token and re-authenticate
+del C:\Users\tasms\.planner_mcp_token_cache.json
+
+# Restart Claude Desktop
+```
+
+**Issue:** Mechanic health reports not appearing  
+**Cause:** Teams webhook expired or Mechanic not running  
+**Fix:**
+```bash
+# Check if Mechanic is scheduled in daemon
+grep -r "mechanic" /home/aaronshirley751/charter-stone-automation/agents/daemon/
+
+# Manually run Mechanic to test
+python3 agents/mechanic/monitor.py
+```
+
+---
+
+## 7. OPERATIONAL NOTES - UPDATES
+
+### 7.1 Split-Brain Coordination
+
+**Data Consistency:**
+- Factory writes to `knowledge_base/` → Syncs to SharePoint → HQ reads from cloud
+- Latency: ~5 minute sync interval (Rclone)
+- Conflict Resolution: Newest file wins (timestamp-based)
+
+**Task Flow:**
+- Factory creates tasks → Cloud storage (Planner) → HQ reads/modifies via MCP
+- No direct Pi → Laptop communication (all via Microsoft 365 cloud)
+
+**Network Requirements:**
+- **Pi:** Outbound HTTPS only (443)
+- **Laptop:** Outbound HTTPS only (443)
+- **Both:** Require internet connectivity (no offline mode)
+
+---
+
+### 7.2 Disaster Recovery
+
+**Critical Data Locations:**
+1. **Authentication Tokens:**
+   - Pi: `~/.cache/msal_token_cache.bin`
+   - Windows: `~/.planner_mcp_token_cache.json`
+   - Backup: Not required (can re-authenticate)
+
+2. **Knowledge Base:**
+   - Pi: `/home/aaronshirley751/charter-stone-automation/knowledge_base/`
+   - Cloud: SharePoint `/knowledge_base/`
+   - Backup: Weekly snapshot to external USB (manual)
+
+3. **Configuration:**
+   - Pi: `/etc/systemd/system/charterstone.service`, `agents/*/. env`
+   - Windows: `C:\Users\tasms\AppData\Roaming\Claude\claude_desktop_config.json`
+   - Backup: Store in 1Password vault
+
+**Recovery Procedures:**
+
+**If Pi fails completely:**
+1. Provision new Pi, install OS
+2. Clone repository from GitHub
+3. Restore `.env` files from 1Password
+4. Re-authenticate Microsoft Graph (device code)
+5. Download `knowledge_base/` from SharePoint
+6. Install systemd service and start
+
+**If Windows laptop fails:**
+1. Install Claude Desktop on new machine
+2. Clone PlannerMCP from backup
+3. Restore `claude_desktop_config.json`
+4. Re-authenticate (device code)
+5. Test with `list_tasks`
+
+---
+
+### 7.3 Scaling Considerations
+
+**Current Capacity:**
+- **Signals:** 500-1000 per year (sustainable)
+- **Documents:** 100-200 per year (sustainable)
+- **Prospects:** 50-100 institutions (sustainable)
+- **Total Storage:** ~500MB/year
+
+**Future Growth (5-Year Projection):**
+- **Signals:** 5,000-10,000 files
+- **Total Storage:** ~2.5GB
+- **Action:** No changes needed (well within Pi 5 and SharePoint capacity)
+
+**If Exceeds 50,000 Files:**
+- Migrate from file-based to SQLite database
+- Implement full-text search engine (Elasticsearch)
+- Consider dedicated server (Pi → cloud VM)
+
+---
+
+**END OF V2.0 OPERATIONS MANUAL UPDATES**
+
+---
+
+## APPENDIX A: GLOSSARY
+
+**The Factory** - Raspberry Pi 5 server running 24/7 automation agents (Watchdog, Sentinel, Mechanic)
+
+**The HQ** - Windows laptop providing strategic interface via Claude Desktop and Planner MCP
+
+**The Oracle** - Centralized knowledge base (`knowledge_base/` directory) containing all accumulated intelligence
+
+**Split-Brain Model** - Architecture where operational execution (Pi) and strategic intelligence (laptop) are physically separated but connected via cloud
+
+**Planner MCP** - Model Context Protocol server enabling Claude Desktop to interact with Microsoft Planner
+
+**Device Code Flow** - Interactive browser-based authentication method for delegated Microsoft 365 permissions
+
+**RAG** - Retrieval-Augmented Generation; AI technique enabling natural language queries over document collections
+
+**Sentinel Inbox** - Network folder (`\\192.168.7.189\Sentinel_Input\`) where users drop files for processing
+
+**Signal** - Intelligence alert from Watchdog about institutional events (crisis or growth opportunity)
+
+**Prospect** - University identified as potential client, tracked in `knowledge_base/prospects/`
+
+---
+
+## APPENDIX B: QUICK REFERENCE COMMANDS
+
+**Factory (Pi):**
+```bash
+# View service status
+sudo systemctl status charterstone.service
+
+# View real-time logs
+sudo journalctl -u charterstone -f
+
+# Restart service
+sudo systemctl restart charterstone.service
+
+# Run health check
+bash shared/healthcheck.sh
+
+# Force knowledge_base sync
+rclone sync knowledge_base/ charterstone:knowledge_base/
+```
+
+**HQ (Windows):**
+```powershell
+# Check Planner MCP logs
+notepad C:\Users\tasms\.planner_mcp.log
+
+# Reset authentication
+del ~/.planner_mcp_token_cache.json
+
+# Reinstall dependencies
+cd C:\Users\tasms\CharterStone\PlannerMCP
+.\venv\Scripts\activate
+pip install --upgrade msal httpx mcp
+```
+
+**Claude Desktop (Conversational):**
+```
+List all tasks
+Get details for task [ID]
+Create task titled "X" in Strategy & Intel bucket
+Update task [ID] to 50% complete
+What universities are in crisis?  [Future - Phase 2]
+```
+
+---
+
+**Document Version:** 2.0  
+**Author:** Charter & Stone Engineering  
+**Classification:** Internal Operations  
+**Distribution:** Aaron Shirley, Amanda [Partner Name]
+

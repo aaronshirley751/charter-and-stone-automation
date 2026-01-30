@@ -36,7 +36,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WATCH_FOLDER = os.path.join(BASE_DIR, "_INBOX")
 
 # --- SMART TEMPLATE FINDER ---
+template_path_env = os.getenv("TEMPLATE_PATH")
 search_paths = [
+    template_path_env,
     os.path.join(BASE_DIR, "Reference.docx"),
     os.path.join(BASE_DIR, "..", "Reference.docx"),
     os.path.join(BASE_DIR, "Reference.docx.docx")
@@ -44,13 +46,15 @@ search_paths = [
 
 TEMPLATE_PATH = None
 for path in search_paths:
+    if not path:
+        continue
     full_path = os.path.abspath(path)
     if os.path.exists(full_path):
         TEMPLATE_PATH = full_path
         break
 
 if not TEMPLATE_PATH:
-    TEMPLATE_PATH = os.path.join(BASE_DIR, "Reference.docx")
+    TEMPLATE_PATH = os.path.abspath(template_path_env) if template_path_env else os.path.join(BASE_DIR, "Reference.docx")
 
 # --- DESTINATION (LOCAL SYNC FOLDER) ---
 TARGET_ROOT = os.getenv("TARGET_ROOT")
@@ -65,19 +69,54 @@ TEAMS_WEBHOOK_URL = os.getenv("TEAMS_WEBHOOK_URL")
 
 def notify_teams(filename, _filepath):
     """Sends a WRAPPED Adaptive Card with a Clickable Link."""
-    if "PASTE_YOUR" in TEAMS_WEBHOOK_URL:
+    if not TEAMS_WEBHOOK_URL or "PASTE_YOUR" in TEAMS_WEBHOOK_URL:
         print("⚠️ Skipping Teams Alert (Webhook URL not set).")
         return
 
     # Generate Smart Link
-    if "charterandstone" in SHAREPOINT_FOLDER_URL:
+    file_url = None
+    if SHAREPOINT_FOLDER_URL and "charterandstone" in SHAREPOINT_FOLDER_URL:
         safe_filename = urllib.parse.quote(filename)
         base = SHAREPOINT_FOLDER_URL.rstrip('/')
         # ADDing '?web=1' forces SharePoint to open the Word Online viewer
-        web_link = f"{base}/{safe_filename}?web=1"
-        display_value = f"[{filename}]({web_link})"
+        file_url = f"{base}/{safe_filename}?web=1"
+        display_value = f"[{filename}]({file_url})"
     else:
         display_value = filename
+
+    body_blocks = [
+        {
+            "type": "TextBlock",
+            "text": "🚀 New Strategy Asset Published",
+            "weight": "Bolder",
+            "size": "Medium",
+            "color": "Accent"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Charter & Stone Autonomous Agent",
+            "isSubtle": True,
+            "wrap": True,
+            "size": "Small"
+        },
+        {
+            "type": "FactSet",
+            "facts": [
+                {"title": "Document:", "value": display_value},
+                {"title": "Location:", "value": "Strategy & Intel"},
+                {"title": "Status:", "value": "Synced & Ready"}
+            ]
+        }
+    ]
+
+    if not file_url:
+        body_blocks.append({
+            "type": "TextBlock",
+            "text": "✅ Archived to Oracle (Local Only)",
+            "isSubtle": True,
+            "wrap": True,
+            "size": "Small"
+        })
 
     wrapped_card_payload = {
         "type": "message",
@@ -87,33 +126,15 @@ def notify_teams(filename, _filepath):
                 "content": {
                     "type": "AdaptiveCard",
                     "version": "1.4",
-                    "body": [
-                        {
-                            "type": "TextBlock",
-                            "text": "🚀 New Strategy Asset Published",
-                            "weight": "Bolder",
-                            "size": "Medium",
-                            "color": "Accent"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "Charter & Stone Autonomous Agent",
-                            "isSubtle": True,
-                            "wrap": True,
-                            "size": "Small"
-                        },
-                        {
-                            "type": "FactSet",
-                            "facts": [
-                                {"title": "Document:", "value": display_value},
-                                {"title": "Location:", "value": "Strategy & Intel"},
-                                {"title": "Status:", "value": "Synced & Ready"}
-                            ]
-                        }
-                    ],
+                    "body": body_blocks,
                     "msteams": {
                         "width": "Full"
-                    }
+                    },
+                    **({
+                        "actions": [
+                            {"type": "Action.OpenUrl", "title": "View File", "url": file_url}
+                        ]
+                    } if file_url else {})
                 }
             }
         ]
@@ -136,6 +157,21 @@ def notify_teams(filename, _filepath):
         print(f"⚠️ Error sending alert: {e}")
 
 
+def ensure_template(template_path):
+    """Create a basic template if missing to keep logs clean."""
+    if os.path.exists(template_path):
+        return
+
+    try:
+        os.makedirs(os.path.dirname(template_path), exist_ok=True)
+        doc = Document()
+        doc.add_paragraph("")
+        doc.save(template_path)
+        print(f"🧩 Default template created: {template_path}")
+    except Exception as e:
+        print(f"⚠️ Failed to create default template: {e}")
+
+
 def apply_branding_to_doc(doc, title_text):
     """Applies the Charter & Stone header and date styles."""
     doc.add_paragraph("") 
@@ -150,6 +186,7 @@ def convert_md_to_branded_docx(md_file_path):
     print(f"⚙️ Processing: {md_file_path}")
 
     try:
+        ensure_template(TEMPLATE_PATH)
         if os.path.exists(TEMPLATE_PATH):
             doc = Document(TEMPLATE_PATH)
             # CLEAR SCAFFOLDING
