@@ -23,8 +23,9 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from dotenv import load_dotenv
 
-# Import Shared Auth
+# Import Shared Auth and Memory
 from shared.auth import get_graph_headers
+from shared.memory import save_document_text
 
 # Load environment variables from project root
 load_dotenv(os.path.join(project_root, ".env"))
@@ -197,6 +198,18 @@ def convert_md_to_branded_docx(md_file_path):
         doc.save(final_path)
 
         print(f"✅ PUBLISHED: {final_path}")
+        
+        # 🆕 SAVE TO THE ORACLE
+        try:
+            oracle_path = save_document_text(
+                filename=base_name,
+                text_content=text,  # Raw markdown content
+                doc_type="internal"
+            )
+            print(f"📚 [ORACLE] Knowledge archived: {oracle_path}")
+        except Exception as oracle_error:
+            print(f"⚠️ [ORACLE] Failed to save to Knowledge Base: {oracle_error}")
+        
         notify_teams(filename, final_path)
         os.rename(md_file_path, md_file_path + ".processed")
 

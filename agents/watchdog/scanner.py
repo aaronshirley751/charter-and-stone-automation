@@ -12,8 +12,9 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, "../../"))
 sys.path.append(project_root)
 
-# Import Shared Auth
+# Import Shared Auth and Memory
 from shared.auth import get_graph_headers
+from shared.memory import save_signal
 
 # Load env from root
 load_dotenv(os.path.join(project_root, ".env"))
@@ -172,6 +173,33 @@ def scan_feeds():
             
             if signal_type:
                 print(f"🎯 {signal_type} FOUND: {title}")
+                
+                # 🆕 SAVE TO THE ORACLE
+                try:
+                    # Extract summary from entry
+                    summary = entry.get('summary', title)
+                    
+                    # Determine signal type for Oracle (remove emoji)
+                    oracle_signal_type = "distress" if "DISTRESS" in signal_type else "forecast"
+                    
+                    # Extract metadata (university name if possible)
+                    metadata = {
+                        "keyword": keyword,
+                        "priority": priority,
+                        "published_date": entry.get('published', 'Unknown')
+                    }
+                    
+                    oracle_path = save_signal(
+                        title=title,
+                        content=summary,
+                        signal_type=oracle_signal_type,
+                        source_url=link,
+                        metadata=metadata
+                    )
+                    print(f"📚 [ORACLE] Signal archived: {oracle_path}")
+                except Exception as oracle_error:
+                    print(f"⚠️ [ORACLE] Failed to save signal: {oracle_error}")
+                
                 send_teams_alert(signal_type, title, link, keyword)
                 create_planner_task(signal_type, title, link, keyword, priority)
                 
