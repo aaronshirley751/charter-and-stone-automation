@@ -1,0 +1,530 @@
+# OPERATIONS_MANUAL.md
+
+## Charter & Stone Automation Stack
+
+**Version:** 3.0 (Architecture V3 — Hybrid Power Automate + MCP)  
+**Last Updated:** January 31, 2026  
+**Platform:** Raspberry Pi 5 (Heath, TX) + Microsoft 365 Cloud Services
+
+---
+
+## Document History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 3.0 | 2026-01-31 | Architecture V3 migration: unified SharePoint site, converter.py, MCP V2.6.1 |
+| 2.0 | 2026-01-29 | Digital Teammates Architecture |
+| 1.0 | 2026-01-26 | Initial Sentinel deployment |
+
+---
+
+## 1. SYSTEM ARCHITECTURE
+
+### 1.1 Architecture V3 Overview
+
+Charter & Stone operates a **hybrid automation architecture** ratified on January 31, 2026:
+
+| Layer | Technology | Reliability Requirement |
+|-------|------------|------------------------|
+| **24/7 Automation** | Power Automate | 99.95% (Azure SLA) |
+| **Interactive Sessions** | MCP Server V2.6.1 | Human-supervised |
+| **Document Processing** | Sentinel (Pi) | Best-effort with monitoring |
+| **Intelligence Gathering** | Watchdog/Orchestrator (Pi) | Best-effort with monitoring |
+
+**Decision Source:** Claude + Gemini adversarial architecture review  
+**Documentation:** See `ARCHITECTURE_V3.md` in SharePoint Governance folder
+
+### 1.2 Directory Structure
+
+```
+charter-and-stone-automation/
+├── agents/
+│   ├── daemon/              # 24/7 Scheduler
+│   ├── watchdog/            # News Scanner
+│   ├── orchestrator/        # 990 Analysis & Router
+│   └── sentinel/            # Document Converter
+│       ├── converter.py     # Main processing script
+│       ├── charter_template.docx  # Branded template
+│       ├── .env             # Environment configuration
+│       └── src/
+│           └── _INBOX/      # Drop zone for markdown files
+├── shared/
+│   ├── auth.py              # Central Authentication Module
+│   ├── planner_client.py    # Microsoft Planner API Wrapper
+│   └── config.py            # Environment Variables
+├── knowledge_base/
+│   ├── signals/             # Watchdog output
+│   ├── docs/
+│   │   └── internal/        # Governance documentation
+│   ├── intelligence/        # Enriched prospect data
+│   └── prospects/           # Target institution profiles
+├── systemd/
+│   └── charterstone.service # Production Service Definition
+└── requirements.txt         # Python Dependencies
+```
+
+### 1.3 SharePoint Structure (Unified Site)
+
+**Site URL:** `https://charterandstone.sharepoint.com/sites/CharterStone`
+
+```
+Shared Documents/
+├── General/                 # General files
+├── Governance/              # Architecture, Planner config, Agent registry, Deprecation log
+├── Operations/              # Operations manual, procedures
+├── Technical/               # MCP reference, technical specs
+├── Intelligence/            # Research outputs, dossiers
+├── Strategy and Intel/      # Legacy signals (pre-V3)
+└── Incoming Signals/        # Power Automate trigger folder (future)
+```
+
+**Deprecated:** `sites/Operations` (HQ site) — content migrated to unified site
+
+---
+
+## 2. THE STAFF (AGENTS)
+
+### 2.1 The Daemon (Scheduler)
+
+**Location:** `agents/daemon/`  
+**Purpose:** Orchestrates timed execution of all other agents  
+**Runtime:** Continuous background service via systemd
+
+**Schedule:**
+- Watchdog: Every 60 minutes
+- Orchestrator: Every 15 minutes
+- Sentinel: Continuous (file system monitoring)
+
+### 2.2 The Watchdog (Intel Agent)
+
+**Location:** `agents/watchdog/`  
+**Purpose:** Monitors higher education news sources for institutional distress signals  
+**Status:** Production (V2.2)
+
+**Data Sources:**
+- RSS feeds from InsideHigherEd, Chronicle of Higher Education
+- Web scraping of state higher ed commission announcements
+- Keyword filters: "enrollment decline," "budget deficit," "restructuring"
+
+**Critical Filter:**
+```python
+AGE_THRESHOLD = 30  # days — prevents duplicate alerts on stale news
+```
+
+**Output:** Creates Planner task in "Watchdog Inbox" bucket
+
+### 2.3 The Orchestrator (990 Analyst)
+
+**Location:** `agents/orchestrator/`  
+**Purpose:** Enriches university prospect tasks with IRS 990 financial intelligence  
+**Status:** Production (V2.4)
+
+**Data Source:** ProPublica Nonprofit Explorer API
+
+**Workflow:**
+1. Scan "Watchdog Inbox" bucket for unprocessed tasks
+2. Query ProPublica API for latest 990 filing
+3. Extract key metrics (revenue, net assets, fiscal year)
+4. Update task description with financial snapshot
+5. Move task to "Strategy & Intel" bucket
+6. Post enriched summary to Teams
+
+### 2.4 The Sentinel (Document Converter)
+
+**Location:** `agents/sentinel/`  
+**Purpose:** Converts Markdown to branded Word documents, syncs to SharePoint  
+**Status:** Production (V3.0 — reconfigured January 31, 2026)
+
+**Script:** `converter.py` (not auto_publisher.py)
+
+**Workflow:**
+1. **Ingestion:** Monitor `src/_INBOX/` folder for `.md` files
+2. **Conversion:** Parse Markdown, apply Charter & Stone template
+3. **Upload:** Save to rclone-mounted SharePoint directory
+4. **Safety Buffer:** Wait 20 seconds for cloud sync
+5. **Notification:** Post Adaptive Card to Teams
+6. **Cleanup:** Rename `.md` file to `.md.processed`
+
+**Template:** `charter_template.docx` in `agents/sentinel/` directory
+
+---
+
+## 3. CONFIGURATION
+
+### 3.1 Sentinel Environment Variables
+
+**File:** `~/charter-and-stone-automation/agents/sentinel/.env`
+
+```ini
+# SharePoint Target (Unified Site)
+TARGET_ROOT=/home/aaronshirley751/charterstone-mount/Operations
+SHAREPOINT_FOLDER_URL=https://charterandstone.sharepoint.com/sites/CharterStone/Shared%20Documents/Operations
+
+# Teams Notification Webhook
+TEAMS_WEBHOOK_URL=https://[your-power-automate-webhook-url]
+
+# Template (must exist in agents/sentinel/ directory)
+TEMPLATE_PATH=charter_template.docx
+```
+
+**Note:** To route documents to different folders, change `TARGET_ROOT` and `SHAREPOINT_FOLDER_URL` accordingly:
+- Governance: `.../charterstone-mount/Governance`
+- Technical: `.../charterstone-mount/Technical`
+- Intelligence: `.../charterstone-mount/Intelligence`
+
+### 3.2 Rclone Configuration
+
+**Remote Name:** `charterstone`  
+**Type:** Microsoft SharePoint  
+**Site:** `https://charterandstone.sharepoint.com/sites/CharterStone`
+
+**Verify remote:**
+```bash
+rclone lsd charterstone:"Shared Documents"
+```
+
+**Expected output:**
+```
+General
+Governance
+Incoming Signals
+Intelligence
+Operations
+Strategy and Intel
+Technical
+```
+
+### 3.3 Systemd Service
+
+**File:** `/etc/systemd/system/charterstone.service`
+
+```ini
+[Unit]
+Description=Charter & Stone Automation Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=aaronshirley751
+WorkingDirectory=/home/aaronshirley751/charter-and-stone-automation
+
+# Breach and Clear Protocol — clean stale mounts
+ExecStartPre=-/bin/fusermount -uz /home/aaronshirley751/charterstone-mount
+ExecStartPre=/usr/bin/mkdir -p /home/aaronshirley751/charterstone-mount
+
+# Mount SharePoint with Golden Flags
+ExecStartPre=/usr/bin/rclone mount charterstone:"Shared Documents" /home/aaronshirley751/charterstone-mount \
+    --vfs-cache-mode writes \
+    --no-checksum \
+    --no-modtime \
+    --ignore-size \
+    --daemon \
+    --allow-non-empty
+
+# Start the main service
+ExecStart=/home/aaronshirley751/charter-and-stone-automation/venv/bin/python \
+    /home/aaronshirley751/charter-and-stone-automation/agents/sentinel/converter.py
+
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Golden Flags Rationale:**
+| Flag | Purpose |
+|------|---------|
+| `--vfs-cache-mode writes` | Buffer writes locally until file close |
+| `--no-checksum` | Prevent false corruption from SharePoint metadata |
+| `--ignore-size` | Ignore size changes post-upload |
+| `--no-modtime` | Ignore timestamp drift |
+| `fusermount -uz` | Force unmount zombie processes on start |
+
+---
+
+## 4. MCP SERVER (INTERACTIVE SESSIONS)
+
+### 4.1 Overview
+
+**Version:** V2.6.1 "Interactive Edition"  
+**Location:** `C:\Users\tasms\CharterStone\PlannerMCP\server.py`  
+**Purpose:** Enables Claude Desktop to manage Planner tasks and search Oracle
+
+### 4.2 Available Tools
+
+| Tool | Category | Purpose |
+|------|----------|---------|
+| `search_oracle` | Intelligence | Query Pi knowledge base via SSH |
+| `list_buckets` | Planner Read | Show available buckets |
+| `list_tasks` | Planner Read | List tasks (with bucket filter) |
+| `get_task_details` | Planner Read | Full task info + checklist |
+| `create_task` | Planner Write | Create new task |
+| `update_task` | Planner Write | Modify existing task |
+| `complete_task` | Planner Write | Mark task done |
+| `move_task` | Planner Write | Change bucket |
+| `update_checklist_item` | Planner Write | Check/uncheck checklist item |
+| `add_checklist_item` | Planner Write | Add new checklist item |
+
+### 4.3 Configuration
+
+**Claude Desktop Config:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "charterstone": {
+      "command": "C:\\Users\\tasms\\CharterStone\\PlannerMCP\\venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\Users\\tasms\\CharterStone\\PlannerMCP\\server.py"
+      ],
+      "env": {
+        "SSH_KEY_PATH": "C:/Users/tasms/.ssh/id_rsa"
+      }
+    }
+  }
+}
+```
+
+**Environment Variables:** `C:\Users\tasms\CharterStone\PlannerMCP\.env`
+
+```ini
+AZURE_TENANT_ID=a7704ac7-417c-49ec-b214-18a1636bd1cd
+AZURE_CLIENT_ID=b8c66910-f314-4a6d-a7ca-da4ac50101dd
+PLANNER_PLAN_NAME=Launch Operations
+PLANNER_PLAN_ID=y9DwHD-ObEGDHvjmhIFtW2UAAnJj
+SSH_HOST=192.168.7.187
+SSH_PORT=22
+SSH_USER=aaronshirley751
+SSH_KEY_PATH=C:/Users/tasms/.ssh/id_rsa
+```
+
+### 4.4 Troubleshooting MCP
+
+| Issue | Solution |
+|-------|----------|
+| Tools not appearing | Full quit Claude Desktop (system tray → Quit), relaunch |
+| SSH timeout | Check Pi is reachable: `ping 192.168.7.187` |
+| Auth expired | Run `server.py` manually, complete device code flow |
+| Stale connection | `taskkill /IM python.exe /F`, restart Claude Desktop |
+
+---
+
+## 5. DEPLOYMENT (RASPBERRY PI 5)
+
+### 5.1 Hardware Specification
+
+| Component | Specification |
+|-----------|---------------|
+| Model | Raspberry Pi 5 (8GB RAM) |
+| OS | Raspberry Pi OS (64-bit, Debian-based) |
+| Network | Ethernet (static IP: 192.168.7.187) |
+| Storage | 128GB microSD + external SSD |
+| Location | Heath, TX (residential network) |
+
+### 5.2 Initial Setup
+
+**Step 1: Clone Repository**
+```bash
+cd /home/aaronshirley751
+git clone https://github.com/charter-stone/automation.git charter-and-stone-automation
+cd charter-and-stone-automation
+```
+
+**Step 2: Create Virtual Environment**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+**Step 3: Configure Rclone**
+```bash
+rclone config
+# Name: charterstone
+# Type: SharePoint
+# Site URL: https://charterandstone.sharepoint.com/sites/CharterStone
+# Follow OAuth prompts
+```
+
+**Step 4: Configure Sentinel**
+```bash
+nano ~/charter-and-stone-automation/agents/sentinel/.env
+# Add environment variables per Section 3.1
+```
+
+**Step 5: Copy Template**
+```bash
+cp ~/charter-and-stone-automation/Reference.docx \
+   ~/charter-and-stone-automation/agents/sentinel/charter_template.docx
+```
+
+**Step 6: Enable Service**
+```bash
+sudo cp systemd/charterstone.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable charterstone.service
+sudo systemctl start charterstone.service
+```
+
+### 5.3 Verification Checklist
+
+- [ ] Service status shows `active (running)`: `sudo systemctl status charterstone.service`
+- [ ] Rclone mount accessible: `ls /home/aaronshirley751/charterstone-mount`
+- [ ] SharePoint folders visible: Should see Governance, Operations, Technical, etc.
+- [ ] Drop test file: `echo "# Test" > ~/charter-and-stone-automation/agents/sentinel/src/_INBOX/test.md`
+- [ ] Verify .docx appears in SharePoint within 60 seconds
+- [ ] Teams notification received with clickable link
+- [ ] Original .md renamed to .md.processed
+
+---
+
+## 6. MAINTENANCE
+
+### 6.1 Log Monitoring
+
+**Real-time:**
+```bash
+sudo journalctl -u charterstone -f
+```
+
+**Last 100 lines:**
+```bash
+sudo journalctl -u charterstone -n 100
+```
+
+**Filter by severity:**
+```bash
+sudo journalctl -u charterstone | grep ERROR
+```
+
+### 6.2 Log Interpretation
+
+| Pattern | Meaning | Action |
+|---------|---------|--------|
+| `📣 Teams Alert Sent (202 Accepted)` | Normal operation | None |
+| `⚠️ Skipping Teams Alert` | Missing webhook URL | Check `.env` |
+| `❌ Error: [Errno 2] No such file` | Template missing | Verify `charter_template.docx` |
+| `fusermount: entry not found` | Clean state (normal) | None |
+| `429 Too Many Requests` | API rate limit | Wait 60 minutes |
+
+### 6.3 Common Operations
+
+**Restart Service:**
+```bash
+sudo systemctl restart charterstone.service
+```
+
+**After Configuration Changes:**
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart charterstone.service
+```
+
+**Clear Stale Mount:**
+```bash
+sudo fusermount -uz /home/aaronshirley751/charterstone-mount
+sudo systemctl restart charterstone.service
+```
+
+**Re-authenticate (after ~90 days):**
+```bash
+rm ~/.cache/msal_token_cache.bin
+python3 -c "from shared.auth import get_graph_token; get_graph_token()"
+# Follow device code prompts
+```
+
+---
+
+## 7. KNOWLEDGE BASE
+
+### 7.1 Structure
+
+```
+knowledge_base/
+├── signals/
+│   └── processed/           # Watchdog output (news signals)
+├── docs/
+│   └── internal/            # Governance documentation
+│       ├── ARCHITECTURE_V3.md
+│       ├── PLANNER_CONFIGURATION.md
+│       ├── AGENT_REGISTRY.md
+│       ├── DEPRECATION_LOG.md
+│       ├── MCP_SERVER_REFERENCE.md
+│       └── OPERATIONS_MANUAL.md
+├── intelligence/            # Enriched 990 data
+└── prospects/               # Institution profiles
+```
+
+### 7.2 Oracle Search
+
+The Oracle (MCP `search_oracle` tool) searches the knowledge base via SSH.
+
+**Categories:**
+- `signals` — News and alerts
+- `docs` — Internal documentation
+- `intelligence` — Financial analysis
+- `prospects` — Target institutions
+- `all` — Search everything
+
+**Example queries:**
+- "Search Oracle for West Virginia" → Finds distress signals
+- "Search Oracle for ARCHITECTURE_V3" → Finds governance docs
+- "Search Oracle for 990 revenue" → Finds financial intelligence
+
+---
+
+## 8. PLANNER CONFIGURATION
+
+### 8.1 Buckets
+
+| Bucket | Purpose |
+|--------|---------|
+| Watchdog Inbox | Raw signals from news monitoring |
+| Strategy & Intel | Enriched prospects ready for review |
+| Digital Teammates Org Chart (R&D) | Agent development tasks |
+| Operations Blueprint | Process improvements |
+| Financial Infrastructure | Accounting, billing, entity |
+| Legal & Structure | Contracts, compliance |
+| Branding & Assets | Marketing materials |
+| Sandbox/Parking Lot | Ideas, deferred items |
+
+### 8.2 Task Naming Convention
+
+**Signal Tasks:** `🔴 [University] — [Issue Type]`
+- 🔴 DISTRESS — Immediate financial/operational crisis
+- 🟢 FORECAST — Expansion or investment opportunity
+- 🟡 WATCH — Developing situation
+- ⚪ INFO — General intelligence
+
+**Sprint Tasks:** `Sprint: [Initiative Name]`
+
+**Agent Tasks:** `The "[Agent Name]" ([Role])`
+
+See `PLANNER_CONFIGURATION.md` for complete taxonomy.
+
+---
+
+## 9. CONTACT & ESCALATION
+
+**System Administrator:** Aaron Shirley  
+**Location:** Heath, TX
+
+**Escalation Path:**
+1. Check logs: `journalctl -u charterstone -n 100`
+2. Attempt restart: `sudo systemctl restart charterstone.service`
+3. If auth errors: Re-run device code flow
+4. If persistent: Post in Teams "#Tech-Support" channel
+
+**Related Documentation:**
+- `ARCHITECTURE_V3.md` — System design rationale
+- `AGENT_REGISTRY.md` — Digital Teammate specifications
+- `DEPRECATION_LOG.md` — What we tried and abandoned
+- `MCP_SERVER_REFERENCE.md` — Interactive tooling guide
+- `PLANNER_CONFIGURATION.md` — Task management standards
+
+---
+
+**END OF OPERATIONS MANUAL**

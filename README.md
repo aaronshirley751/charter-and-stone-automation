@@ -27,12 +27,13 @@ An automated document processing system that monitors a local folder for Markdow
     ```
 
 3.  **Configure Environment:**
-    Create a `.env` file in the `src/` directory:
+    Create a `.env` file in the project root directory:
 
     ```ini
-    TARGET_ROOT=/home/user/mountpoint/TargetFolder
-    SHAREPOINT_FOLDER_URL=https://your-sharepoint-site/Shared%20Documents/TargetFolder
+    TARGET_ROOT=/home/aaronshirley751/charterstone-mount/Operations
+    SHAREPOINT_FOLDER_URL=https://charterandstone.sharepoint.com/sites/CharterStone/Shared%20Documents/Operations
     TEAMS_WEBHOOK_URL=https://your-power-automate-webhook-url
+    TEMPLATE_PATH=/home/aaronshirley751/charter-and-stone-automation/agents/sentinel/templates/charter_template.docx
     ```
 
 4.  **Systemd Service (The "Golden Config"):**
@@ -42,23 +43,99 @@ An automated document processing system that monitors a local folder for Markdow
     - `--ignore-size`: Ignores file size changes post-upload.
     - `--no-modtime`: Ignores timestamp drifts.
 
+## Current Architecture
+
+**Unified Site:** All operations now route through the unified "CharterStone" SharePoint site.
+
+**Active Components:**
+- **Sentinel Agent:** Raspberry Pi 5 running Ubuntu at Heath, TX
+- **rclone Mount:** FUSE filesystem at `/home/aaronshirley751/charterstone-mount`
+- **Systemd Service:** `charterstone.service` (active, PID 67672)
+- **Document Pipeline:** Markdown → Branded DOCX → SharePoint Operations folder
+- **SharePoint Structure:** 7 folders (General, Governance, Incoming Signals, Intelligence, Operations, Strategy and Intel, Technical)
+
+**File Paths:**
+- Inbox: `agents/sentinel/_INBOX/`
+- Output: `agents/sentinel/_OUTPUT/`
+- Templates: `agents/sentinel/templates/charter_template.docx`
+- SharePoint Mount: `/home/aaronshirley751/charterstone-mount/`
+
+---
+
 ## Usage
 
 The system runs as a background service (`charterstone.service`).
 
 To manually trigger or test:
 ```bash
-python src/auto_publisher.py
+cd /home/aaronshirley751/charter-and-stone-automation/agents/sentinel
+python converter.py
 ```
 
-Drop a Markdown file into `src/_INBOX`. The system will:
+Drop a Markdown file into `agents/sentinel/_INBOX`. The system will:
 1.  Detect the file.
-2.  Convert to `.docx` with branding.
-3.  Upload to SharePoint.
-4.  Wait for sync (20s safety buffer).
-5.  Post to Teams.
+2.  Convert to `.docx` with branding from `charter_template.docx`.
+3.  Upload to SharePoint Operations folder.
+4.  Move processed file to `_OUTPUT` with timestamp.
 
-## Commissioning Log (Jan 26, 2026)
+## Service Management
+
+Check service status:
+```bash
+sudo systemctl status charterstone.service
+```
+
+Restart service:
+```bash
+sudo systemctl restart charterstone.service
+```
+
+View logs:
+```bash
+sudo journalctl -u charterstone.service -f
+```
+
+Check mount status:
+```bash
+ls -la /home/aaronshirley751/charterstone-mount/
+rclone lsd charterstone:
+```
+
+## Commissioning Log
+
+### Jan 31, 2026 — HQ Site Migration & Deprecation Verification
+
+**Operation: Unified Site Migration**
+
+Migrated Charter & Stone Sentinel from deprecated "Charter & Stone HQ" SharePoint site to unified "CharterStone" site. Performed comprehensive verification to ensure no operational remnants remain.
+
+**Key Changes:**
+- ✅ **Environment Configuration:** Updated `.env` with unified site paths
+  - `TARGET_ROOT=/home/aaronshirley751/charterstone-mount/Operations`
+  - `SHAREPOINT_FOLDER_URL=https://charterandstone.sharepoint.com/sites/CharterStone/Shared%20Documents/Operations`
+- ✅ **Systemd Service Fix:** Corrected `charterstone.service` paths
+  - WorkingDirectory: `/home/aaronshirley751/charter-and-stone-automation/agents/sentinel`
+  - ExecStart: Changed from `auto_publisher.py` (non-existent) to `converter.py`
+- ✅ **Template Setup:** Created `charter_template.docx` in `agents/sentinel/templates/`
+- ✅ **rclone Configuration:** Verified drive_id points to unified site (b!xv2k...JjKb)
+- ✅ **Live Testing:** Successfully converted test documents with branding applied
+- ✅ **Ghost Hunt:** Comprehensive verification found zero active references to deprecated site
+
+**Verification Results:**
+- Rclone configuration: CLEAN ✅
+- Python code references: CLEAN ✅
+- Systemd services: CLEAN ✅
+- Live remote access: OPERATIONAL ✅
+- Documentation archives: Historical references preserved for audit trail
+
+**Documentation:**
+- Generated `HQ_SITE_DEPRECATION_VERIFICATION.md` with full verification report
+- Service confirmed running (PID 67672) with all 7 unified site folders accessible
+- Mount point: `/home/aaronshirley751/charterstone-mount`
+
+---
+
+### Jan 26, 2026 — Operation Sentinel
 
 **Operation Sentinel** stabilized the pipeline with the following resolutions:
 

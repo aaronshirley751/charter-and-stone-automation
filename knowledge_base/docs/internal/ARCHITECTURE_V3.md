@@ -1,0 +1,264 @@
+---
+original_file: "ARCHITECTURE_V3"
+processed_date: 2026-01-31T18:08:13.913974
+type: document_extraction
+---
+
+# Document Extraction: ARCHITECTURE_V3
+
+# Charter & Stone Digital Teammates Architecture
+## Version 3.0 — "The Hybrid Pivot"
+**Effective Date:** January 31, 2026  
+**Status:** APPROVED  
+**Authors:** Aaron Shirley (CSO), Claude (CTO/Solutions Architect), Gemini (Peer Review)
+
+---
+
+## Executive Summary
+
+This document defines the production architecture for Charter & Stone's Digital Teammates infrastructure. It supersedes all previous architectural decisions and represents the consensus output of a two-round adversarial review between Claude and Gemini AI systems.
+
+**Core Principle:** Separate automation (background, must be reliable) from analysis (interactive, can tolerate restarts). Use Microsoft's managed infrastructure for reliability-critical workflows; preserve custom tooling for intelligence and reasoning.
+
+---
+
+## Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    RASPBERRY PI "SENTINEL"                      │
+│                    (Heath, TX - Residential IP)                 │
+│  ┌─────────────────┐    ┌─────────────────┐                    │
+│  │    Watchdog     │───▶│  knowledge_base/ │                   │
+│  │  (Python/cron)  │    │    /signals/     │                   │
+│  │   V2.2          │    │    /docs/        │                   │
+│  └─────────────────┘    │    /prospects/   │                   │
+│                         │    /processed/   │                   │
+│                         └────────┬─────────┘                   │
+│                                  │                              │
+│                                  │ rclone sync (systemd)       │
+│                                  │ Runs every 5 minutes        │
+└──────────────────────────────────┼──────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                 MICROSOFT 365 / SHAREPOINT                      │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐                    │
+│  │  "Incoming      │───▶│  Power Automate │                    │
+│  │   Signals"      │    │  ┌───────────┐  │                    │
+│  │   (OneDrive)    │    │  │ Flow 1:   │  │                    │
+│  └─────────────────┘    │  │ Signal→   │──┼──▶ Planner Tasks   │
+│                         │  │ Task      │  │                    │
+│  ┌─────────────────┐    │  └───────────┘  │                    │
+│  │  Knowledge Base │    │  ┌───────────┐  │                    │
+│  │  (SharePoint    │    │  │ Flow 2:   │──┼──▶ Teams Alerts    │
+│  │   Library)      │    │  │ Notify    │  │                    │
+│  └────────┬────────┘    │  └───────────┘  │                    │
+│           │             └─────────────────┘                    │
+│           │                                                     │
+│           │  Future: Copilot Studio Agent                      │
+│           └──────────────────────────────────────────────────▶ │
+└─────────────────────────────────────────────────────────────────┘
+                                   │
+                                   │ Interactive Queries
+                                   │ (On-Demand, Not Daemon)
+                                   ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    ANALYST WORKSTATION                          │
+│                    (Windows - Aaron's Machine)                  │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐                    │
+│  │  Claude Desktop │◀──▶│   MCP Tools     │                    │
+│  │                 │    │  ┌───────────┐  │                    │
+│  │  - Deep Analysis│    │  │ Oracle    │──┼──▶ SSH to Pi       │
+│  │  - Dossiers     │    │  │ (Search)  │  │    (Read KB)       │
+│  │  - Strategy     │    │  └───────────┘  │                    │
+│  │                 │    │  ┌───────────┐  │                    │
+│  │                 │    │  │ Planner   │──┼──▶ Graph API       │
+│  │                 │    │  │ (READ)    │  │    (Query Tasks)   │
+│  │                 │    │  └───────────┘  │                    │
+│  └─────────────────┘    └─────────────────┘                    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Component Specifications
+
+### 1. The Sentinel (Raspberry Pi 5)
+
+**Location:** Heath, TX (Aaron's residence)  
+**Role:** Edge Intelligence — Web scraping, signal detection, local file processing  
+**Why Physical Hardware:** Residential IP avoids cloud IP blocklists common on .edu and .gov sites
+
+| Service | Description | Schedule |
+|---------|-------------|----------|
+| `watchdog.service` | Monitors RSS feeds, news sources for distress signals | Hourly |
+| `orchestrator.service` | Enriches signals with IRS 990 data via ProPublica API | Every 15 min |
+| `charterstone.service` | rclone mount for SharePoint sync | Continuous |
+| `rclone-sync.service` | Pushes `knowledge_base/` to SharePoint | Every 5 min |
+
+**Key Directories:**
+```
+/home/aaronshirley751/
+├── charter-and-stone-automation/
+│   ├── agents/
+│   │   ├── watchdog/           # Signal detection scripts
+│   │   └── orchestrator/       # IRS enrichment scripts
+│   ├── knowledge_base/
+│   │   ├── signals/            # Raw signal files (synced to cloud)
+│   │   ├── docs/               # Processed documents
+│   │   ├── prospects/          # University dossiers
+│   │   └── processed/          # Archived signals
+│   └── shared/
+│       ├── auth/               # Graph API authentication
+│       └── memory.py           # Standardized file storage
+└── charterstone-mount/         # rclone FUSE mount to SharePoint
+```
+
+### 2. Microsoft 365 Layer
+
+**Tenant:** charterandstone.com  
+**Role:** Reliable automation, task management, notifications, document storage
+
+| Component | Purpose |
+|-----------|---------|
+| SharePoint | Knowledge base storage, document library |
+| OneDrive | "Incoming Signals" folder (trigger for Power Automate) |
+| Planner | Task management, project tracking |
+| Teams | Notifications, alerts, future chatbot interface |
+| Power Automate | Event-driven automation flows |
+
+**Power Automate Flows:**
+| Flow Name | Trigger | Actions |
+|-----------|---------|---------|
+| Signal-to-Task | File created in "Incoming Signals" | Parse file → Create Planner task → Post Teams alert |
+| Task-Completion-Notify | Task completed in Planner | Post summary to Teams channel |
+
+### 3. Analyst Workstation (Claude Desktop)
+
+**Role:** Interactive intelligence analysis, reasoning, strategy development  
+**NOT a daemon:** Only active when Aaron is working with Claude
+
+**MCP Tools (Active — Full Suite):**
+| Tool | Purpose | Backend | Mode |
+|------|---------|---------|------|
+| `search_oracle` | Query knowledge base for intelligence | SSH → Pi filesystem | Interactive |
+| `list_tasks` | Read current Planner state | Graph API | Interactive |
+| `get_task_details` | Get specific task information | Graph API | Interactive |
+| `create_task` | Create tasks during Claude sessions | Graph API | Interactive |
+| `update_task` | Modify task details during sessions | Graph API | Interactive |
+| `complete_task` | Mark tasks complete during sessions | Graph API | Interactive |
+| `move_task` | Change task buckets during sessions | Graph API | Interactive |
+
+**Important Distinction:**
+- **Interactive Mode:** All MCP tools available when Aaron is actively working with Claude. Occasional restarts acceptable.
+- **Automated Mode:** Only Power Automate handles unattended task creation (signal pipeline). No MCP daemon operations.
+
+---
+
+## Data Flow Patterns
+
+### Pattern 1: Signal Detection → Task Creation (Automated)
+
+```
+1. Watchdog (Pi) detects signal via RSS/news scraping
+2. Watchdog writes signal file to ~/knowledge_base/signals/
+3. rclone syncs file to SharePoint "Incoming Signals" folder
+4. Power Automate triggers on file creation
+5. Flow parses file content, creates Planner task
+6. Flow posts Teams notification with link
+7. Signal file moved to ~/knowledge_base/processed/
+```
+
+**Reliability:** HIGH — No SSH tunnels, no token refresh issues, no Windows sleep problems
+
+### Pattern 2: Intelligence Query (Interactive)
+
+```
+1. Aaron asks Claude: "What do we know about West Virginia University?"
+2. Claude invokes search_oracle MCP tool
+3. Tool SSHs to Pi, searches knowledge_base/ directory
+4. Results returned to Claude for synthesis
+5. Claude provides analysis with citations
+```
+
+**Reliability:** MEDIUM — May require occasional MCP server restart; acceptable for interactive use
+
+### Pattern 3: Project State Query (Interactive)
+
+```
+1. Aaron asks Claude: "What tasks are overdue in Strategy & Intel?"
+2. Claude invokes list_tasks MCP tool
+3. Tool queries Graph API for Planner tasks
+4. Results returned to Claude for analysis
+5. Claude identifies issues, recommends actions
+```
+
+**Reliability:** MEDIUM — Same as Pattern 2; interactive use tolerates occasional restarts
+
+---
+
+## Decision Log
+
+| Date | Decision | Rationale | Alternatives Considered |
+|------|----------|-----------|------------------------|
+| 2026-01-31 | Adopt Power Automate for task creation | Eliminates SSH/token fragility | Continue debugging MCP |
+| 2026-01-31 | Keep Pi for Watchdog execution | Residential IP, working code, sovereignty | Azure Functions |
+| 2026-01-31 | Demote Planner MCP to READ-only | Interactive use tolerates restarts | Full deprecation |
+| 2026-01-31 | Sync knowledge_base to SharePoint | Enables future Copilot Studio integration | Local-only storage |
+
+---
+
+## Success Criteria
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Automated pipeline uptime | >99% | Power Automate execution history |
+| Manual intervention frequency | <1 hr/week | Time tracking |
+| Signal-to-task latency | <10 minutes | Timestamp comparison |
+| False positive rate (Watchdog) | <10% | Manual audit of signals |
+
+---
+
+## Migration Checklist
+
+### Phase 1: The Digital Bridge (Target: Feb 7, 2026)
+- [ ] Configure rclone to sync `knowledge_base/signals/` to OneDrive
+- [ ] Create Power Automate flow: File → Planner Task → Teams
+- [ ] Update Claude Desktop MCP config (remove write tools)
+- [ ] Test end-to-end pipeline
+- [ ] Update OPERATIONS_MANUAL.md
+
+### Phase 2: Intelligence Bank (Target: Feb 28, 2026)
+- [ ] Expand rclone to sync entire `knowledge_base/`
+- [ ] Migrate simple RSS feeds to Logic Apps
+- [ ] Document all Power Automate flows
+- [ ] Evaluate Oracle MCP pointing to SharePoint vs. Pi
+
+### Phase 3: Governance Layer (Target: Mar 31, 2026)
+- [ ] Evaluate Copilot Studio for Amanda's interface
+- [ ] Implement agent-managing-agents audit workflows
+- [ ] Establish drift detection procedures
+
+---
+
+## Appendix: Why Not Azure Functions?
+
+The peer review considered migrating the Watchdog to Azure Functions. This was deferred for the following reasons:
+
+1. **Learning curve:** Azure Functions require stateless refactoring, cloud dependency management, and log-based debugging
+2. **Timeout limits:** Consumption tier has 5-10 minute limits; scraping may exceed this
+3. **IP reputation:** Educational/government sites often blocklist cloud IPs; residential IP (Pi) has better success
+4. **Working code:** The Pi scripts function correctly; the problem was the data handoff, not the execution
+5. **Sovereignty:** SSH access to physical hardware enables faster iteration than cloud deployment
+
+**Trigger for reconsideration:** If Pi maintenance exceeds 2 hrs/week OR hardware failure occurs, evaluate Azure Functions migration.
+
+---
+
+*Document Version: 3.0*  
+*Last Updated: January 31, 2026*  
+*Next Review: April 30, 2026*
+

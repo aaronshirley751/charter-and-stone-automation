@@ -1,0 +1,370 @@
+---
+original_file: "MCP_SERVER_REFERENCE"
+processed_date: 2026-01-31T18:08:48.797179
+type: document_extraction
+---
+
+# Document Extraction: MCP_SERVER_REFERENCE
+
+# Charter & Stone MCP Server Reference
+## Claude Desktop Tool Inventory
+
+**Purpose:** Documents all MCP tools available to Claude Desktop, their status, usage patterns, and troubleshooting procedures.
+
+**Last Updated:** January 31, 2026  
+**MCP Server Version:** 2.4 "The Bridge"  
+**Server Location:** `C:\Users\tasms\CharterStone\PlannerMCP\server.py`
+
+---
+
+## Tool Status Overview
+
+| Tool | Category | Status | Notes |
+|------|----------|--------|-------|
+| `search_oracle` | Intelligence | ✅ ACTIVE | Primary knowledge base search |
+| `list_tasks` | Planner (Read) | ✅ ACTIVE | Query tasks in buckets |
+| `get_task_details` | Planner (Read) | ✅ ACTIVE | Get specific task info |
+| `create_task` | Planner (Write) | ✅ ACTIVE | Interactive use only |
+| `update_task` | Planner (Write) | ✅ ACTIVE | Interactive use only |
+| `complete_task` | Planner (Write) | ✅ ACTIVE | Interactive use only |
+| `move_task` | Planner (Write) | ✅ ACTIVE | Interactive use only |
+| `process_signals` | Orchestration | ❌ DEPRECATED | Moved to Pi daemon + Power Automate |
+
+### Critical Distinction: Interactive vs. Automated
+
+**All Planner write tools are ACTIVE for interactive sessions** (when Aaron is working with Claude).
+
+**Automated pipelines use Power Automate** (Watchdog → Task creation runs 24/7 without human supervision).
+
+This distinction exists because:
+- Interactive failures are visible and recoverable (Claude can retry, Aaron can intervene)
+- Automated failures are silent and cause data loss (signals missed, no human watching)
+
+The MCP server reliability issues (SSH drops, token expiry, zombie processes) are acceptable for interactive use but unacceptable for daemon operations.
+
+---
+
+## Active Tools
+
+### search_oracle
+
+**Purpose:** Search the Charter & Stone knowledge base for intelligence on universities, prospects, signals, and documentation.
+
+**Backend:** SSH connection to Raspberry Pi → grep/find on filesystem
+
+**Usage:**
+```
+"Search the knowledge base for West Virginia University"
+"What signals have we captured about layoffs?"
+"Find all documents mentioning Baker College"
+```
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `query` | string | Yes | Search terms |
+| `category` | string | No | Filter by: signals, docs, prospects, all |
+| `max_results` | int | No | Limit results (default: 10) |
+
+**Returns:**
+- File paths matching query
+- Content snippets with context
+- Timestamps of last modification
+
+**Troubleshooting:**
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| "Connection refused" | Pi offline or SSH not running | Verify Pi is powered and SSH service active |
+| "Authentication failed" | SSH key issue | Check `~/.ssh/id_rsa` permissions |
+| "No results found" | Query too specific or KB empty | Broaden search terms |
+| Slow response | Large KB or network latency | Normal for first query; subsequent faster |
+
+---
+
+### list_tasks
+
+**Purpose:** Query all tasks in a specified Planner bucket.
+
+**Backend:** Microsoft Graph API → Planner
+
+**Usage:**
+```
+"List all tasks in the Strategy & Intel bucket"
+"Show me what's in the Watchdog Inbox"
+"What tasks are in Digital Teammates R&D?"
+```
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `bucket_name` | string | Yes | Exact bucket name |
+
+**Returns:**
+- Task IDs
+- Task titles
+- Priority levels
+- Assignment status
+- Due dates
+- Completion status
+
+**Bucket Names (Exact Match Required):**
+- `Digital Teammates Org Chart (R&D)`
+- `Strategy & Intel`
+- `Legal & Structure`
+- `Financial Infrastructure`
+- `Branding & Assets`
+- `Operations Blueprint`
+- `Sandbox/Parking Lot`
+- `Watchdog Inbox`
+
+**Troubleshooting:**
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| "Bucket not found" | Name mismatch | Use exact name from list above |
+| "401 Unauthorized" | Token expired | Restart MCP server; re-authenticate |
+| Empty results | Bucket actually empty | Verify in Planner web UI |
+
+---
+
+### get_task_details
+
+**Purpose:** Retrieve full details of a specific task including description, checklist items, and comments.
+
+**Backend:** Microsoft Graph API → Planner
+
+**Usage:**
+```
+"Get details on task KNxIw9nm5EWWoIYV1NCeVWUABI3K"
+"Show me the full description of the MCP stability fix task"
+```
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `task_id` | string | Yes | Planner task ID |
+
+**Returns:**
+- Full task title
+- Complete description (notes)
+- Checklist items with completion status
+- Assignments
+- Due date and start date
+- Labels applied
+- Bucket location
+
+---
+
+## Deprecated for Automation (Active for Interactive Use)
+
+The following tools are **deprecated for daemon/automated use** but **remain active for interactive sessions**:
+
+### create_task ✅ (Interactive) / ❌ (Automation)
+
+**Interactive Status:** ACTIVE  
+**Automation Status:** DEPRECATED — Use Power Automate
+
+**Usage in Sessions:**
+```
+"Create a task in Strategy & Intel for following up with West Virginia University"
+"Add a new sprint task to Digital Teammates R&D"
+```
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `bucket_name` | string | Yes | Target bucket name |
+| `title` | string | Yes | Task title |
+| `description` | string | No | Task notes/details |
+| `priority` | string | No | Urgent, Important, Medium, Low |
+| `due_date` | string | No | ISO date format |
+
+---
+
+### update_task ✅ (Interactive) / ❌ (Automation)
+
+**Interactive Status:** ACTIVE  
+**Automation Status:** DEPRECATED
+
+**Usage in Sessions:**
+```
+"Update the description on that West Virginia task"
+"Change the priority to Urgent"
+"Set the due date to next Friday"
+```
+
+---
+
+### complete_task ✅ (Interactive) / ❌ (Automation)
+
+**Interactive Status:** ACTIVE  
+**Automation Status:** DEPRECATED
+
+**Usage in Sessions:**
+```
+"Mark that task as complete"
+"Complete the MCP stability fix task — it's been superseded"
+```
+
+---
+
+### move_task ✅ (Interactive) / ❌ (Automation)
+
+**Interactive Status:** ACTIVE  
+**Automation Status:** DEPRECATED
+
+**Usage in Sessions:**
+```
+"Move that signal from Watchdog Inbox to Strategy & Intel"
+"Archive this task to Sandbox"
+```
+
+---
+
+### process_signals ❌ (Fully Deprecated)
+
+**Status:** FULLY DEPRECATED  
+**Reason:** Moved to dedicated daemon on Raspberry Pi + Power Automate  
+**Replacement:** Orchestrator service (`orchestrator.service` on Pi)
+
+---
+
+## Server Configuration
+
+### Claude Desktop Config Location
+
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+**Current Configuration (Post-Pivot):**
+```json
+{
+  "mcpServers": {
+    "charterstone": {
+      "command": "python",
+      "args": ["C:\\Users\\tasms\\CharterStone\\PlannerMCP\\server.py"],
+      "env": {
+        "TENANT_ID": "your-tenant-id",
+        "CLIENT_ID": "your-client-id"
+      }
+    }
+  }
+}
+```
+
+### Environment Variables
+
+| Variable | Purpose | Location |
+|----------|---------|----------|
+| `TENANT_ID` | Azure AD tenant for Graph API | `.env` or system env |
+| `CLIENT_ID` | App registration client ID | `.env` or system env |
+| `PI_HOST` | Raspberry Pi IP address | `.env` |
+| `PI_USER` | SSH username for Pi | `.env` |
+| `PI_KEY_PATH` | Path to SSH private key | `.env` |
+
+### Token Cache
+
+**Location:** `~/.planner_mcp_token_cache.json`
+
+**Contents:** MSAL token cache for Graph API authentication
+
+**Maintenance:**
+- Tokens auto-refresh on use
+- If auth fails persistently, delete file and re-authenticate
+- Do not commit to version control
+
+---
+
+## Starting/Stopping the MCP Server
+
+### Normal Startup
+
+MCP server starts automatically when Claude Desktop launches if configured correctly.
+
+### Manual Restart
+
+If tools become unresponsive:
+
+1. Close Claude Desktop completely
+2. Kill any zombie processes:
+   ```powershell
+   taskkill /IM python.exe /F
+   ```
+3. Reopen Claude Desktop
+4. Test with: "List tasks in Strategy & Intel"
+
+### Verify Server Status
+
+Ask Claude:
+```
+"Can you list the tasks in Strategy & Intel bucket?"
+```
+
+If successful: Server is working  
+If "tool not found": Server failed to start; check Claude Desktop logs
+
+---
+
+## Common Patterns
+
+### Morning Status Check
+
+```
+"Give me a status report:
+1. List all tasks in Watchdog Inbox
+2. List overdue tasks in Strategy & Intel
+3. Search the knowledge base for any signals from yesterday"
+```
+
+### Prospect Research
+
+```
+"Search the knowledge base for everything we have on [University Name]"
+"Get the task details for the [University] distress signal"
+```
+
+### Sprint Planning
+
+```
+"List all tasks in Digital Teammates R&D bucket"
+"Which tasks are marked as Urgent?"
+```
+
+### Governance Audit
+
+```
+"List tasks in each bucket and count them"
+"Are there any tasks without assignees outside of Sandbox?"
+"What tasks are overdue by more than a week?"
+```
+
+---
+
+## Future Tool Candidates
+
+| Tool | Purpose | Prerequisites |
+|------|---------|---------------|
+| `search_sharepoint` | Query SharePoint directly (after KB migration) | KB migrated to SharePoint |
+| `list_flows` | Show Power Automate flow status | Power Automate API integration |
+| `query_990` | Direct IRS 990 lookup | ProPublica API wrapper |
+
+---
+
+## Appendix: Graph API Scopes Required
+
+The MCP server requires the following Microsoft Graph permissions:
+
+| Scope | Purpose |
+|-------|---------|
+| `Tasks.ReadWrite` | Read and write Planner tasks |
+| `Group.Read.All` | Read plan/bucket structure |
+| `User.Read` | Get current user info for assignments |
+
+**Note:** Write scopes retained for future re-evaluation; currently only read operations used.
+
+---
+
+*Document Version: 1.0*  
+*Last Updated: January 31, 2026*  
+*Owner: Aaron Shirley (CSO)*
+
