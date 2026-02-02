@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "generated_at": "2026-02-02T14:00:00Z",
+    "analyst": "Deep Dive Analyst v2.0"
+  },
+  "institution": {
+    "name": "Albright College",
+    "type": "Private Liberal Arts",
+    "location": {
+      "city": "Reading",
+      "state": "PA"
+    }
+  },
+  "financials": {
+    "calculated": {
+      "expense_ratio": 1.08,
+      "runway_years": 3.2,
+      "tuition_dependency": 68
+    }
+  },
+  "signals": {
+    "distress_level": "elevated",
+    "indicators": [
+      {
+        "type": "enrollment",
+        "signal": "12% decline in freshman enrollment YoY",
+        "severity": "high"
+      },
+      {
+        "type": "leadership",
+        "signal": "CFO transition following budget cuts",
+        "severity": "high"
+      },
+      {
+        "type": "financial",
+        "signal": "Expense ratio running at 1.08x revenue (deficit spending)",
+        "severity": "high"
+      }
+    ]
+  },
+  "leadership": {
+    "key_contacts": [
+      {
+        "name": "Jennifer Schulman",
+        "title": "Chief Financial Officer"
+      },
+      {
+        "name": "Merl Saunders",
+        "title": "President"
+      }
+    ]
+  },
+  "blinded_presentation": {
+    "display_name": "ALCO-PA-001"
+  }
+}
