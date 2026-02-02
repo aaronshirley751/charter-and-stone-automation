@@ -1,17 +1,50 @@
 # Charter & Stone Automation Server (Sentinel)
 
-**Status:** ✅ Active Duty (Operation Sentinel)  
-**System:** Raspberry Pi 5 (Headless / Silent Mode)
+**Status:** ✅ Active Duty (Operation Sentinel + Analyst V1.1)  
+**System:** Raspberry Pi 5 (Headless / Silent Mode)  
+**Latest Deployment:** Analyst Agent V1.1 (2 Feb 2026)
 
-An automated document processing system that monitors a local folder for Markdown files, converts them into branded Word documents, and publishes notifications to Microsoft Teams via Power Automate Webhooks.
+An intelligent automation system featuring:
+- **Sentinel Agent:** Automated document processing and SharePoint publishing
+- **Analyst Agent V1.1:** Financial intelligence and prospect profiling (NEW)
+- **Watchdog Agent:** News monitoring and distress signal detection (planned)
 
-## Features
+## System Overview
 
+### Sentinel Agent (Document Pipeline)
+Monitors local folder for Markdown files, converts them into branded Word documents, and publishes notifications to Microsoft Teams via Power Automate Webhooks.
+
+**Features:**
 - **Automated Conversion:** Watches `src/_INBOX` for new `.md` files.
-- **Branding:** Applies Charter & Stone styles using a reference Word template.
-- **Reliable Cloud Sync:** Uses hardened `rclone` mount settings to interface with SharePoint.
-- **Notifications:** Sends a rich Adaptive Card to Microsoft Teams with a direct link to the document.
-- **Self-Healing:** Service includes "Breach and Clear" protocols to handle stale mounts and process locks.
+- **Branding:** Applies Charter & Stone styles using reference Word template.
+- **Reliable Cloud Sync:** Uses hardened `rclone` mount settings for SharePoint.
+- **Notifications:** Sends rich Adaptive Cards to Microsoft Teams.
+- **Self-Healing:** "Breach and Clear" protocols handle stale mounts.
+
+### Analyst Agent V1.1 (NEW - Financial Intelligence)
+Generates comprehensive financial dossiers for higher education institutions using IRS 990 data.
+
+**Features:**
+- **Dual Output:** Markdown dossier (human-readable) + JSON profile (machine-readable)
+- **Schema Compliance:** Outputs conform to Prospect Data Standard v1.0.0
+- **Calculated Metrics:** Expense ratio, runway years, tuition dependency
+- **Distress Classification:** Automatic risk assessment (critical/elevated/watch/stable)
+- **Null-Safe:** Robust handling of missing financial data
+- **ProPublica Integration:** Fetches IRS 990 data from public API
+
+**Usage:**
+```bash
+python3 agents/analyst/analyst.py --target "University Name" --ein "XX-XXXXXXX"
+```
+
+**Output:**
+- `~/charter_stone/knowledge_base/prospects/{EIN}_profile.json` - Machine-readable
+- `~/charter_stone/knowledge_base/prospects/{name}_dossier.md` - Human-readable
+
+**Documentation:**
+- [Analyst V1.1 Peer Review](ANALYST_V1.1_PEER_REVIEW.md)
+- [Sources Module Integration Review](SOURCES_MODULE_INTEGRATION_REVIEW.md)
+- [Deployment Log V1.1](DEPLOYMENT_LOG_V1.1.md)
 
 ## Setup & Configuration
 
@@ -49,15 +82,20 @@ An automated document processing system that monitors a local folder for Markdow
 
 **Active Components:**
 - **Sentinel Agent:** Raspberry Pi 5 running Ubuntu at Heath, TX
+- **Analyst Agent V1.1:** Financial intelligence system (Python 3.11+)
 - **rclone Mount:** FUSE filesystem at `/home/aaronshirley751/charterstone-mount`
 - **Systemd Service:** `charterstone.service` (active, PID 67672)
 - **Document Pipeline:** Markdown → Branded DOCX → SharePoint Operations folder
 - **SharePoint Structure:** 7 folders (General, Governance, Incoming Signals, Intelligence, Operations, Strategy and Intel, Technical)
+- **Knowledge Base:** Prospect profiles stored in `~/charter_stone/knowledge_base/prospects/`
 
 **File Paths:**
-- Inbox: `agents/sentinel/_INBOX/`
-- Output: `agents/sentinel/_OUTPUT/`
-- Templates: `agents/sentinel/templates/charter_template.docx`
+- Sentinel Inbox: `agents/sentinel/_INBOX/`
+- Sentinel Output: `agents/sentinel/_OUTPUT/`
+- Sentinel Templates: `agents/sentinel/templates/charter_template.docx`
+- Analyst Agent: `agents/analyst/analyst.py`
+- Analyst Sources: `agents/analyst/sources/` (propublica.py, signals.py)
+- Prospect Profiles: `~/charter_stone/knowledge_base/prospects/`
 - SharePoint Mount: `/home/aaronshirley751/charterstone-mount/`
 
 ---
