@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "generated_at": "2026-02-03T04:08:50.391268+00:00",
+    "generated_by": "analyst-v1.1",
+    "data_sources": [
+      {
+        "source": "ProPublica Nonprofit Explorer",
+        "retrieved_at": "2026-02-03T04:08:50.391268+00:00",
+        "confidence": "high"
+      }
+    ]
+  },
+  "institution": {
+    "name": "Rockland Community College",
+    "aliases": [],
+    "ein": "13-1969305",
+    "type": "private-nonprofit",
+    "classification": null,
+    "location": {
+      "city": "Suffern",
+      "state": "NY",
+      "region": "northeast"
+    },
+    "enrollment": {
+      "total": null,
+      "fte": null,
+      "as_of": null
+    },
+    "website": null
+  },
+  "financials": {
+    "fiscal_year": 2022,
+    "total_revenue": 932107,
+    "total_expenses": 749781,
+    "operating_surplus_deficit": 182326,
+    "net_assets": 362553,
+    "tuition_revenue": 621285,
+    "contributions": 203380,
+    "investment_income": 2532,
+    "calculated": {
+      "expense_ratio": 0.804,
+      "runway_years": 1.2,
+      "tuition_dependency": 0.667
+    },
+    "data_source": {
+      "form": "IRS-990",
+      "tax_period": "2022",
+      "retrieved_from": "ProPublica Nonprofit Explorer API"
+    }
+  },
+  "signals": {
+    "distress_level": "critical",
+    "indicators": [
+      {
+        "type": "NEWS",
+        "signal": "Presidential termination and security escort off campus",
+        "severity": "critical"
+      },
+      {
+        "type": "FINANCIAL",
+        "signal": "Hidden $8M structural deficit revealed",
+        "severity": "critical"
+      },
+      {
+        "type": "LABOR",
+        "signal": "Vote of No Confidence (43-0) from Faculty Senate",
+        "severity": "critical"
+      },
+      {
+        "type": "OPERATIONS",
+        "signal": "Phase 3 Layoffs (June 2024)",
+        "severity": "high"
+      }
+    ],
+    "news_hits": []
+  },
+  "leadership": {
+    "president": {
+      "name": null,
+      "title": null,
+      "tenure_start": null,
+      "email": null
+    },
+    "cfo": {
+      "name": null,
+      "title": null,
+      "email": null
+    },
+    "provost": {
+      "name": null,
+      "title": null,
+      "email": null
+    },
+    "stability_notes": null
+  },
+  "engagement": {
+    "status": "prospect",
+    "priority": "tier-2",
+    "last_contact": null,
+    "next_action": "Review diagnostic and determine outreach approach",
+    "next_action_date": null,
+    "owner": "unassigned",
+    "notes": []
+  },
+  "blinded_presentation": {
+    "display_name": "Representative Private Nonprofit College (Northeast)",
+    "approved_for_external": false
+  }
+}

@@ -35,8 +35,8 @@ from sources.signals import get_signals_for_target
 AGENT_VERSION = "analyst-v1.1"
 SCHEMA_VERSION = "1.0.0"
 
-# Output directories (relative to user home)
-DEFAULT_OUTPUT_BASE = Path.home() / "charter_stone" / "knowledge_base" / "prospects"
+# Output directories (relative to workspace)
+DEFAULT_OUTPUT_BASE = Path(__file__).parent.parent.parent / "knowledge_base" / "prospects"
 
 # State mappings for region detection
 STATE_TO_REGION = {
