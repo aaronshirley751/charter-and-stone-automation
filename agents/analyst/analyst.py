@@ -517,7 +517,12 @@ For use in external materials (pitch decks, case studies):
 # =============================================================================
 
 
-def generate_dossier(target_name: str, ein: str, output_dir: str = None) -> Dict[str, str]:
+def generate_dossier(
+    target_name: str,
+    ein: str,
+    output_dir: str = None,
+    enable_v2_lite: bool = False
+) -> Dict[str, str]:
     """
     Generate complete dossier package for a target institution.
     
@@ -529,6 +534,7 @@ def generate_dossier(target_name: str, ein: str, output_dir: str = None) -> Dict
         target_name: Official institution name
         ein: Employer Identification Number (format: XX-XXXXXXX)
         output_dir: Optional output directory path
+        enable_v2_lite: Enable V2.0-LITE intelligence layer (opt-in)
         
     Returns:
         Dict with paths: {'markdown': path, 'json': path, 'elapsed_seconds': float}
@@ -588,6 +594,27 @@ def generate_dossier(target_name: str, ein: str, output_dir: str = None) -> Dict
         org_info=org_info
     )
     print(f"[ANALYST] ✓ Profile built (distress_level: {profile['signals']['distress_level']})")
+
+    # PHASE 5-6: V2-LITE ENHANCEMENT (NEW)
+    if enable_v2_lite:
+        print("[ANALYST] [V2] Enhancing profile with real-time intelligence...")
+        from agents.analyst.core import enhance_profile_with_v2_lite
+
+        try:
+            profile = enhance_profile_with_v2_lite(
+                v1_profile=profile,
+                university_name=target_name,
+                ein=ein,
+                enable_v2=True
+            )
+
+            v2_block = profile.get('v2_signals', {})
+            print(f"[ANALYST] [V2] ✓ Composite score: {v2_block.get('composite_score')}")
+            print(f"[ANALYST] [V2] ✓ Urgency: {v2_block.get('urgency_flag')}")
+
+        except Exception as e:
+            print(f"[ANALYST] [V2] ⚠️  V2-LITE enhancement failed: {e}")
+            print("[ANALYST] [V2] ⚠️  Continuing with V1-only profile")
     
     # Generate markdown dossier
     print("[ANALYST] Generating markdown dossier...")

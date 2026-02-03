@@ -1,0 +1,196 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Charter & Stone Prospect Profile Schema",
+  "description": "Prospect profile schema with backward-compatible V2.0 extensions for real-time intelligence",
+  "version": "2.0.0",
+  "type": "object",
+  "required": ["profile_version", "university_name", "ein", "v1_signals", "metadata"],
+  
+  "properties": {
+    "profile_version": {
+      "type": "string",
+      "enum": ["1.0.0", "2.0.0"],
+      "description": "Schema version for backward compatibility"
+    },
+    
+    "university_name": {
+      "type": "string",
+      "description": "Full name of the university"
+    },
+    
+    "ein": {
+      "type": "string",
+      "pattern": "^[0-9]{2}-[0-9]{7}$|^[0-9]{9}$",
+      "description": "Employer Identification Number (XX-XXXXXXX or XXXXXXXXX format)"
+    },
+    
+    "v1_signals": {
+      "type": "object",
+      "description": "IRS 990-derived signals (original Analyst V1 output)",
+      "required": ["operating_deficit", "pain_level"],
+      "properties": {
+        "operating_deficit": {
+          "type": "number",
+          "description": "Net income from IRS 990 (negative = deficit)"
+        },
+        "pain_level": {
+          "oneOf": [
+            {"type": "string", "enum": ["CRITICAL", "SEVERE", "ELEVATED", "MODERATE", "LOW", "MINIMAL"]},
+            {"type": "number", "minimum": 0, "maximum": 100}
+          ],
+          "description": "Distress severity classification"
+        },
+        "budget_capacity": {
+          "type": "number",
+          "description": "Operational runway in months"
+        },
+        "decision_velocity": {
+          "type": "number",
+          "description": "Likelihood of decisive action (0-100)"
+        },
+        "expense_ratio": {
+          "type": "number",
+          "description": "Expenses divided by revenue"
+        },
+        "runway_years": {
+          "type": "number",
+          "description": "Years until reserve depletion"
+        },
+        "tuition_dependency": {
+          "type": "number",
+          "description": "Tuition as percentage of revenue"
+        }
+      }
+    },
+    
+    "v2_signals": {
+      "type": "object",
+      "description": "Real-time intelligence signals (optional, V2.0+ only)",
+      "required": ["real_time_intel", "composite_score", "urgency_flag"],
+      "properties": {
+        "real_time_intel": {
+          "type": "object",
+          "description": "Structured signals from web reconnaissance",
+          "properties": {
+            "enrollment_trends": {
+              "$ref": "#/definitions/intelligence_signal",
+              "description": "Evidence of student recruitment/retention problems"
+            },
+            "leadership_changes": {
+              "$ref": "#/definitions/intelligence_signal",
+              "description": "C-suite turnover, interim appointments, resignations"
+            },
+            "accreditation_status": {
+              "$ref": "#/definitions/intelligence_signal",
+              "description": "Regulatory warnings, probation, compliance issues"
+            }
+          }
+        },
+        "composite_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Combined V1 + V2 distress score"
+        },
+        "urgency_flag": {
+          "type": "string",
+          "enum": ["IMMEDIATE", "HIGH", "MONITOR"],
+          "description": "Engagement priority classification (IMMEDIATE: >=90, HIGH: 75-89, MONITOR: <75)"
+        },
+        "v1_base_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "V1 financial distress score before amplification"
+        },
+        "v2_contribution": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 45,
+          "description": "Points added from real-time signals (max 10+15+20)"
+        },
+        "signal_breakdown": {
+          "type": "array",
+          "description": "Which signals contributed to amplification",
+          "items": {
+            "type": "object",
+            "properties": {
+              "signal": {
+                "type": "string",
+                "enum": ["enrollment_trends", "leadership_changes", "accreditation_status"]
+              },
+              "amplification": {
+                "type": "integer",
+                "enum": [10, 15, 20]
+              },
+              "finding_snippet": {
+                "type": "string",
+                "description": "First 80 characters of finding for audit trail"
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "metadata": {
+      "type": "object",
+      "description": "Processing metadata and provenance",
+      "required": ["analyst_version", "processing_timestamp"],
+      "properties": {
+        "analyst_version": {
+          "type": "string",
+          "description": "Analyst agent version (e.g., '2.0.0-LITE', '1.1')"
+        },
+        "processing_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this profile was generated"
+        },
+        "intelligence_queries_used": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Number of Perplexity queries consumed (V2.0+ only)"
+        },
+        "schema_version": {
+          "type": "string",
+          "enum": ["1.0.0", "2.0.0"],
+          "description": "Schema version used to generate this profile"
+        },
+        "processing_duration_seconds": {
+          "type": "number",
+          "description": "Time taken to generate profile"
+        }
+      }
+    }
+  },
+  
+  "definitions": {
+    "intelligence_signal": {
+      "type": "object",
+      "description": "Single extracted intelligence signal with source attribution",
+      "required": ["finding", "source", "credibility"],
+      "properties": {
+        "finding": {
+          "type": "string",
+          "description": "Factual claim extracted from search results"
+        },
+        "source": {
+          "type": "string",
+          "description": "Publication name and date (format: 'Publisher, YYYY-MM-DD')"
+        },
+        "credibility": {
+          "type": "string",
+          "enum": ["TRUSTED", "UNTRUSTED", "N/A"],
+          "description": "Binary credibility classification (TRUSTED: official sources, major pubs; UNTRUSTED: forums, blogs; N/A: insufficient evidence)"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When signal was extracted"
+        }
+      }
+    }
+  }
+}
