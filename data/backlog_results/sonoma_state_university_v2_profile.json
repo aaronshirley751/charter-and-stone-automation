@@ -1,0 +1,19 @@
+{
+  "institution": {
+    "name": "Sonoma State University",
+    "ein": "68-0338225",
+    "risk_score": 48
+  },
+  "composite_score": 48,
+  "urgency_flag": "MONITOR",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    }
+  ]
+}

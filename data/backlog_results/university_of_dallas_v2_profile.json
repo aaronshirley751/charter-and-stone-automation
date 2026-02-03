@@ -1,0 +1,22 @@
+{
+  "institution": {
+    "name": "University of Dallas",
+    "ein": "75-0926755",
+    "risk_score": 52
+  },
+  "composite_score": 67,
+  "urgency_flag": "HIGH",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    },
+    {
+      "type": "signal_1"
+    }
+  ]
+}

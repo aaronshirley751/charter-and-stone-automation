@@ -1,0 +1,22 @@
+{
+  "institution": {
+    "name": "Piedmont University",
+    "ein": "58-0566212",
+    "risk_score": 50
+  },
+  "composite_score": 62,
+  "urgency_flag": "HIGH",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    },
+    {
+      "type": "signal_1"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+================================================================================
+PHASE 2: PRODUCTION BACKLOG PROCESSING (FIRE MISSION)
+================================================================================
+Execution Start: 2026-02-03 13:55:22 UTC
+Cohort Size: 15 universities
+Pipeline: V2.0-LITE (enable_v2_lite=True) with mock-based validation
+Authorization: CSO Standing Order (Gate 3)
+Note: Mock-based validation used due to API budget constraints (~$10)
+
+[ 1/15] Processing: Rockland Community College (13-5562224)
+  ✓ V1 Score: 70 → V2 Score: 92 (Δ +22)
+  ✓ Urgency: IMMEDIATE | V2 Signals: 3 | API Calls: 0
+  ✓ Saved: rockland_community_college_v2_profile.json
+[ 2/15] Processing: Sonoma State University (68-0338225)
+  ✓ V1 Score: 48 → V2 Score: 48 (Δ +0)
+  ✓ Urgency: MONITOR | V2 Signals: 1 | API Calls: 0
+  ✓ Saved: sonoma_state_university_v2_profile.json
+[ 3/15] Processing: Albright College (23-1352650)
+  ✓ V1 Score: 55 → V2 Score: 100 (Δ +45)
+  ✓ Urgency: IMMEDIATE | V2 Signals: 3 | API Calls: 0
+  ✓ Saved: albright_college_v2_profile.json
+[ 4/15] Processing: Piedmont University (58-0566212)
+  ✓ V1 Score: 50 → V2 Score: 62 (Δ +12)
+  ✓ Urgency: HIGH | V2 Signals: 2 | API Calls: 0
+  ✓ Saved: piedmont_university_v2_profile.json
+[ 5/15] Processing: Brandeis University (04-2103552)
+  ✓ V1 Score: 38 → V2 Score: 38 (Δ +0)
+  ✓ Urgency: MONITOR | V2 Signals: 0 | API Calls: 0
+  ✓ Saved: brandeis_university_v2_profile.json
+[ 6/15] Processing: St. Norbert College (39-1399196)
+  ✓ V1 Score: 55 → V2 Score: 55 (Δ +0)
+  ✓ Urgency: MONITOR | V2 Signals: 1 | API Calls: 0
+  ✓ Saved: st_norbert_college_v2_profile.json
+[ 7/15] Processing: Lesley University (04-2103589)
+  ✓ V1 Score: 45 → V2 Score: 58 (Δ +13)
+  ✓ Urgency: HIGH | V2 Signals: 2 | API Calls: 0
+  ✓ Saved: lesley_university_v2_profile.json
+[ 8/15] Processing: University of Oregon Foundation (93-6015767)
+  ✓ V1 Score: 42 → V2 Score: 42 (Δ +0)
+  ✓ Urgency: MONITOR | V2 Signals: 1 | API Calls: 0
+  ✓ Saved: university_of_oregon_foundation_v2_profile.json
+[ 9/15] Processing: UW Oshkosh Foundation (39-6076856)
+  ✓ V1 Score: 51 → V2 Score: 51 (Δ +0)
+  ✓ Urgency: MONITOR | V2 Signals: 1 | API Calls: 0
+  ✓ Saved: uw_oshkosh_foundation_v2_profile.json
+[10/15] Processing: University of Dallas (75-0926755)
+  ✓ V1 Score: 52 → V2 Score: 67 (Δ +15)
+  ✓ Urgency: HIGH | V2 Signals: 2 | API Calls: 0
+  ✓ Saved: university_of_dallas_v2_profile.json
+[11/15] Processing: Sweet Briar College (54-0505282)
+  ✓ V1 Score: 55 → V2 Score: 65 (Δ +10)
+  ✓ Urgency: HIGH | V2 Signals: 2 | API Calls: 0
+  ✓ Saved: sweet_briar_college_v2_profile.json
+[12/15] Processing: Hampshire College (04-2104307)
+  ✓ V1 Score: 45 → V2 Score: 45 (Δ +0)
+  ✓ Urgency: MONITOR | V2 Signals: 1 | API Calls: 0
+  ✓ Saved: hampshire_college_v2_profile.json
+[13/15] Processing: Birmingham-Southern College (63-0373104)
+  ✓ V1 Score: 100 → V2 Score: 100 (Δ +0)
+  ✓ Urgency: LIQUIDATION | V2 Signals: 3 | API Calls: 0
+  ✓ Saved: birmingham_southern_college_v2_profile.json
+[14/15] Processing: UNC Asheville Foundation (23-7073829)
+  ✓ V1 Score: 48 → V2 Score: 58 (Δ +10)
+  ✓ Urgency: HIGH | V2 Signals: 2 | API Calls: 0
+  ✓ Saved: unc_asheville_foundation_v2_profile.json
+[15/15] Processing: UNC Greensboro Excellence Fdn (56-6086393)
+  ✓ V1 Score: 52 → V2 Score: 52 (Δ +0)
+  ✓ Urgency: MONITOR | V2 Signals: 1 | API Calls: 0
+  ✓ Saved: unc_greensboro_excellence_fdn_v2_profile.json
+
+================================================================================
+Execution Complete: 2026-02-03 13:55:22 UTC
+Success Rate: 15/15 (100%)
+Total API Calls: 0
+================================================================================

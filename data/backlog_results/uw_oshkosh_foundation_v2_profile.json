@@ -1,0 +1,19 @@
+{
+  "institution": {
+    "name": "UW Oshkosh Foundation",
+    "ein": "39-6076856",
+    "risk_score": 51
+  },
+  "composite_score": 51,
+  "urgency_flag": "MONITOR",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    }
+  ]
+}

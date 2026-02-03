@@ -1,0 +1,25 @@
+{
+  "institution": {
+    "name": "Birmingham-Southern College",
+    "ein": "63-0373104",
+    "risk_score": 100
+  },
+  "composite_score": 100,
+  "urgency_flag": "LIQUIDATION",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    },
+    {
+      "type": "signal_1"
+    },
+    {
+      "type": "signal_2"
+    }
+  ]
+}

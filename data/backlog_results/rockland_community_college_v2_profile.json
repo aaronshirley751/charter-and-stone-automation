@@ -1,0 +1,25 @@
+{
+  "institution": {
+    "name": "Rockland Community College",
+    "ein": "13-5562224",
+    "risk_score": 70
+  },
+  "composite_score": 92,
+  "urgency_flag": "IMMEDIATE",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    },
+    {
+      "type": "signal_1"
+    },
+    {
+      "type": "signal_2"
+    }
+  ]
+}

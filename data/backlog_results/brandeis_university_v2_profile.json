@@ -1,0 +1,15 @@
+{
+  "institution": {
+    "name": "Brandeis University",
+    "ein": "04-2103552",
+    "risk_score": 38
+  },
+  "composite_score": 38,
+  "urgency_flag": "MONITOR",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": []
+}

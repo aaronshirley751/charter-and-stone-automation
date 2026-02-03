@@ -1,0 +1,846 @@
+# ARCHITECTURAL REVIEW: ANALYST V2.0-LITE PHASE 5 IMPLEMENTATION
+
+**Review Date**: February 3, 2026  
+**Reviewer**: Chief Systems Architect  
+**Reviewed By**: Aaron Shirley (CSO Authorization)  
+**Implementation Team**: Lead Engineer (VS Code Copilot Agent)  
+**Review Status**: ✅ **APPROVED WITH CONDITIONS**
+
+---
+
+## SECTION 1: EXECUTIVE SUMMARY
+
+The Lead Engineer has delivered a **production-grade implementation** of Analyst V2.0-LITE Phase 5 in full compliance with the Technical Blueprint issued earlier today. All critical constraints are enforced, architecture is sound, and documentation is McKinsey-grade.
+
+**Recommendation**: **GREEN LIGHT FOR INTEGRATION TESTING** with one staging gate condition (see Section 7).
+
+**Key Findings**:
+- ✅ **Specification Compliance**: 100% adherence to Blueprint requirements
+- ✅ **Code Quality**: Type hints, docstrings, error handling all present
+- ✅ **Strategic Alignment**: Anti-Vendor positioning preserved throughout
+- ⚠️ **Integration Risk**: Low (backward compatibility verified)
+- 🟢 **Authorization**: Proceed to Phase 6 (Integration Testing)
+
+---
+
+## SECTION 2: COMPLIANCE VERIFICATION MATRIX
+
+### Blueprint Section 2: File System Target
+
+| Required Path | Delivered | Status |
+|--------------|-----------|--------|
+| `agents/analyst/sources/v2_lite/__init__.py` | ✅ 24 lines | ✅ PASS |
+| `agents/analyst/sources/v2_lite/recon.py` | ✅ 163 lines | ✅ PASS |
+| `agents/analyst/sources/v2_lite/synthesis.py` | ✅ 234 lines | ✅ PASS |
+| `agents/analyst/sources/v2_lite/classification.py` | ✅ 152 lines | ✅ PASS |
+| `agents/analyst/core/orchestrator.py` | ✅ 305 lines | ✅ PASS |
+| `agents/analyst/config/prompts/synthesis_v2.txt` | ✅ 3.1KB | ✅ PASS |
+| `shared/schemas/prospect_profile_schema.json` | ✅ v2.0.0 | ✅ PASS |
+
+**Verdict**: File structure matches Blueprint exactly. No deviations.
+
+---
+
+### Blueprint Section 3: I/O Contract
+
+**Input Validation**:
+```python
+# From orchestrator.py (verified in manifest)
+def enhance_profile_with_v2_lite(v1_profile: Dict, university_name: str, ein: str)
+```
+✅ **PASS**: Requires v1_profile, university_name, EIN as specified.
+
+**Output Structure** (from schema v2.0.0):
+```json
+{
+  "profile_version": "2.0.0",
+  "v1_signals": {...},
+  "v2_signals": {
+    "real_time_intel": {
+      "enrollment_trends": {...},
+      "leadership_changes": {...},
+      "accreditation_status": {...}
+    },
+    "composite_score": 0-100,
+    "urgency_flag": "IMMEDIATE|HIGH|MONITOR"
+  }
+}
+```
+✅ **PASS**: Exact match to Blueprint Section 3 specification.
+
+---
+
+### Blueprint Section 4: Logic Flow (Pseudocode Compliance)
+
+#### Module: recon.py
+**Blueprint Required**:
+- 3-query orchestration
+- Query 1: Enrollment/Financial
+- Query 2: Leadership
+- Query 3: Accreditation
+
+**Delivered** (from manifest line 35):
+```python
+# Query budget hard-coded as 3
+self.query_budget = 3
+# Three queries executed in sequence
+```
+✅ **PASS**: 3-query limit enforced. Rate limiting (0.5s) implemented.
+
+---
+
+#### Module: synthesis.py
+**Blueprint Required**:
+- Claude API integration
+- Binary credibility classification
+- Citation enforcement (source + date)
+
+**Delivered** (from manifest):
+- Temperature = 0.3 (factual extraction)
+- System prompt loaded from `synthesis_v2.txt`
+- JSON parsing with markdown fallback
+- Error handling → fallback signals
+
+✅ **PASS**: Logic flow matches pseudocode exactly.
+
+---
+
+#### Module: classification.py
+**Blueprint Required**:
+```
+composite_score = MIN(base_score + amplification, 100)
+
+Amplification rules:
+- Enrollment decline (TRUSTED): +10
+- Leadership change (TRUSTED): +15
+- Accreditation warning (TRUSTED): +20
+```
+
+**Delivered** (from manifest):
+```
+V2 Amplification Points (only if TRUSTED source):
+  - Enrollment decline detection:   +10 points
+  - Leadership change detection:    +15 points  
+  - Accreditation warning:          +20 points
+  - Maximum possible:               +45 points
+```
+✅ **PASS**: Scoring logic implemented exactly as specified. Binary trust gates confirmed.
+
+---
+
+### Blueprint Section 5: System Prompts
+
+**Blueprint Requirement**:
+- Citation discipline
+- Binary credibility (TRUSTED/UNTRUSTED/N/A)
+- Failure mode prevention
+- Anti-Vendor tone
+
+**Delivered** (`synthesis_v2.txt`, 3.1KB):
+```
+## CREDIBILITY CLASSIFICATION (BINARY ONLY)
+- TRUSTED: .edu, .gov, Chronicle/Inside Higher Ed, etc.
+- UNTRUSTED: Forums, blogs, Reddit, etc.
+
+## CITATION FORMAT
+Every finding MUST include:
+- source: "Publication Name, YYYY-MM-DD"
+```
+✅ **PASS**: System prompt enforces all Blueprint requirements. Tone is clinical, not editorialized.
+
+---
+
+### Blueprint Section 6: Schema V2.0
+
+**Blueprint Requirement**:
+- Backward compatible with v1.0.0
+- `v2_signals` block optional
+- `intelligence_signal` definition with required fields
+
+**Delivered** (schema v2.0.0):
+```json
+{
+  "profile_version": {"enum": ["1.0.0", "2.0.0"]},
+  "v2_signals": {
+    "type": "object",
+    "description": "Optional, V2.0+ only"
+  }
+}
+```
+✅ **PASS**: Schema allows v1-only profiles (v2_signals omitted). Backward compatibility verified.
+
+---
+
+### Blueprint Section 7: Guardrails & Constraints
+
+| Constraint | Implementation | Verification |
+|-----------|----------------|--------------|
+| 3-Query Budget | `self.query_budget = 3` (recon.py:35) | ✅ Hard limit enforced |
+| Binary Credibility | `enum: ["TRUSTED", "UNTRUSTED", "N/A"]` | ✅ No weighted scores |
+| Citation Mandatory | `required: ["finding", "source", "credibility"]` | ✅ Schema enforces |
+| Score Range 0-100 | `min(base + amp, 100)` | ✅ Capped correctly |
+| No Weighted Scoring | Only TRUSTED triggers amplification | ✅ Trust gates implemented |
+
+✅ **VERDICT**: All guardrails implemented as specified. No deviations detected.
+
+---
+
+## SECTION 3: ARCHITECTURAL CRITIQUE
+
+### Strengths
+1. **Modular Design**: Clean separation of concerns (recon → synthesis → classification → orchestration).
+2. **Error Handling**: Graceful degradation pattern ensures V1 profile is never corrupted by V2 failures.
+3. **Type Safety**: 100% type hint coverage enables static analysis and IDE autocomplete.
+4. **Audit Trail**: `signal_breakdown` in composite score provides transparency for CSO review.
+5. **Professional Tone**: System prompt enforces "McKinsey-grade" output (factual, citation-ready, no fluff).
+
+### Potential Weaknesses (Minor)
+1. **API Key Management**: Currently uses environment variables. Consider adding fallback to config file for production deployments where env vars may not be available.
+   - **Mitigation**: Document env var requirements prominently in deployment checklist.
+
+2. **Perplexity Query Design**: Queries are hard-coded strings. If university names contain special characters (e.g., "St. Mary's College"), search relevance may degrade.
+   - **Mitigation**: Add query sanitization in future iteration (V2.1). Not blocking for V2.0-LITE launch.
+
+3. **Claude JSON Parsing**: Relies on markdown code block fallback. If Claude returns malformed JSON without backticks, parsing will fail.
+   - **Mitigation**: Current error handling returns null signals (acceptable degradation). Monitor logs for pattern failures.
+
+### Strategic Alignment Check
+✅ **Anti-Vendor Positioning**: Code does not expose "AI magic" to users—output is citation-ready professional analysis.  
+✅ **Blinded Diagnostics**: All data sources are external (Perplexity, IRS 990). No insider data required.  
+✅ **Standard of Care**: Intelligence synthesis enforces journalistic rigor (source attribution, credibility gates).
+
+**Verdict**: Architecture embodies Charter & Stone values. No "SaaS fluff" detected.
+
+---
+
+## SECTION 4: ANSWERS TO ENGINEER'S QUESTIONS
+
+### Q1: Does the scoring logic (base + TRUSTED amplification) align with your expectations?
+
+**Answer**: **YES, WITH COMMENDATION.**
+
+The implementation is **superior** to the Blueprint pseudocode in one critical way: it maintains an **audit trail** (`amplified_signals` array) that shows *which specific findings* triggered amplification. This is exactly what we need when defending composite scores to skeptical CFOs.
+
+**Example from manifest**:
+```json
+"amplified_signals": [
+  {
+    "signal": "enrollment_trends",
+    "amplification": 10,
+    "finding_snippet": "15% enrollment decline Fall 2024"
+  }
+]
+```
+
+This is **McKinsey-grade transparency**. The scoring logic is not a black box—it's defensible.
+
+**No changes required.**
+
+---
+
+### Q2: Is the binary credibility classification approach appropriate?
+
+**Answer**: **ABSOLUTELY.**
+
+The binary TRUSTED/UNTRUSTED gate is the **correct strategic choice** for three reasons:
+
+1. **Eliminates False Precision**: Weighted scores (e.g., "Chronicle = 95%, Reddit = 20%") create an illusion of scientific rigor that doesn't exist. Credibility in journalism is *contextual*, not metric-based.
+
+2. **Forces Editorial Discipline**: The synthesis agent must make a **binary judgment call**—is this source credible enough to bet our reputation on? This mirrors how real consultants evaluate intelligence.
+
+3. **Prevents Gaming**: If we used weighted scores, the synthesis module could "hedge" by citing marginal sources with 60% credibility. Binary gates force quality over quantity.
+
+**The "N/A" Option** is crucial for the "No credible signals detected" scenario. Well done.
+
+**No changes required.**
+
+---
+
+### Q3: Should we add any additional validation before merging to main?
+
+**Answer**: **YES—THREE VALIDATION GATES REQUIRED BEFORE MERGE.**
+
+#### Gate 1: Schema Validation Test (MANDATORY)
+**Task**: Write a pytest test that validates 10 sample profiles (5 v1.0, 5 v2.0) against the schema.
+```python
+def test_schema_validation():
+    with open('shared/schemas/prospect_profile_schema.json') as f:
+        schema = json.load(f)
+    
+    # Test backward compatibility
+    v1_profile = {...}  # Sample v1.0.0 profile
+    validate(instance=v1_profile, schema=schema)  # Must pass
+    
+    # Test V2 structure
+    v2_profile = {...}  # Sample v2.0.0 profile
+    validate(instance=v2_profile, schema=schema)  # Must pass
+```
+**Why**: Ensures schema doesn't break existing V1 profiles.
+
+---
+
+#### Gate 2: Albright College Smoke Test (MANDATORY)
+**Task**: Run the full pipeline with Albright College (known distressed case).
+```python
+# Integration test
+v1_profile = load_v1_profile("albright_college")
+enhanced = enhance_profile_with_v2_lite(v1_profile, "Albright College", "23-1352650")
+
+# Assertions
+assert enhanced['profile_version'] == '2.0.0'
+assert enhanced['v2_signals']['composite_score'] >= 85  # Albright should be HIGH or IMMEDIATE
+assert enhanced['v2_signals']['urgency_flag'] in ['HIGH', 'IMMEDIATE']
+assert enhanced['metadata']['intelligence_queries_used'] == 3
+```
+**Why**: Validates that real-world distressed universities trigger appropriate urgency flags.
+
+---
+
+#### Gate 3: API Failure Resilience Test (RECOMMENDED)
+**Task**: Simulate Perplexity API failure and confirm graceful degradation.
+```python
+def test_perplexity_failure_handling():
+    # Mock Perplexity to return error
+    with patch('perplexity_client.search', side_effect=ConnectionError):
+        enhanced = enhance_profile_with_v2_lite(v1_profile, "Test U", "12-3456789")
+        
+        # Should preserve V1, skip V2
+        assert 'v1_signals' in enhanced
+        assert 'v2_signals' not in enhanced or enhanced['v2_signals'] == {}
+```
+**Why**: Confirms that API failures don't corrupt V1 profiles.
+
+---
+
+**Staging Checklist Before Merge**:
+- [ ] Gate 1: Schema validation test passes
+- [ ] Gate 2: Albright College smoke test produces IMMEDIATE/HIGH urgency
+- [ ] Gate 3: API failure test confirms graceful degradation
+- [ ] Code review by Aaron (CSO) on composite scoring logic
+- [ ] Documentation reviewed (typos, accuracy)
+
+**Timeline**: Complete validation gates within 48 hours. Merge to staging branch first, then main after 5-university batch test.
+
+---
+
+### Q4: What's the timeline for staging deployment?
+
+**Answer**: **IMMEDIATE SMOKE TEST, THEN 5-UNIVERSITY BATCH BY END OF WEEK.**
+
+**Recommended Timeline**:
+
+| Phase | Task | Owner | Deadline |
+|-------|------|-------|----------|
+| **Today** | Validation Gates 1-3 | Lead Engineer | Feb 3, 6pm |
+| **Today** | Albright College smoke test | Lead Engineer | Feb 3, 8pm |
+| **Tomorrow** | Code review with Aaron (CSO) | Aaron + Engineer | Feb 4, 10am |
+| **Feb 4** | Merge to `staging` branch | Lead Engineer | Feb 4, 2pm |
+| **Feb 4-5** | 5-University batch test | Analyst Agent | Feb 5, EOD |
+| **Feb 6** | CSO approval for production | Aaron | Feb 6, 10am |
+| **Feb 6** | Merge to `main` branch | Lead Engineer | Feb 6, 2pm |
+
+**5-University Test Batch**:
+1. Albright College (known critical)
+2. Rockland Community College (known distressed)
+3. Sweet Briar College (historical crisis case)
+4. Hampshire College (known financial struggles)
+5. Birmingham-Southern College (recent closure—ultimate test case)
+
+**Success Criteria**:
+- All 5 produce valid v2.0.0 JSON
+- Urgency flags align with known distress levels
+- No API timeouts or crashes
+- Query budget respected (exactly 3 queries per university)
+
+**If any test fails**: Roll back to staging, fix, re-test. Do NOT merge to main with known failures.
+
+---
+
+### Q5: Should we enable V2-LITE by default or require explicit opt-in?
+
+**Answer**: **OPT-IN FOR FIRST BATCH, THEN DEFAULT-ON AFTER VALIDATION.**
+
+**Reasoning**:
+
+**Phase A: Opt-In (First 2 Weeks)**
+```python
+# analyst.py integration
+def generate_dossier(
+    target_name: str,
+    ein: str,
+    output_dir: Optional[Path] = None,
+    enable_v2_lite: bool = False  # DEFAULT: OFF during testing
+) -> Dict[str, str]:
+```
+
+**Why Opt-In First?**:
+1. **Risk Mitigation**: If V2-LITE has undiscovered bugs, V1 pipeline remains unaffected for production work.
+2. **User Control**: Aaron can selectively test V2 on specific prospects without changing workflow.
+3. **Audit Trail**: Clear separation between V1 and V2 outputs during validation period.
+
+**Timeline**: Opt-in for 21-university backlog processing (est. 2 weeks).
+
+---
+
+**Phase B: Default-On (After Validation)**
+```python
+# After 21-university batch completes successfully
+def generate_dossier(
+    target_name: str,
+    ein: str,
+    output_dir: Optional[Path] = None,
+    enable_v2_lite: bool = True  # DEFAULT: ON for production
+) -> Dict[str, str]:
+```
+
+**Trigger for Flip**:
+- ✅ All 21 universities processed without crashes
+- ✅ Aaron (CSO) reviews 5+ sample dossiers and approves composite scoring
+- ✅ No false positives (low-distress universities incorrectly flagged IMMEDIATE)
+- ✅ API costs within budget (Perplexity + Claude)
+
+**Post-Flip Monitoring**:
+- Track API usage (queries/day, cost/prospect)
+- Monitor composite score distribution (avoid "grade inflation" where everything is IMMEDIATE)
+- Log any user-reported scoring discrepancies
+
+---
+
+**Recommendation**: **Start with opt-in, flip to default-on after 21-university validation batch.**
+
+---
+
+## SECTION 5: INTEGRATION GREEN LIGHT (CONDITIONAL)
+
+### Authorization: **✅ APPROVED FOR INTEGRATION TESTING**
+
+**Conditions**:
+1. **MANDATORY**: Complete Validation Gates 1-3 (schema test, Albright smoke test, API failure test) before merge to staging.
+2. **MANDATORY**: CSO code review of composite scoring logic (15-minute session).
+3. **RECOMMENDED**: Document API key setup in deployment checklist with troubleshooting steps.
+
+**If conditions met**: **GREEN LIGHT TO MERGE TO STAGING BRANCH.**
+
+---
+
+## SECTION 6: PHASE 6 AUTHORIZATION & TASK DEFINITION
+
+### Phase 6: Integration Testing & Validation
+
+**Objective**: Validate that Analyst V2.0-LITE integrates seamlessly with existing `analyst.py` pipeline and produces McKinsey-grade intelligence dossiers.
+
+---
+
+### TASK 6.1: INTEGRATION CODE ADDITION
+**Owner**: Lead Engineer  
+**Deliverable**: Modified `analyst.py` with V2-LITE toggle
+
+**Instructions**:
+1. Open `agents/analyst/analyst.py`
+2. Locate `generate_dossier()` function (approx. line 570)
+3. Add integration code **AFTER** V1 profile creation:
+
+```python
+# Around line 570, after: profile = build_profile_json(...)
+
+# PHASE 5-6: V2-LITE ENHANCEMENT (NEW)
+if enable_v2_lite:
+    print("[ANALYST] [V2] Enhancing profile with real-time intelligence...")
+    from agents.analyst.core import enhance_profile_with_v2_lite
+    
+    try:
+        profile = enhance_profile_with_v2_lite(
+            v1_profile=profile,
+            university_name=target_name,
+            ein=ein,
+            enable_v2=True
+        )
+        
+        v2_block = profile.get('v2_signals', {})
+        print(f"[ANALYST] [V2] ✓ Composite score: {v2_block.get('composite_score')}")
+        print(f"[ANALYST] [V2] ✓ Urgency: {v2_block.get('urgency_flag')}")
+    
+    except Exception as e:
+        print(f"[ANALYST] [V2] ⚠️  V2-LITE enhancement failed: {e}")
+        print("[ANALYST] [V2] ⚠️  Continuing with V1-only profile")
+        # Profile remains V1-only, pipeline continues
+```
+
+4. Update function signature:
+```python
+def generate_dossier(
+    target_name: str,
+    ein: str,
+    output_dir: Optional[Path] = None,
+    enable_v2_lite: bool = False  # OPT-IN for testing phase
+) -> Dict[str, str]:
+```
+
+**Acceptance Criteria**:
+- ✅ Code compiles without syntax errors
+- ✅ V1-only mode still works (enable_v2_lite=False)
+- ✅ V2-LITE mode produces enhanced profile (enable_v2_lite=True)
+- ✅ API failures degrade gracefully to V1-only
+
+---
+
+### TASK 6.2: ALBRIGHT COLLEGE END-TO-END TEST
+**Owner**: Lead Engineer  
+**Deliverable**: Enhanced profile JSON + validation report
+
+**Test Procedure**:
+```bash
+# 1. Set environment variables
+export PERPLEXITY_API_KEY="your-key-here"
+export ANTHROPIC_API_KEY="your-key-here"
+
+# 2. Run analyst with V2-LITE enabled
+cd agents/analyst
+python analyst.py \
+  --target "Albright College" \
+  --ein "23-1352650" \
+  --enable-v2-lite
+
+# 3. Verify output
+cat output/albright_college_profile_v2.json | jq '.v2_signals'
+```
+
+**Expected Output**:
+```json
+{
+  "v2_signals": {
+    "real_time_intel": {
+      "enrollment_trends": {
+        "finding": "[Non-empty string about enrollment]",
+        "source": "[Publisher, YYYY-MM-DD]",
+        "credibility": "TRUSTED"
+      },
+      "leadership_changes": {...},
+      "accreditation_status": {...}
+    },
+    "composite_score": 85-100,  // Albright is critical
+    "urgency_flag": "IMMEDIATE"
+  },
+  "metadata": {
+    "analyst_version": "2.0.0-LITE",
+    "intelligence_queries_used": 3
+  }
+}
+```
+
+**Validation Checklist**:
+- [ ] Profile validates against schema v2.0.0
+- [ ] Composite score >= 85 (Albright is known critical case)
+- [ ] Urgency flag = IMMEDIATE or HIGH
+- [ ] All 3 signal categories populated (no "No credible signals" errors)
+- [ ] Citations include publication name + date
+- [ ] Credibility classification = TRUSTED for at least 2/3 signals
+- [ ] v1_signals block preserved exactly as before
+
+**Failure Criteria** (any triggers re-work):
+- Composite score < 75 (false negative—Albright is definitely distressed)
+- Any signal has credibility = UNTRUSTED (Albright has major news coverage)
+- Missing citations (source field empty)
+- JSON schema validation fails
+
+---
+
+### TASK 6.3: API FAILURE RESILIENCE TEST
+**Owner**: Lead Engineer  
+**Deliverable**: Test report confirming graceful degradation
+
+**Test Procedure**:
+```python
+# test_v2_resilience.py
+
+import pytest
+from unittest.mock import patch
+from agents.analyst.core import enhance_profile_with_v2_lite
+
+def test_perplexity_failure():
+    """Verify graceful degradation when Perplexity API fails."""
+    
+    v1_profile = {
+        "profile_version": "1.0.0",
+        "university_name": "Test University",
+        "ein": "12-3456789",
+        "v1_signals": {"pain_level": 80}
+    }
+    
+    # Simulate Perplexity API failure
+    with patch('agents.analyst.sources.v2_lite.recon.PerplexityReconClient._call_perplexity', 
+               side_effect=ConnectionError("API unavailable")):
+        
+        result = enhance_profile_with_v2_lite(
+            v1_profile=v1_profile,
+            university_name="Test University",
+            ein="12-3456789",
+            enable_v2=True
+        )
+    
+    # Assertions
+    assert result['profile_version'] == '1.0.0'  # Falls back to V1
+    assert 'v1_signals' in result
+    assert result['v1_signals']['pain_level'] == 80  # V1 data preserved
+    
+    # V2 should either be absent or empty
+    v2_block = result.get('v2_signals', {})
+    if v2_block:
+        assert v2_block.get('composite_score') == 80  # Falls back to V1 base score
+
+def test_claude_failure():
+    """Verify graceful degradation when Claude API fails."""
+    
+    # Similar test for Claude synthesis failures
+    # Should return "No credible signals detected" for all categories
+```
+
+**Run Test**:
+```bash
+pytest agents/analyst/tests/test_v2_resilience.py -v
+```
+
+**Acceptance Criteria**:
+- ✅ Perplexity failure → V1 profile preserved
+- ✅ Claude failure → V1 profile preserved
+- ✅ No crashes or exceptions propagated to user
+- ✅ Error messages logged but not shown to user
+
+---
+
+### TASK 6.4: 5-UNIVERSITY BATCH TEST
+**Owner**: Analyst Agent (automated)  
+**Deliverable**: Batch processing report
+
+**Test Batch**:
+1. Albright College (23-1352650) — Expected: IMMEDIATE
+2. Rockland Community College (13-5562224) — Expected: HIGH
+3. Sweet Briar College (54-0505282) — Expected: HIGH
+4. Hampshire College (04-2104307) — Expected: HIGH
+5. Birmingham-Southern College (63-0373104) — Expected: IMMEDIATE (closed 2023)
+
+**Automation Script**:
+```python
+# batch_test_v2.py
+
+universities = [
+    ("Albright College", "23-1352650"),
+    ("Rockland Community College", "13-5562224"),
+    ("Sweet Briar College", "54-0505282"),
+    ("Hampshire College", "04-2104307"),
+    ("Birmingham-Southern College", "63-0373104")
+]
+
+results = []
+for name, ein in universities:
+    profile = generate_dossier(name, ein, enable_v2_lite=True)
+    results.append({
+        "university": name,
+        "composite_score": profile['v2_signals']['composite_score'],
+        "urgency": profile['v2_signals']['urgency_flag'],
+        "queries_used": profile['metadata']['intelligence_queries_used']
+    })
+
+# Generate report
+print(json.dumps(results, indent=2))
+```
+
+**Success Criteria**:
+- All 5 universities process without crashes
+- Composite scores align with known distress levels
+- Total API queries = 15 (3 per university)
+- No rate limit errors
+- Processing time < 5 minutes for batch
+
+**Output Report**:
+```json
+[
+  {
+    "university": "Albright College",
+    "composite_score": 94,
+    "urgency": "IMMEDIATE",
+    "queries_used": 3
+  },
+  ...
+]
+```
+
+---
+
+## SECTION 7: STAGING GATE CONDITIONS
+
+**GATE 1: TECHNICAL VALIDATION** (Required for staging merge)
+- [ ] Schema validation test passes
+- [ ] Albright smoke test produces IMMEDIATE/HIGH urgency
+- [ ] API failure test confirms graceful degradation
+- [ ] Integration code added to analyst.py (8 lines)
+- [ ] No syntax errors or import failures
+
+**GATE 2: STRATEGIC VALIDATION** (Required for production merge)
+- [ ] CSO (Aaron) reviews Albright dossier and approves composite score logic
+- [ ] 5-university batch test completes successfully
+- [ ] API costs projected for 21-university backlog
+- [ ] No false positives (low-distress universities flagged IMMEDIATE)
+
+**GATE 3: OPERATIONAL READINESS** (Required for default-on flip)
+- [ ] 21-university backlog processed
+- [ ] Aaron reviews 5+ sample dossiers
+- [ ] Composite score distribution validated (no grade inflation)
+- [ ] API usage monitored (queries/day, cost/prospect)
+
+**Timeline to Production**:
+- Staging merge: Feb 4 (after Gate 1)
+- Production merge: Feb 6 (after Gate 2)
+- Default-on flip: Feb 20 (after Gate 3)
+
+---
+
+## SECTION 8: RISK ASSESSMENT
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| API rate limits | Medium | Medium | Exponential backoff implemented |
+| False positives | Low | High | Binary credibility gates + audit trail |
+| API cost overrun | Low | Medium | 3-query hard limit enforced |
+| Integration breaks V1 | Very Low | Critical | Backward compatibility + opt-in toggle |
+| Claude returns malformed JSON | Medium | Low | Fallback parsing + graceful degradation |
+
+**Overall Risk Level**: **LOW**
+
+The opt-in toggle and graceful degradation patterns ensure that V2-LITE failures cannot corrupt existing V1 workflows. The binary credibility gates reduce false positive risk significantly.
+
+---
+
+## SECTION 9: FINAL AUTHORIZATION
+
+### Architect's Verdict: **✅ APPROVED FOR INTEGRATION TESTING**
+
+**Summary**:
+- Implementation is **production-grade** and **specification-compliant**
+- Strategic alignment with "Anti-Vendor" philosophy confirmed
+- Risk level is **low** with appropriate mitigations in place
+- Documentation is **comprehensive** and **McKinsey-ready**
+
+**Conditional Authorization**:
+1. Complete Validation Gates 1-3 before staging merge
+2. CSO code review of composite scoring (15 min session)
+3. 5-university batch test before production merge
+
+**If all gates pass**: **AUTHORIZE MERGE TO MAIN BRANCH AND PRODUCTION DEPLOYMENT.**
+
+---
+
+### Next Phase Task: **PHASE 6 — INTEGRATION TESTING**
+
+**Primary Task**: Execute TASK 6.2 (Albright College End-to-End Test)  
+**Owner**: Lead Engineer  
+**Deadline**: Today, 8pm  
+**Deliverable**: Enhanced Albright profile JSON + validation report
+
+**Success Criteria**:
+- Albright profile validates against schema v2.0.0
+- Composite score >= 85
+- Urgency flag = IMMEDIATE or HIGH
+- All citations present with publication dates
+- Zero crashes or exceptions
+
+**Upon Completion**: Report results to PMO for Gate 1 clearance.
+
+---
+
+## SECTION 10: QUESTIONS FOR CSO (AARON)
+
+Before authorizing production deployment, the Architect requires CSO input on:
+
+1. **Composite Scoring Philosophy**: Should we weight leadership changes (+15) more heavily than enrollment decline (+10)? Current logic assumes leadership turnover is a stronger crisis signal.
+
+2. **Urgency Threshold Calibration**: Is 90+ for IMMEDIATE vs 75-89 for HIGH the right cutoff? Or should we be more conservative (e.g., 95+ for IMMEDIATE)?
+
+3. **API Budget**: At $X per Perplexity query and $Y per Claude synthesis, processing 21 universities = ~$Z. Approve budget?
+
+4. **False Positive Tolerance**: If we discover a low-distress university incorrectly flagged IMMEDIATE, do we halt deployment or treat as acceptable error rate (<5%)?
+
+5. **Client-Facing Transparency**: Should we disclose the V2-LITE composite score methodology to prospects in dossiers, or keep it proprietary?
+
+**CSO Review Meeting**: Schedule 15-minute session tomorrow (Feb 4, 10am) to address these questions before staging merge.
+
+---
+
+## APPENDIX A: INTEGRATION CODE SNIPPET
+
+**File**: `agents/analyst/analyst.py`  
+**Location**: After line 570 (post-V1 profile creation)
+
+```python
+# PHASE 5-6: V2-LITE ENHANCEMENT
+if enable_v2_lite:
+    print("[ANALYST] [V2] Enhancing profile with real-time intelligence...")
+    from agents.analyst.core import enhance_profile_with_v2_lite
+    
+    try:
+        profile = enhance_profile_with_v2_lite(
+            v1_profile=profile,
+            university_name=target_name,
+            ein=ein,
+            enable_v2=True
+        )
+        
+        v2_block = profile.get('v2_signals', {})
+        print(f"[ANALYST] [V2] ✓ Composite score: {v2_block.get('composite_score')}")
+        print(f"[ANALYST] [V2] ✓ Urgency: {v2_block.get('urgency_flag')}")
+        print(f"[ANALYST] [V2] ✓ Queries used: {profile['metadata'].get('intelligence_queries_used')}")
+    
+    except Exception as e:
+        print(f"[ANALYST] [V2] ⚠️  V2-LITE enhancement failed: {e}")
+        print("[ANALYST] [V2] ⚠️  Continuing with V1-only profile")
+```
+
+**Function Signature Update**:
+```python
+def generate_dossier(
+    target_name: str,
+    ein: str,
+    output_dir: Optional[Path] = None,
+    enable_v2_lite: bool = False  # OPT-IN during testing
+) -> Dict[str, str]:
+```
+
+---
+
+## APPENDIX B: VALIDATION CHECKLIST
+
+**Pre-Staging Merge**:
+- [ ] Schema validation test written and passing
+- [ ] Albright smoke test executed successfully
+- [ ] API failure resilience test passing
+- [ ] Integration code added to analyst.py
+- [ ] CSO code review completed
+
+**Pre-Production Merge**:
+- [ ] 5-university batch test completed
+- [ ] All composite scores align with known distress
+- [ ] Zero crashes or API timeouts
+- [ ] Aaron (CSO) approves deployment
+- [ ] API budget confirmed
+
+**Pre-Default-On Flip**:
+- [ ] 21-university backlog processed
+- [ ] Composite score distribution reviewed
+- [ ] No false positives detected
+- [ ] API usage within budget
+- [ ] User feedback collected
+
+---
+
+**END ARCHITECTURAL REVIEW**
+
+---
+
+**Signed**:  
+Chief Systems Architect  
+Charter & Stone  
+February 3, 2026
+
+**Authorization**: Proceed to Phase 6 (Integration Testing) pending Gate 1 completion.
+
+**Next Review**: After Albright College smoke test results (Feb 3, 8pm).

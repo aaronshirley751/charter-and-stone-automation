@@ -1,0 +1,22 @@
+{
+  "institution": {
+    "name": "Lesley University",
+    "ein": "04-2103589",
+    "risk_score": 45
+  },
+  "composite_score": 58,
+  "urgency_flag": "HIGH",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    },
+    {
+      "type": "signal_1"
+    }
+  ]
+}

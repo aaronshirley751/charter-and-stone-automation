@@ -1,0 +1,573 @@
+# TECHNICAL BLUEPRINT: ANALYST V2.0-LITE (OPERATION SNIPER)
+
+---
+
+## 1. CONTEXT & OBJECTIVE
+
+**WHAT IS THIS?**
+Analyst V2.0-LITE transforms our "Tax Reader" into an "Intelligence Sniper" by augmenting IRS 990 data with real-time intelligence from Perplexity Sonar API. This addresses the critical 18-24 month lag in tax filings that currently blinds us to market-moving events.
+
+**WHY ARE WE BUILDING IT?**
+Live-fire testing revealed a strategic bottleneck: our pipeline works flawlessly on historical data but requires manual intelligence injection for current market conditions. V2.0-LITE solves this with minimal complexity—3 queries, no browser automation, no NewsAPI dependencies.
+
+**STRATEGIC ALIGNMENT** (`Value_Prop_V2.1_2.md`):
+- **Anti-Vendor Positioning**: We demonstrate professional preparation through superior intelligence, not flashy tech.
+- **Blinded Diagnostics**: External-only data sources prove we can diagnose distress from outside the walls.
+- **Standard of Care**: Real-time intelligence gathering is table stakes for serious consultants.
+
+**AUTHORIZATION SOURCE**: `OPERATION_SNIPER_FINAL_AUTHORIZATION_V2_LITE.md`
+
+---
+
+## 2. FILE SYSTEM TARGET
+
+**NEW DIRECTORY STRUCTURE**:
+```
+agents/analyst/
+├── sources/
+│   ├── propublica.py          # [EXISTING] IRS 990 client
+│   └── v2_lite/               # [NEW] V2.0-LITE intelligence layer
+│       ├── __init__.py
+│       ├── recon.py           # Perplexity Sonar client (3-query orchestrator)
+│       ├── synthesis.py       # Claude-powered signal extraction
+│       └── classification.py  # Composite scoring with V2 signals
+├── core/
+│   └── orchestrator.py        # [MODIFY] Add V2-LITE toggle
+├── output/
+│   └── templates/
+│       └── dossier_v2.md      # [NEW] Template with Intelligence Annex
+└── config/
+    └── prompts/
+        └── synthesis_v2.txt   # [NEW] System prompt for signal extraction
+```
+
+**DEPENDENCIES**:
+- `sources/propublica.py` (existing)
+- `shared/schemas/prospect_profile_schema.json` (modify for v2.0)
+- Perplexity MCP server (already operational in project)
+- Anthropic Claude API (native tool integration)
+
+---
+
+## 3. I/O CONTRACT
+
+### INPUT (Phase 1-4 Output):
+```json
+{
+  "university_name": "Albright College",
+  "ein": "23-1352650",
+  "v1_signals": {
+    "operating_deficit": -20100000,
+    "pain_level": "CRITICAL",
+    "budget_capacity": 85,
+    "decision_velocity": 92
+  }
+}
+```
+
+### OUTPUT (V2.0-LITE Enhanced Profile):
+```json
+{
+  "profile_version": "2.0.0",
+  "university_name": "Albright College",
+  "ein": "23-1352650",
+  
+  "v1_signals": { /* existing 990 data */ },
+  
+  "v2_signals": {
+    "real_time_intel": {
+      "enrollment_trends": {
+        "finding": "15% enrollment decline Fall 2024",
+        "source": "Chronicle of Higher Education, 2024-09-15",
+        "credibility": "TRUSTED",
+        "timestamp": "2025-02-03T14:23:00Z"
+      },
+      "leadership_changes": {
+        "finding": "Interim CFO appointed January 2025",
+        "source": "Campus announcement",
+        "credibility": "TRUSTED",
+        "timestamp": "2025-02-03T14:23:00Z"
+      },
+      "accreditation_status": {
+        "finding": "MSCHE probation warning issued",
+        "source": "MSCHE public disclosure",
+        "credibility": "TRUSTED",
+        "timestamp": "2025-02-03T14:23:00Z"
+      }
+    },
+    "composite_score": 94,
+    "urgency_flag": "IMMEDIATE"
+  },
+  
+  "metadata": {
+    "analyst_version": "2.0.0-LITE",
+    "processing_timestamp": "2025-02-03T14:25:00Z",
+    "intelligence_queries_used": 3
+  }
+}
+```
+
+**SCHEMA CONSTRAINT**: Must maintain backward compatibility. V1-only systems ignore `v2_signals` block.
+
+---
+
+## 4. LOGIC FLOW (PSEUDOCODE)
+
+### MODULE: `recon.py` (Perplexity Client)
+
+```
+FUNCTION execute_recon(university_name, ein):
+    """
+    Orchestrates 3 Perplexity queries using MCP server.
+    Returns raw search results as structured JSON.
+    """
+    
+    INITIALIZE query_budget = 3
+    INITIALIZE results = {}
+    
+    # Query 1: Enrollment & Financial Stress
+    query_1 = f"{university_name} enrollment decline financial crisis 2024 2025"
+    results['enrollment_financial'] = CALL perplexity_search(
+        query=query_1,
+        max_results=5,
+        country="US"
+    )
+    
+    # Query 2: Leadership Changes
+    query_2 = f"{university_name} president CFO resignation interim appointment"
+    results['leadership'] = CALL perplexity_search(
+        query=query_2,
+        max_results=5,
+        country="US"
+    )
+    
+    # Query 3: Accreditation & Regulatory
+    query_3 = f"{university_name} accreditation probation MSCHE HLC closure"
+    results['accreditation'] = CALL perplexity_search(
+        query=query_3,
+        max_results=5,
+        country="US"
+    )
+    
+    RETURN {
+        "raw_results": results,
+        "queries_executed": 3,
+        "timestamp": NOW()
+    }
+```
+
+### MODULE: `synthesis.py` (Claude Signal Extraction)
+
+```
+FUNCTION extract_signals(raw_perplexity_results, university_name):
+    """
+    Uses Claude API to extract structured signals from search results.
+    Enforces citation discipline and binary credibility classification.
+    """
+    
+    LOAD system_prompt FROM config/prompts/synthesis_v2.txt
+    
+    # Construct Claude prompt
+    user_prompt = f"""
+    MISSION: Extract actionable intelligence signals for {university_name}.
+    
+    RAW SEARCH RESULTS:
+    {json.dumps(raw_perplexity_results, indent=2)}
+    
+    OUTPUT FORMAT: JSON with structure:
+    {{
+      "enrollment_trends": {{
+        "finding": "specific factual claim",
+        "source": "publication name, date",
+        "credibility": "TRUSTED|UNTRUSTED"
+      }},
+      "leadership_changes": {{ ... }},
+      "accreditation_status": {{ ... }}
+    }}
+    
+    GUARDRAILS:
+    - Every finding MUST cite source with date.
+    - Credibility is BINARY: TRUSTED (original sources, .edu, .gov, major pubs) or UNTRUSTED (forums, blogs, unverified claims).
+    - NO weighted scores. NO confidence percentages.
+    - If insufficient evidence, return finding: "No credible signals detected".
+    """
+    
+    response = CALL claude_api(
+        system=system_prompt,
+        user=user_prompt,
+        temperature=0.3  # Low temp for factual extraction
+    )
+    
+    structured_signals = PARSE_JSON(response.content)
+    
+    RETURN structured_signals
+```
+
+### MODULE: `classification.py` (Composite Scoring)
+
+```
+FUNCTION calculate_composite_score(v1_signals, v2_signals):
+    """
+    Combines V1 (990 data) and V2 (real-time intel) into single score.
+    Rejects weighted credibility in favor of binary trust gates.
+    """
+    
+    base_score = v1_signals['pain_level_score']  # 0-100 from 990 data
+    
+    # V2 Signal Amplifiers (only if TRUSTED sources)
+    amplification = 0
+    
+    IF v2_signals['enrollment_trends']['credibility'] == 'TRUSTED':
+        IF "decline" IN v2_signals['enrollment_trends']['finding']:
+            amplification += 10
+    
+    IF v2_signals['leadership_changes']['credibility'] == 'TRUSTED':
+        IF "interim" OR "resignation" IN v2_signals['leadership_changes']['finding']:
+            amplification += 15
+    
+    IF v2_signals['accreditation_status']['credibility'] == 'TRUSTED':
+        IF "probation" OR "warning" IN v2_signals['accreditation_status']['finding']:
+            amplification += 20
+    
+    composite_score = MIN(base_score + amplification, 100)
+    
+    # Urgency Flag Logic
+    IF composite_score >= 90:
+        urgency = "IMMEDIATE"
+    ELSE IF composite_score >= 75:
+        urgency = "HIGH"
+    ELSE:
+        urgency = "MONITOR"
+    
+    RETURN {
+        "composite_score": composite_score,
+        "urgency_flag": urgency,
+        "v2_contribution": amplification
+    }
+```
+
+### ORCHESTRATION UPDATE (`core/orchestrator.py`)
+
+```
+FUNCTION run_analyst_v2_lite(university_name, ein):
+    """
+    Master pipeline with V2-LITE toggle.
+    """
+    
+    # Phase 1-4: Existing V1 logic (990 analysis)
+    v1_profile = execute_v1_pipeline(ein)
+    
+    # Phase 5: NEW - Real-time Intelligence Layer
+    raw_intel = recon.execute_recon(university_name, ein)
+    v2_signals = synthesis.extract_signals(raw_intel, university_name)
+    
+    # Phase 6: NEW - Composite Scoring
+    composite = classification.calculate_composite_score(
+        v1_signals=v1_profile['signals'],
+        v2_signals=v2_signals
+    )
+    
+    # Merge into unified profile
+    enhanced_profile = {
+        "profile_version": "2.0.0",
+        "university_name": university_name,
+        "ein": ein,
+        "v1_signals": v1_profile['signals'],
+        "v2_signals": {
+            "real_time_intel": v2_signals,
+            "composite_score": composite['composite_score'],
+            "urgency_flag": composite['urgency_flag']
+        },
+        "metadata": {
+            "analyst_version": "2.0.0-LITE",
+            "processing_timestamp": NOW(),
+            "intelligence_queries_used": 3
+        }
+    }
+    
+    RETURN enhanced_profile
+```
+
+---
+
+## 5. THE "BRAIN" (SYSTEM PROMPTS)
+
+### FILE: `config/prompts/synthesis_v2.txt`
+
+```
+# SYSTEM PROMPT: INTELLIGENCE SYNTHESIS ENGINE (V2.0-LITE)
+
+## MISSION
+You are the Intelligence Synthesis module for Charter & Stone's Analyst Agent V2.0-LITE.
+Your role: Extract structured, actionable signals from web search results about distressed universities.
+
+## CORE PRINCIPLES
+1. **Anti-Vendor Philosophy**: We sell judgment, not data dumps. Every finding must be decision-ready.
+2. **Blinded Diagnostics**: We only use external, public data sources. No insider info.
+3. **Citation Discipline**: Every claim requires source attribution with publication date.
+
+## OUTPUT REQUIREMENTS
+
+### STRUCTURE
+You MUST return valid JSON with exactly three signal categories:
+- `enrollment_trends`: Evidence of student recruitment/retention problems
+- `leadership_changes`: C-suite turnover, interim appointments, resignations
+- `accreditation_status`: Regulatory warnings, probation, compliance issues
+
+### CREDIBILITY CLASSIFICATION (BINARY ONLY)
+- **TRUSTED**: .edu domains, .gov sites, Chronicle/Inside Higher Ed, WSJ, NYT, Bloomberg, official accreditor disclosures
+- **UNTRUSTED**: Forums, blogs, Reddit, unverified social media, press releases without third-party confirmation
+
+**CRITICAL**: Do NOT use weighted scores (e.g., "85% credible"). Classification is BINARY: TRUSTED or UNTRUSTED.
+
+### CITATION FORMAT
+Every finding MUST include:
+- `source`: "Publication Name, YYYY-MM-DD"
+- Example: "Chronicle of Higher Education, 2024-11-15"
+
+### INSUFFICIENT EVIDENCE HANDLING
+If search results contain no credible signals for a category, return:
+```json
+{
+  "finding": "No credible signals detected",
+  "source": "Search corpus reviewed 2025-02-03",
+  "credibility": "N/A"
+}
+```
+
+## WHAT TO IGNORE
+- Marketing fluff (e.g., "X University announces exciting new program")
+- Opinion pieces without factual claims
+- Paywalled content where snippet doesn't contain actionable data
+- Duplicate reports of the same event
+
+## TONE
+- Factual, clinical, no editorializing
+- "Enrollment declined 12%" not "Enrollment suffered a devastating blow"
+- Let the numbers speak
+
+## EXAMPLE OUTPUT
+```json
+{
+  "enrollment_trends": {
+    "finding": "Undergraduate enrollment dropped 18% year-over-year (Fall 2024: 1,247 students vs Fall 2023: 1,520)",
+    "source": "Inside Higher Ed, 2024-10-08",
+    "credibility": "TRUSTED"
+  },
+  "leadership_changes": {
+    "finding": "CFO Jane Smith resigned effective December 2024; interim CFO appointed from Board",
+    "source": "University press release corroborated by Chronicle of Higher Education, 2024-12-15",
+    "credibility": "TRUSTED"
+  },
+  "accreditation_status": {
+    "finding": "MSCHE issued public warning regarding fiscal sustainability in June 2024 review",
+    "source": "Middle States Commission on Higher Education public disclosure, 2024-06-20",
+    "credibility": "TRUSTED"
+  }
+}
+```
+
+## FAILURE MODES TO AVOID
+- Citing forums or Reddit as credible sources
+- Omitting publication dates
+- Using confidence percentages or weighted scores
+- Editorializing findings with subjective language
+- Returning malformed JSON
+
+---
+END SYSTEM PROMPT
+```
+
+---
+
+## 6. SCHEMA V2.0 CHANGES (`prospect_profile_schema.json`)
+
+### BACKWARD-COMPATIBLE ADDITIONS
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Charter & Stone Prospect Profile Schema",
+  "version": "2.0.0",
+  "type": "object",
+  "required": ["profile_version", "university_name", "ein", "v1_signals", "metadata"],
+  
+  "properties": {
+    "profile_version": {
+      "type": "string",
+      "enum": ["1.0.0", "2.0.0"],
+      "description": "Schema version for backward compatibility"
+    },
+    
+    "v1_signals": {
+      "type": "object",
+      "description": "IRS 990-derived signals (original Analyst V1 output)",
+      "required": ["operating_deficit", "pain_level", "budget_capacity", "decision_velocity"],
+      "properties": { /* existing V1 structure */ }
+    },
+    
+    "v2_signals": {
+      "type": "object",
+      "description": "Real-time intelligence signals (optional, V2.0+ only)",
+      "required": ["real_time_intel", "composite_score", "urgency_flag"],
+      "properties": {
+        "real_time_intel": {
+          "type": "object",
+          "properties": {
+            "enrollment_trends": {
+              "$ref": "#/definitions/intelligence_signal"
+            },
+            "leadership_changes": {
+              "$ref": "#/definitions/intelligence_signal"
+            },
+            "accreditation_status": {
+              "$ref": "#/definitions/intelligence_signal"
+            }
+          }
+        },
+        "composite_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Combined V1 + V2 distress score"
+        },
+        "urgency_flag": {
+          "type": "string",
+          "enum": ["IMMEDIATE", "HIGH", "MONITOR"],
+          "description": "Engagement priority classification"
+        }
+      }
+    },
+    
+    "metadata": {
+      "type": "object",
+      "required": ["analyst_version", "processing_timestamp"],
+      "properties": {
+        "analyst_version": {
+          "type": "string",
+          "description": "Analyst agent version (e.g., '2.0.0-LITE')"
+        },
+        "processing_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "intelligence_queries_used": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of Perplexity queries consumed (V2.0+ only)"
+        }
+      }
+    }
+  },
+  
+  "definitions": {
+    "intelligence_signal": {
+      "type": "object",
+      "required": ["finding", "source", "credibility"],
+      "properties": {
+        "finding": {
+          "type": "string",
+          "description": "Factual claim extracted from search results"
+        },
+        "source": {
+          "type": "string",
+          "description": "Publication name and date (format: 'Publisher, YYYY-MM-DD')"
+        },
+        "credibility": {
+          "type": "string",
+          "enum": ["TRUSTED", "UNTRUSTED", "N/A"],
+          "description": "Binary credibility classification"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When signal was extracted"
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## 7. GUARDRAILS & CONSTRAINTS
+
+### REJECTED APPROACHES (FROM AUTHORIZATION DOC)
+- ❌ Weighted credibility scores (e.g., "Chronicle = 95%, Reddit = 20%")
+- ❌ NewsAPI integration (adds cost, complexity, limited value)
+- ❌ Playwright browser automation (overkill for V2.0-LITE)
+- ❌ Machine learning scoring models (premature optimization)
+
+### ENFORCED CONSTRAINTS
+1. **3-Query Limit**: `recon.py` MUST NOT exceed 3 Perplexity searches per university.
+2. **Binary Credibility**: `synthesis.py` MUST classify sources as TRUSTED or UNTRUSTED only.
+3. **Citation Mandatory**: Every `finding` MUST include `source` with date.
+4. **Backward Compatibility**: V1-only systems MUST ignore `v2_signals` block gracefully.
+
+### ERROR HANDLING
+- **Perplexity Rate Limits**: Implement exponential backoff, log failures to Planner.
+- **Claude API Failures**: Retry once, then return "Intelligence unavailable" signal.
+- **Malformed JSON from Claude**: Log error, return empty V2 signals, DO NOT crash pipeline.
+
+---
+
+## 8. HANDOVER CHECKLIST FOR LEAD ENGINEER
+
+**BEFORE WRITING CODE**:
+- [ ] Review `OPERATION_SNIPER_FINAL_AUTHORIZATION_V2_LITE.md` in project files
+- [ ] Confirm Perplexity MCP server is accessible from VS Code environment
+- [ ] Verify `prospect_profile_schema.json` current version in repo
+
+**IMPLEMENTATION ORDER**:
+1. Update schema (`prospect_profile_schema.json` → v2.0.0)
+2. Build `recon.py` (start with single query test)
+3. Build `synthesis.py` (validate JSON parsing)
+4. Build `classification.py` (test with mock V1+V2 data)
+5. Modify `orchestrator.py` (add V2-LITE toggle flag)
+6. Create `dossier_v2.md` template (add "Intelligence Annex" section)
+
+**TESTING PROTOCOL**:
+- Unit tests for each module with mock Perplexity responses
+- Integration test with live Perplexity call (budget 1 query for testing)
+- End-to-end test: Albright College (known distressed case)
+- Validation: Ensure V1-only mode still works (backward compatibility)
+
+**DEPLOYMENT GATES**:
+- [ ] All tests pass
+- [ ] System prompt loaded correctly in `synthesis.py`
+- [ ] Composite scoring produces integer 0-100
+- [ ] Output validates against schema v2.0.0
+- [ ] Aaron approves before merging to main branch
+
+---
+
+## 9. SUCCESS CRITERIA
+
+**TECHNICAL**:
+- Processes a university through V2.0-LITE in <60 seconds (including API latency)
+- Generates valid JSON that passes schema v2.0.0 validation
+- Consumes exactly 3 Perplexity queries per run
+
+**STRATEGIC**:
+- Produces actionable intelligence that V1 (990-only) would miss
+- Citations are audit-ready (could defend in front of skeptical CFO)
+- Composite score meaningfully differentiates IMMEDIATE vs MONITOR cases
+
+**OPERATIONAL**:
+- Can process backlog of 21 universities in <30 minutes
+- Integrates with existing Outreach Architect (passes enhanced JSON)
+- Aaron can deploy to production without touching Python
+
+---
+
+**END TECHNICAL BLUEPRINT**
+
+---
+
+**ARCHITECT'S NOTES**:
+This spec is designed for a **3-hour implementation sprint** by a competent engineer with Copilot assistance. The constraint to 3 queries and binary credibility keeps complexity low while delivering 80% of the strategic value. The system prompt is the critical piece—it enforces our "Anti-Vendor" discipline by treating intelligence synthesis as professional practice, not magic AI.
+
+The backward-compatible schema ensures we don't break existing Watchdog flows while we test V2.0-LITE in production. Once validated, we can deprecate V1-only mode.
+
+**Handover to Lead Engineer approved. Begin Phase 5 implementation.**

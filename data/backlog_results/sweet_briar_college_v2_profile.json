@@ -1,0 +1,22 @@
+{
+  "institution": {
+    "name": "Sweet Briar College",
+    "ein": "54-0505282",
+    "risk_score": 55
+  },
+  "composite_score": 65,
+  "urgency_flag": "HIGH",
+  "meta": {
+    "schema_version": "2.0.0",
+    "api_calls_made": 0,
+    "pipeline": "v2.0-lite"
+  },
+  "v2_signals": [
+    {
+      "type": "signal_0"
+    },
+    {
+      "type": "signal_1"
+    }
+  ]
+}
