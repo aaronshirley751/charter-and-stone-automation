@@ -68,19 +68,12 @@ class AnalystV2Orchestrator:
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
         
-        try:
-            recon_results = execute_recon(
-                university_name=university_name,
-                ein=ein,
-                api_key=os.environ.get('PERPLEXITY_API_KEY')
-            )
-            return recon_results
-        except Exception as e:
-            return {
-                "status": "error",
-                "error": str(e),
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            }
+        recon_results = execute_recon(
+            university_name=university_name,
+            ein=ein,
+            api_key=os.environ.get('PERPLEXITY_API_KEY')
+        )
+        return recon_results
     
     def run_signal_extraction(
         self,
@@ -100,25 +93,17 @@ class AnalystV2Orchestrator:
         if not self.enable_v2_lite:
             return {"status": "skipped"}
         
-        try:
-            # Extract just the raw_results for Claude processing
-            raw_results = raw_recon_results.get('raw_results', {})
-            
-            extraction_result = extract_signals(
-                raw_perplexity_results=raw_results,
-                university_name=university_name,
-                api_key=os.environ.get('ANTHROPIC_API_KEY'),
-                system_prompt_path=str(self.system_prompt_path) if self.system_prompt_path.exists() else None
-            )
-            
-            return extraction_result
-        except Exception as e:
-            return {
-                "status": "error",
-                "error": str(e),
-                "signals": self._get_null_signals(),
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            }
+        # Extract just the raw_results for Claude processing
+        raw_results = raw_recon_results.get('raw_results', {})
+        
+        extraction_result = extract_signals(
+            raw_perplexity_results=raw_results,
+            university_name=university_name,
+            api_key=os.environ.get('ANTHROPIC_API_KEY'),
+            system_prompt_path=str(self.system_prompt_path) if self.system_prompt_path.exists() else None
+        )
+        
+        return extraction_result
     
     def run_composite_scoring(
         self,
@@ -138,21 +123,14 @@ class AnalystV2Orchestrator:
         if not self.enable_v2_lite:
             return {"status": "skipped"}
         
-        try:
-            v1_signals = v1_profile.get('signals', v1_profile)
-            
-            composite_result = calculate_composite_score(
-                v1_signals=v1_signals,
-                v2_signals=v2_signals
-            )
-            
-            return composite_result
-        except Exception as e:
-            return {
-                "status": "error",
-                "error": str(e),
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            }
+        v1_signals = v1_profile.get('signals', v1_profile)
+        
+        composite_result = calculate_composite_score(
+            v1_signals=v1_signals,
+            v2_signals=v2_signals
+        )
+        
+        return composite_result
     
     def merge_v2_into_profile(
         self,
@@ -176,14 +154,8 @@ class AnalystV2Orchestrator:
         if not self.enable_v2_lite:
             return v1_profile
 
-        if raw_recon.get('status') == 'error' or extracted_signals.get('status') == 'error':
-            return v1_profile
-        
         # Extract signals from extraction result
-        if extracted_signals.get('status') == 'error':
-            signals_block = self._get_null_signals()
-        else:
-            signals_block = extracted_signals.get('signals', self._get_null_signals())
+        signals_block = extracted_signals.get('signals', self._get_null_signals())
         
         # Build V2 signals block
         v2_signals_block = {

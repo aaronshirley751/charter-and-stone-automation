@@ -1,12 +1,12 @@
 {
   "meta": {
     "schema_version": "1.0.0",
-    "generated_at": "2026-02-03T20:09:53.900745+00:00",
+    "generated_at": "2026-02-03T20:37:30.646393+00:00",
     "generated_by": "analyst-v1.1",
     "data_sources": [
       {
         "source": "ProPublica Nonprofit Explorer",
-        "retrieved_at": "2026-02-03T20:09:53.900745+00:00",
+        "retrieved_at": "2026-02-03T20:37:30.646393+00:00",
         "confidence": "high"
       }
     ]
@@ -107,5 +107,35 @@
   "blinded_presentation": {
     "display_name": "Representative Private Nonprofit College (Northeast)",
     "approved_for_external": false
+  },
+  "profile_version": "2.0.0",
+  "v2_signals": {
+    "real_time_intel": {
+      "enrollment_trends": {
+        "finding": "Extraction failed",
+        "source": "Error occurred during processing",
+        "credibility": "N/A"
+      },
+      "leadership_changes": {
+        "finding": "Extraction failed",
+        "source": "Error occurred during processing",
+        "credibility": "N/A"
+      },
+      "accreditation_status": {
+        "finding": "Extraction failed",
+        "source": "Error occurred during processing",
+        "credibility": "N/A"
+      }
+    },
+    "composite_score": 0,
+    "urgency_flag": "MONITOR",
+    "v1_base_score": 0,
+    "v2_contribution": 0,
+    "signal_breakdown": []
+  },
+  "metadata": {
+    "analyst_version": "2.0.0-LITE",
+    "intelligence_queries_used": 0,
+    "schema_version": "2.0.0"
   }
 }

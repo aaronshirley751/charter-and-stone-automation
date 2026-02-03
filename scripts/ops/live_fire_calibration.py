@@ -1,24 +1,20 @@
 #!/usr/bin/env python3
 """
-PHASE 2.5: LIVE FIRE CALIBRATION (5-UNIVERSITY COHORT)
+PHASE 2.7: LIVE FIRE RE-CALIBRATION (ALBRIGHT ONLY)
 
 Mission: Validate V2.0-LITE "18-Month Advantage" hypothesis with real API data.
 Authorization: CSO Authorization for Live API Spend
-Mode: Hybrid Execution
-  - Real ProPublica API: Live financial data retrieval
-  - Simulated Perplexity/Claude: Intelligence synthesis (API cost management)
-  - enable_v2_lite=True: Full V2-LITE pipeline with real financial baseline
+Mode: FORCED LIVE EXECUTION
+    - Real ProPublica API: Live financial data retrieval
+    - Real Perplexity Recon: Live API calls
+    - Real Claude Synthesis: Live API calls
+    - enable_v2_lite=True: Full V2-LITE pipeline (no fallback)
 
 Target Cohort:
 1. Albright College (23-1352650) - Expected: Critical (+45 delta from V1)
-2. Rockland CC (13-1969305) - Expected: High/Critical (+22 delta)
-3. Sweet Briar College (54-0505282) - Expected: High (+10 delta)
-4. Hampshire College (04-2104307) - Expected: Monitor (no delta)
-5. Birmingham-Southern (63-0373104) - Expected: Liquidation (terminal case)
 
 Execution Date: February 3, 2026
-NOTE: Hybrid mode uses real ProPublica data + simulated signals to manage API costs
-      while validating V2-LITE scoring logic with real financial baselines.
+NOTE: Forced LIVE execution. No hybrid/mocked fallback. Exceptions will surface.
 """
 
 import sys
@@ -82,31 +78,7 @@ LIVE_FIRE_COHORT = [
         "ein": "23-1352650",
         "expected": "Critical",
         "expected_delta": "+45"
-    },
-    {
-        "name": "Rockland Community College",
-        "ein": "13-1969305",
-        "expected": "High/Critical",
-        "expected_delta": "+22"
-    },
-    {
-        "name": "Sweet Briar College",
-        "ein": "54-0505282",
-        "expected": "High",
-        "expected_delta": "+10"
-    },
-    {
-        "name": "Hampshire College",
-        "ein": "04-2104307",
-        "expected": "Monitor",
-        "expected_delta": "0"
-    },
-    {
-        "name": "Birmingham-Southern College",
-        "ein": "63-0373104",
-        "expected": "Liquidation",
-        "expected_delta": "0 (terminal)"
-    },
+    }
 ]
 
 # =============================================================================
@@ -183,24 +155,26 @@ def execute_live_fire_calibration():
     # ─────────────────────────────────────────────────────────────────────
     
     log_lines.append("=" * 90)
-    log_lines.append("PHASE 2.5: LIVE FIRE CALIBRATION (5-UNIVERSITY COHORT)")
+    log_lines.append("PHASE 2.7: LIVE FIRE RE-CALIBRATION (ALBRIGHT ONLY)")
     log_lines.append("=" * 90)
     log_lines.append(f"Execution Start: {start_time.strftime('%Y-%m-%d %H:%M:%S UTC')}")
     log_lines.append(f"Cohort Size: {len(LIVE_FIRE_COHORT)} universities")
-    log_lines.append(f"Pipeline: V2.0-LITE HYBRID EXECUTION")
+    log_lines.append(f"Pipeline: V2.0-LITE FORCED LIVE EXECUTION")
     log_lines.append(f"  - ProPublica: LIVE financial data retrieval")
-    log_lines.append(f"  - Intelligence synthesis: Simulated (API cost management)")
-    log_lines.append(f"  - V2 Scoring: Real baseline with V2-LITE logic")
+    log_lines.append(f"  - Perplexity: LIVE reconnaissance")
+    log_lines.append(f"  - Claude: LIVE synthesis")
+    log_lines.append(f"  - V2 Scoring: LIVE signals + V1 baseline")
     log_lines.append(f"Authorization: CSO Authorization for Live API Spend")
-    log_lines.append(f"Mode: HYBRID (Real data + simulated signals for validation)")
+    log_lines.append(f"Mode: LIVE (No fallback - exceptions bubble up)")
     log_lines.append("")
     
     print("\n" + log_lines[0])
     print(log_lines[1])
     print(log_lines[0])
-    print(f"🔴 HYBRID EXECUTION INITIATED")
+    print(f"🔴 LIVE EXECUTION INITIATED")
     print(f"   ProPublica API: LIVE")
-    print(f"   Intelligence Layer: SIMULATED (cost optimization)")
+    print(f"   Perplexity API: LIVE")
+    print(f"   Claude API: LIVE")
     print()
     
     # ─────────────────────────────────────────────────────────────────────
@@ -211,6 +185,7 @@ def execute_live_fire_calibration():
     success_count = 0
     total_cost = 0.0
     
+    cohort_size = len(LIVE_FIRE_COHORT)
     for idx, target in enumerate(LIVE_FIRE_COHORT, 1):
         name = target["name"]
         ein = target["ein"]
@@ -218,95 +193,75 @@ def execute_live_fire_calibration():
         expected = target["expected"]
         expected_delta = target["expected_delta"]
         
-        log_lines.append(f"[{idx}/5] Processing: {name} ({ein})")
-        print(f"\n[{idx}/5] 🔴 EXECUTION: {name}")
+        log_lines.append(f"[{idx}/{cohort_size}] Processing: {name} ({ein})")
+        print(f"\n[{idx}/{cohort_size}] 🔴 EXECUTION: {name}")
         print(f"      EIN: {ein}")
         print(f"      Expected: {expected} (Δ {expected_delta})")
         print(f"      Status: Fetching ProPublica data...")
         
-        try:
-            # Generate dossier with enable_v2_lite=True
-            # This will attempt real API calls but handle failures gracefully
-            result = generate_dossier(
-                target_name=name,
-                ein=ein,
-                output_dir=str(RESULTS_DIR),
-                enable_v2_lite=True  # Enables V2-LITE pipeline
-            )
+        # Generate dossier with enable_v2_lite=True
+        # Exceptions must bubble up (no graceful fallback)
+        result = generate_dossier(
+            target_name=name,
+            ein=ein,
+            output_dir=str(RESULTS_DIR),
+            enable_v2_lite=True  # Enables V2-LITE pipeline
+        )
+        
+        # Load the generated JSON profile
+        json_path = result.get("json")
+        elapsed = result.get("elapsed_seconds", 0)
+        
+        if json_path and Path(json_path).exists():
+            profile = load_profile_json(json_path)
+            metrics = extract_profile_metrics(profile)
             
-            # Load the generated JSON profile
-            json_path = result.get("json")
-            elapsed = result.get("elapsed_seconds", 0)
+            # Save to live results directory with slug name
+            output_json = RESULTS_DIR / f"{slug}_live_v2_profile.json"
+            with open(output_json, 'w') as f:
+                json.dump(profile, f, indent=2)
             
-            if json_path and Path(json_path).exists():
-                profile = load_profile_json(json_path)
-                metrics = extract_profile_metrics(profile)
-                
-                # Save to live results directory with slug name
-                output_json = RESULTS_DIR / f"{slug}_live_v2_profile.json"
-                with open(output_json, 'w') as f:
-                    json.dump(profile, f, indent=2)
-                
-                # Track results
-                results.append({
-                    "name": name,
-                    "ein": ein,
-                    "slug": slug,
-                    "metrics": metrics,
-                    "elapsed_seconds": elapsed,
-                    "status": "SUCCESS"
-                })
-                
-                # Log metrics
-                v1_score = metrics.get("v1_base_score", 0)
-                v2_score = metrics.get("v2_composite_score", 0)
-                delta = metrics.get("delta", 0)
-                urgency = metrics.get("urgency_flag", "UNKNOWN")
-                api_calls = metrics.get("api_calls_made", 0)
-                v2_signal_count = metrics.get("v2_signal_count", 0)
-                
-                log_lines.append(f"  ✓ V1 Score: {v1_score:.0f} → V2 Score: {v2_score:.0f} (Δ {delta:+.0f})")
-                log_lines.append(f"  ✓ Urgency: {urgency} | V2 Signals: {v2_signal_count} | API Calls: {api_calls}")
-                log_lines.append(f"  ✓ Processing Time: {elapsed:.2f}s")
-                log_lines.append(f"  ✓ Saved: {output_json.name}")
-                
-                # Print to terminal
-                print(f"      ✓ V1 Score: {v1_score:.0f} → V2 Score: {v2_score:.0f} (Δ {delta:+.0f})")
-                print(f"      ✓ Urgency: {urgency}")
-                print(f"      ✓ V2 Signals Found: {v2_signal_count}")
-                
-                if v2_signal_count > 0:
-                    signals = metrics.get("v2_signals", [])
-                    for sig_idx, sig in enumerate(signals[:2], 1):
-                        print(f"        - Signal {sig_idx}: {sig[:70]}")
-                
-                print(f"      ✓ API Calls Made: {api_calls}")
-                print(f"      ✓ Processing Time: {elapsed:.2f}s")
-                
-                total_api_calls += api_calls
-                success_count += 1
-                
-            else:
-                log_lines.append(f"  ✗ Failed to load JSON profile from {json_path}")
-                print(f"      ✗ Failed to load JSON profile")
-                results.append({
-                    "name": name,
-                    "ein": ein,
-                    "slug": slug,
-                    "status": "FAILED"
-                })
-                
-        except Exception as e:
-            error_msg = str(e)
-            log_lines.append(f"  ✗ Exception: {error_msg}")
-            print(f"      ✗ Exception: {error_msg}")
+            # Track results
             results.append({
                 "name": name,
                 "ein": ein,
                 "slug": slug,
-                "status": "FAILED",
-                "error": error_msg
+                "metrics": metrics,
+                "elapsed_seconds": elapsed,
+                "status": "SUCCESS"
             })
+            
+            # Log metrics
+            v1_score = metrics.get("v1_base_score", 0)
+            v2_score = metrics.get("v2_composite_score", 0)
+            delta = metrics.get("delta", 0)
+            urgency = metrics.get("urgency_flag", "UNKNOWN")
+            api_calls = metrics.get("api_calls_made", 0)
+            v2_signal_count = metrics.get("v2_signal_count", 0)
+            
+            log_lines.append(f"  ✓ V1 Score: {v1_score:.0f} → V2 Score: {v2_score:.0f} (Δ {delta:+.0f})")
+            log_lines.append(f"  ✓ Urgency: {urgency} | V2 Signals: {v2_signal_count} | API Calls: {api_calls}")
+            log_lines.append(f"  ✓ Processing Time: {elapsed:.2f}s")
+            log_lines.append(f"  ✓ Saved: {output_json.name}")
+            
+            # Print to terminal
+            print(f"      ✓ V1 Score: {v1_score:.0f} → V2 Score: {v2_score:.0f} (Δ {delta:+.0f})")
+            print(f"      ✓ Urgency: {urgency}")
+            print(f"      ✓ V2 Signals Found: {v2_signal_count}")
+            
+            if v2_signal_count > 0:
+                signals = metrics.get("v2_signals", [])
+                for sig_idx, sig in enumerate(signals[:2], 1):
+                    print(f"        - Signal {sig_idx}: {sig[:70]}")
+            
+            print(f"      ✓ API Calls Made: {api_calls}")
+            print(f"      ✓ Processing Time: {elapsed:.2f}s")
+            
+            total_api_calls += api_calls
+            success_count += 1
+            
+        else:
+            raise FileNotFoundError(f"JSON profile not found at {json_path}")
     
     # ─────────────────────────────────────────────────────────────────────
     # GENERATE SUMMARY TABLE

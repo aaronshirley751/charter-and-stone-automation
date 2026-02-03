@@ -1,12 +1,12 @@
 {
   "meta": {
     "schema_version": "1.0.0",
-    "generated_at": "2026-02-03T20:09:53.900745+00:00",
+    "generated_at": "2026-02-03T20:32:26.130579+00:00",
     "generated_by": "analyst-v1.1",
     "data_sources": [
       {
         "source": "ProPublica Nonprofit Explorer",
-        "retrieved_at": "2026-02-03T20:09:53.900745+00:00",
+        "retrieved_at": "2026-02-03T20:32:26.130579+00:00",
         "confidence": "high"
       }
     ]

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Generated** | 2026-02-03 14:09:57 |
+| **Generated** | 2026-02-03 14:32:29 |
 | **Agent** | analyst-v1.1 |
 | **EIN** | 13-1969305 |
 | **Data Source** | IRS Form 990 (2022) |
@@ -76,7 +76,7 @@ For use in external materials (pitch decks, case studies):
 
 - **Source:** ProPublica Nonprofit Explorer API
 - **Form:** IRS 990 (Tax Year 2022)
-- **Retrieved:** 2026-02-03 14:09:57
+- **Retrieved:** 2026-02-03 14:32:29
 - **Confidence:** High (official IRS filing data)
 
 ---

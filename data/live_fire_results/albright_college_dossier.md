@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Generated** | 2026-02-03 14:09:55 |
+| **Generated** | 2026-02-03 14:37:32 |
 | **Agent** | analyst-v1.1 |
 | **EIN** | 23-1352650 |
 | **Data Source** | IRS Form 990 (2023) |
@@ -78,7 +78,7 @@ For use in external materials (pitch decks, case studies):
 
 - **Source:** ProPublica Nonprofit Explorer API
 - **Form:** IRS 990 (Tax Year 2023)
-- **Retrieved:** 2026-02-03 14:09:55
+- **Retrieved:** 2026-02-03 14:37:32
 - **Confidence:** High (official IRS filing data)
 
 ---

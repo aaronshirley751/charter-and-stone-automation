@@ -2,7 +2,7 @@
 
 **Status:** ✅ Active Duty (Operation Sniper / V2.0-LITE Real-Time Intelligence + Analyst V1.1 + Outreach Architect)  
 **System:** Raspberry Pi 5 (Headless / Silent Mode)  
-**Latest Deployment:** Operation Sniper Phase 6 Integration & Validation (✅ Gate 1 Approved — Feb 3 2026)
+**Latest Deployment:** Operation Sniper Phase 7 Synthesis Recovery (✅ Live API connectivity restored — Feb 3 2026)
 
 An intelligent automation system featuring:
 - **Analyst Agent V2.0-LITE:** Real-time intelligence layer augmenting IRS 990 analysis (Perplexity + Claude API)
@@ -53,8 +53,8 @@ Phase 6: Composite Scoring
 **Deployment Status:**
 - ✅ **Phase 5 Complete:** 5 Python modules + configuration + JSON schema (878 lines production code)
 - ✅ **Phase 6 Complete:** Integration into analyst.py + validation tests (Gate 1 Approved)
-- 🟡 **Gate 1 Approved:** Integration tests passed, ready for staging merge (Feb 3, 2026)
-- ⏳ **Gate 2 Pending:** 5-University batch test (Albright, Rockland CC, Sweet Briar, Hampshire, Birmingham-Southern)
+- ✅ **Gate 1 Approved:** Integration tests passed (Feb 3, 2026)
+- ✅ **Gate 2 Ready:** Live Perplexity + Claude synthesis confirmed
 - ⏳ **Gate 3 Pending:** Default-on flip after 21-university backlog validation
 
 **Usage (V2-LITE Integration):**
@@ -66,22 +66,22 @@ python3 agents/analyst/analyst.py --target "University Name" --ein "XX-XXXXXXX"
 python3 agents/analyst/analyst.py --target "University Name" --ein "XX-XXXXXXX" --enable-v2-lite
 ```
 
-**Phase 6 Validation Results:**
-- Albright College Smoke Test: ✅ **PASSED**
-  - V1 Base Score: ~55 (moderate distress)
-  - V2 Signals: 3 TRUSTED signals (enrollment decline, leadership change, accreditation warning)
+**Phase 7 Validation Results:**
+- Albright College Smoke Test: ✅ **PASSED (Live)**
+  - Perplexity queries executed: **3**
+  - Claude synthesis: **REAL signals with TRUSTED citations**
   - Composite Score: **100** (IMMEDIATE urgency)
-  - Real-Time Detection: System correctly elevated Albright from "monitor" to "crisis intervention required"
+  - Real-Time Detection: System correctly elevated Albright to crisis intervention
   
-- API Failure Resilience: ✅ **PASSED**
-  - Perplexity failure: V1 profile preserved intact
-  - Claude failure: V1 profile preserved intact
-  - Graceful degradation confirmed; zero cascading failures
+- Model Entitlement Fix: ✅ **APPLIED**
+  - Working model: `claude-3-haiku-20240307`
+  - Previous model `claude-3-sonnet-20240229` returned 404
 
 **Documentation:**
+- [API Connectivity Validation Report](tests/integration/API_CONNECTIVITY_REPORT.md) - Live API proof and gate status
+- [Final Verification Report](FINAL_VERIFICATION_REPORT.md) - Phase 6.9/7.1 verification outcome
+- [API Setup Guide](docs/API_SETUP_GUIDE.md) - Key configuration and live test steps
 - [Operation Sniper Architectural Review V2 (with signoff)](Operation%20Sniper%20Architectural%20Review%20V2%20with%20signoff) - Full technical architecture and Gate 1 authorization
-- [Phase 6 Integration Test Report](PHASE_6_INTEGRATION_TEST_REPORT.md) - Comprehensive testing and validation summary
-- [Analyst V2.0-LITE Implementation Guide](TECHNICAL%20BLUEPRINT:%20ANALYST%20V2.0-LITE%20(OPERATION%20SNIPER)) - Phase 5 implementation details
 
 ### Analyst Agent V1.1 (Financial Intelligence)
 Monitors local folder for Markdown files, converts them into branded Word documents, and publishes notifications to Microsoft Teams via Power Automate Webhooks.

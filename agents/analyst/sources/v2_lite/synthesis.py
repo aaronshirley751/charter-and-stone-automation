@@ -37,7 +37,7 @@ class SynthesisEngine:
             ) from exc
         
         self.client = anthropic.Anthropic(api_key=self.api_key, timeout=90.0)
-        self.model = "claude-3-sonnet-20240229"  # Standard Sonnet model (broader compatibility)
+        self.model = "claude-3-haiku-20240307"  # Working model verified by model hunt
         
         # Load system prompt
         if system_prompt_path:
