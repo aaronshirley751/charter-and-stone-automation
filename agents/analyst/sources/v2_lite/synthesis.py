@@ -36,8 +36,8 @@ class SynthesisEngine:
                 "anthropic package is required for V2-LITE synthesis."
             ) from exc
         
-        self.client = anthropic.Anthropic(api_key=self.api_key)
-        self.model = "claude-3-5-sonnet-20241022"  # Latest Sonnet model
+        self.client = anthropic.Anthropic(api_key=self.api_key, timeout=90.0)
+        self.model = "claude-3-sonnet-20240229"  # Standard Sonnet model (broader compatibility)
         
         # Load system prompt
         if system_prompt_path:
