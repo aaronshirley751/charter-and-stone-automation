@@ -1,0 +1,111 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "generated_at": "2026-02-03T20:09:53.900745+00:00",
+    "generated_by": "analyst-v1.1",
+    "data_sources": [
+      {
+        "source": "ProPublica Nonprofit Explorer",
+        "retrieved_at": "2026-02-03T20:09:53.900745+00:00",
+        "confidence": "high"
+      }
+    ]
+  },
+  "institution": {
+    "name": "Albright College",
+    "aliases": [],
+    "ein": "23-1352650",
+    "type": "private-nonprofit",
+    "classification": null,
+    "location": {
+      "city": "Rosemont",
+      "state": "PA",
+      "region": "northeast"
+    },
+    "enrollment": {
+      "total": null,
+      "fte": null,
+      "as_of": null
+    },
+    "website": null
+  },
+  "financials": {
+    "fiscal_year": 2023,
+    "total_revenue": 26631647,
+    "total_expenses": 28926426,
+    "operating_surplus_deficit": -2294779,
+    "net_assets": 74832491,
+    "tuition_revenue": 23162549,
+    "contributions": 6283448,
+    "investment_income": 284279,
+    "calculated": {
+      "expense_ratio": 1.086,
+      "runway_years": 32.6,
+      "tuition_dependency": 0.87
+    },
+    "data_source": {
+      "form": "IRS-990",
+      "tax_period": "2023",
+      "retrieved_from": "ProPublica Nonprofit Explorer API"
+    }
+  },
+  "signals": {
+    "distress_level": "elevated",
+    "indicators": [
+      {
+        "type": "FINANCIAL",
+        "signal": "Moody's downgraded credit rating to B2",
+        "severity": "info",
+        "detected_at": "2025-01-15",
+        "source_url": null
+      },
+      {
+        "type": "ENROLLMENT",
+        "signal": "Spring enrollment down 12% YoY",
+        "severity": "info",
+        "detected_at": "2025-01-20",
+        "source_url": null
+      },
+      {
+        "type": "LEADERSHIP",
+        "signal": "CFO resignation announced",
+        "severity": "info",
+        "detected_at": "2025-01-28",
+        "source_url": null
+      }
+    ],
+    "news_hits": []
+  },
+  "leadership": {
+    "president": {
+      "name": null,
+      "title": null,
+      "tenure_start": null,
+      "email": null
+    },
+    "cfo": {
+      "name": null,
+      "title": null,
+      "email": null
+    },
+    "provost": {
+      "name": null,
+      "title": null,
+      "email": null
+    },
+    "stability_notes": null
+  },
+  "engagement": {
+    "status": "prospect",
+    "priority": "tier-2",
+    "last_contact": null,
+    "next_action": "Review diagnostic and determine outreach approach",
+    "next_action_date": null,
+    "owner": "unassigned",
+    "notes": []
+  },
+  "blinded_presentation": {
+    "display_name": "Representative Private Nonprofit College (Northeast)",
+    "approved_for_external": false
+  }
+}
