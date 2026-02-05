@@ -1,0 +1,2427 @@
+# TECHNICAL BLUEPRINT: GAUNTLET V1.1 DEPLOYMENT
+
+**Date:** February 4, 2026  
+**Architect:** Claude (CSO/Systems Architect)  
+**Target Delivery:** Immediate (Production-Ready)  
+**Classification:** Constitutional Infrastructure
+
+---
+
+## 1. CONTEXT & OBJECTIVE
+
+### What is this?
+
+The Process Gauntlet V1.1 is Charter & Stone's **operational constitution** — the enforcement mechanism for our "Evidence Over Activity" doctrine. This deployment implements the Red Team-approved governance framework that prevents vendor theater and ensures every initiative survives adversarial scrutiny before resource commitment.
+
+### Why are we building it?
+
+**The Disease:** Most consulting firms worship process without demanding evidence. They bill for "discovery phases" that confirm pre-loaded recommendations. The Gauntlet exists to kill this disease internally before we encounter it externally.
+
+**The Cure:** A six-stage framework (Vision → Plan → Critique → Decision → Architecture → Execution) with embedded kill authority, verification standards, and auto-reject triggers. No initiative advances without measurable problem statements, plural options, and adversarial review.
+
+### Link to Strategic Context
+
+- **Value Proposition:** Directly enables our "Anti-Vendor" positioning by institutionalizing the discipline that differentiates us from competitors.
+- **Operations Manual:** Becomes the Process Control Layer above the Digital Teammates ecosystem.
+- **Red Team Validation:** Passed hostile audit with 7 critical patches applied (see PMO SITREP).
+
+---
+
+## 2. FILE SYSTEM TARGET
+
+### Directory Structure
+
+```
+Charter & Stone Operations Tools/
+├── shared/
+│   └── protocols/
+│       └── PROCESS_GAUNTLET.md          # The Constitution (V1.1)
+│
+└── library/
+    └── prompts/
+        ├── PMO_VISION.md                 # Stage 1: Vision Protocol
+        ├── PMO_PLAN.md                   # Stage 2: Plan Protocol
+        ├── CSO_CRITIQUE.md               # Stage 3: Critique Protocol
+        ├── CSO_DECISION.md               # Stage 4: Decision Protocol
+        └── ARCHITECT_BLUEPRINT.md        # Stage 5: Architecture Protocol
+```
+
+### Dependencies
+
+- **No external dependencies** (pure Markdown documentation)
+- **Cross-references:** Each prompt template links to `PROCESS_GAUNTLET.md`
+- **Integration Point:** Microsoft Planner (for logging rejections/decisions)
+
+### Archive Actions
+
+- Move `RED_TEAM_REVIEW_GAUNTLET_PROCESS.md` → `archive/audits/2026-02-04_red_team_gauntlet.md`
+- Move `PMO_Gauntlet_Design.md` → `archive/drafts/v1.0_original_templates.md`
+
+---
+
+## 3. EXECUTION PLAN (FILE CONTENT)
+
+### FILE 1: `shared/protocols/PROCESS_GAUNTLET.md`
+
+**Purpose:** The Constitutional Document — defines the six stages, operating principles, and authority hierarchy.
+
+**Critical Patches Applied:**
+- Operating Principle #7 (CSO Veto Authority)
+- Accelerated Track (replaces Minimum Viable Gauntlet)
+- Operational Tooling cross-reference
+- Tone hardening ("rejections are victories")
+
+**COMPLETE CONTENT:**
+
+```markdown
+# THE PROCESS GAUNTLET
+## Charter & Stone Doctrine of Evidence
+**Version:** 1.1  
+**Status:** Canonical  
+**Last Updated:** February 4, 2026  
+**Last Audit:** February 4, 2026 (Red Team Review — PASS WITH PATCHES)  
+**Classification:** Internal Operations Protocol
+
+---
+
+## PREAMBLE: WHY WE EXIST
+
+### The Disease
+
+Most consultants are vendors in disguise. They arrive with slide decks pre-loaded, recommendations pre-written, and "discovery phases" designed to bill hours while confirming what they already planned to sell you.
+
+The consulting industry has become an elaborate theater of activity—process frameworks, stakeholder interviews, SWOT matrices, and strategy documents that collect dust in SharePoint folders. The client pays for motion. They receive no forward progress.
+
+Charter & Stone exists to kill this disease.
+
+### The Cure: Evidence Over Activity
+
+We do not worship process. We demand evidence.
+
+Every recommendation must answer one question: **"What did you measure, and what did the measurement tell you?"**
+
+If you cannot answer that question, you are not consulting. You are guessing with confidence. Our clients can guess for free.
+
+### The Anti-Vendor Commitment
+
+We make three promises:
+
+1. **We do not sell solutions looking for problems.** We diagnose first. We prescribe second. If the diagnosis reveals you don't need us, we tell you.
+
+2. **We do not confuse troubleshooting with system design.** Fixing today's symptom is not the same as building tomorrow's infrastructure. We will not let you pay us for the former while pretending it's the latter.
+
+3. **We do not hide behind "best practices."** Best practices are averages. Your institution is not average. If our recommendation sounds like something you could have read in a Harvard Business Review article, we have failed you.
+
+### The Lesson That Forged This Doctrine
+
+This document exists because we learned the hard way: **Troubleshooting is not System Design.**
+
+When a system fails, the instinct is to fix it. Debug the code. Restart the service. Patch the workflow. The immediate problem disappears, and everyone exhales.
+
+But the underlying architecture remains unchanged. The same failure mode waits in the shadows, ready to manifest again—usually at a less convenient time, usually with higher stakes.
+
+The Gauntlet exists to force separation between reactive fixes and proactive construction. If you're troubleshooting, say so. If you're building, prove it. The two are not interchangeable, and this protocol ensures we never confuse them again.
+
+---
+
+## THE SIX STAGES
+
+Every initiative—internal or client-facing—must traverse the Gauntlet. There are no shortcuts. There are no exceptions for "quick wins" or "obvious solutions."
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   VISION → PLAN → CRITIQUE → DECISION → ARCHITECTURE → EXECUTION│
+│     ↑                                                     ↓     │
+│     │                                                     │     │
+│     └──────────────── KILL SWITCH ────────────────────────┘     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+Any stage can trigger a rejection. Rejection returns the initiative to Vision for re-scoping or termination.
+
+---
+
+### STAGE 1: VISION
+**The Problem Definition**
+
+**Purpose:** Establish what we are solving and why it matters. Not what we are building—what pain we are eliminating.
+
+**Entry Criteria:**
+- A stated problem exists (verbal or written)
+- At least one stakeholder has expressed the problem
+- The problem has not already been solved by existing infrastructure
+
+**Required Deliverable:** Problem Statement Brief
+
+The Problem Statement must answer:
+
+| Question | Requirement |
+|----------|-------------|
+| **What is the observable symptom?** | Specific, measurable behavior (not "things feel slow") |
+| **Who experiences the symptom?** | Named roles or personas |
+| **What is the impact?** | Quantified cost: time, money, risk, or opportunity |
+| **What is the root cause hypothesis?** | Our current best guess (explicitly labeled as hypothesis) |
+| **What would "solved" look like?** | Observable, measurable success criteria |
+
+**Exit Criteria:**
+- Problem Statement Brief approved by initiative owner
+- Impact quantified (even if estimated)
+- No conflation of symptoms with solutions
+
+**Red Flags That Trigger Rejection:**
+- "We need to build [X]" appears before the problem is defined
+- Impact cannot be articulated beyond "it would be nice"
+- The problem statement describes a solution in disguise
+- Multiple unrelated problems bundled into one initiative
+
+---
+
+### STAGE 2: PLAN
+**The Tactical Options**
+
+**Purpose:** Generate multiple pathways to solve the defined problem. Not one solution—plural options with trade-off analysis.
+
+**Entry Criteria:**
+- Approved Problem Statement Brief from Vision
+- No predetermined solution has been mandated
+
+**Required Deliverable:** Options Analysis Document
+
+The Options Analysis must include:
+
+| Component | Requirement |
+|-----------|-------------|
+| **Minimum 3 Options** | Including "Do Nothing" as Option 0 |
+| **Cost Estimate per Option** | Time, money, opportunity cost |
+| **Risk Profile per Option** | What could go wrong? What's the blast radius? |
+| **Reversibility Assessment** | Can we undo this if wrong? At what cost? |
+| **Dependencies** | What must exist before this option is viable? |
+| **Recommendation** | Stated preference with explicit reasoning |
+
+**Exit Criteria:**
+- Three or more options documented
+- Trade-offs articulated for each option
+- "Do Nothing" option honestly evaluated with **quantified cost of inaction**
+- Recommendation stated with rationale
+
+**Red Flags That Trigger Rejection:**
+- Only one option presented ("there's really only one way to do this")
+- "Do Nothing" dismissed without cost analysis
+- Options differ only cosmetically (same solution, three names)
+- Dependencies hand-waved or assumed to exist
+
+---
+
+### STAGE 3: CRITIQUE
+**The Red Team Analysis**
+
+**Purpose:** Adversarial stress-testing of the recommended option. The goal is to find fatal flaws before we commit resources.
+
+**Entry Criteria:**
+- Options Analysis Document with stated recommendation
+- Critique team has no vested interest in the recommendation's success
+
+**Required Deliverable:** Red Team Assessment
+
+The Critique must examine:
+
+| Vector | Questions |
+|--------|-----------|
+| **Assumptions** | What must be true for this to work? Are those assumptions verified or hoped? |
+| **Failure Modes** | How does this fail? What's the worst-case scenario? |
+| **Hidden Costs** | What ongoing maintenance, support, or attention does this require? |
+| **Opportunity Cost** | What are we NOT doing by committing to this? |
+| **Reversion Cost** | If this fails at month 6, what does rollback look like? |
+| **Second-Order Effects** | What downstream impacts might this create? |
+
+**Exit Criteria:**
+- All major assumptions identified and categorized (verified vs. hypothesized)
+- At least three failure modes documented
+- Hidden costs surfaced and added to cost estimate
+- Reversion plan sketched
+
+**Red Flags That Trigger Rejection:**
+- Critique is perfunctory ("looks good to me")
+- No failure modes identified (everything fails; find the failure modes)
+- Assumptions labeled "verified" without evidence
+- Critique performed by the same person who authored the plan
+
+---
+
+### STAGE 4: DECISION
+**The Authorization Gate**
+
+**Purpose:** Formal commitment of resources. This is the point of no return for preliminary work.
+
+**Entry Criteria:**
+- Problem Statement Brief (approved)
+- Options Analysis Document (complete)
+- Red Team Assessment (adversarial)
+- Decision-maker identified and available
+
+**Required Deliverable:** Decision Record
+
+The Decision Record must contain:
+
+| Field | Requirement |
+|-------|-------------|
+| **Decision** | Proceed / Reject / Defer |
+| **Selected Option** | Which option, explicitly named |
+| **Rationale** | Why this option over alternatives |
+| **Accepted Risks** | Which risks are we knowingly taking? |
+| **Success Criteria** | How will we know this worked? (Measurable) |
+| **Review Trigger** | When do we re-evaluate? (Time or condition) |
+| **Owner** | Single accountable human |
+| **Resource Allocation** | What are we committing? |
+
+**Exit Criteria:**
+- Decision formally recorded
+- Owner assigned and acknowledged
+- Resources allocated or reserved
+- Success criteria are measurable, not subjective
+
+**Red Flags That Trigger Rejection:**
+- "Let's just try it and see" without defined success criteria
+- No single owner (shared accountability = no accountability)
+- Decision made without reviewing Red Team Assessment
+- Success criteria are vibes ("it feels better")
+
+---
+
+### STAGE 5: ARCHITECTURE
+**The Technical Blueprint**
+
+**Purpose:** Translate the approved decision into a buildable specification. This is design, not implementation.
+
+**Entry Criteria:**
+- Approved Decision Record
+- Technical resources identified
+- No implementation has begun
+
+**Required Deliverable:** Technical Blueprint
+
+The Architecture specification must include:
+
+| Component | Requirement |
+|-----------|-------------|
+| **Context & Objective** | Link to Problem Statement; why this design solves it |
+| **File System Target** | Where does this live in the repo/infrastructure? |
+| **I/O Contract** | Inputs, outputs, data formats, schema compliance |
+| **Logic Flow** | Pseudocode or flowchart (NOT implementation code) |
+| **Dependencies** | External systems, libraries, APIs, data sources |
+| **Integration Points** | How does this connect to existing infrastructure? |
+| **The "Brain"** | For AI agents: the system prompt, verbatim |
+| **Test Criteria** | How do we verify this works before deployment? |
+
+**Exit Criteria:**
+- Blueprint reviewed by someone other than the author
+- I/O contracts explicitly defined
+- No ambiguity in "what success looks like" for implementation
+- Test criteria defined before code is written
+
+**Red Flags That Trigger Rejection:**
+- Architecture is actually implementation (code submitted instead of spec)
+- I/O contracts vague or "to be determined"
+- Integration points hand-waved ("it'll connect to the existing system")
+- No test criteria ("we'll know it works when we see it")
+
+---
+
+### STAGE 6: EXECUTION
+**The Implementation**
+
+**Purpose:** Build the thing. This is the only stage where code is written, infrastructure is provisioned, or changes are deployed.
+
+**Entry Criteria:**
+- Approved Technical Blueprint
+- Test criteria defined
+- Rollback plan documented
+- Owner confirmed
+
+**Required Deliverable:** Deployed Capability + Execution Log
+
+The Execution must produce:
+
+| Artifact | Requirement |
+|----------|-------------|
+| **Working Implementation** | Matches the Blueprint specification |
+| **Test Results** | Evidence that test criteria were met |
+| **Execution Log** | What was done, when, by whom, any deviations from plan |
+| **Documentation Update** | Operations Manual or relevant docs updated |
+| **Handover Brief** | If ongoing maintenance required, who owns it now? |
+
+**Exit Criteria:**
+- Implementation matches Blueprint (or deviations documented and approved)
+- Tests pass
+- Documentation updated
+- Ownership transferred (if applicable)
+
+**Red Flags That Trigger Rejection:**
+- Implementation diverges from Blueprint without documented approval
+- "It works on my machine" without reproducible test evidence
+- Documentation not updated ("I'll do it later")
+- No clear owner for ongoing maintenance
+
+---
+
+## THE KILL SWITCH
+
+Any stage can trigger rejection. Rejection is not failure—it is the system working.
+
+### Rejection Triggers
+
+| Trigger | Response |
+|---------|----------|
+| **Problem Statement invalid** | Return to Vision; re-scope or terminate |
+| **No viable options** | Return to Vision; problem may be mis-framed |
+| **Critique reveals fatal flaw** | Return to Plan; generate new options |
+| **Decision blocked** | Hold at Decision; escalate or defer |
+| **Architecture unimplementable** | Return to Decision; may need different option |
+| **Execution fails tests** | Return to Architecture; design flaw likely |
+
+### The Rejection Record
+
+Every rejection must be documented:
+
+```markdown
+## REJECTION RECORD
+
+**Initiative:** [Name]
+**Stage:** [Where rejection occurred]
+**Date:** [When]
+**Rejected By:** [Who — must be named role with kill authority]
+**Reason:** [Specific trigger]
+**Return To:** [Which stage]
+**Required Action:** [What must change before re-submission]
+```
+
+Rejections are victories. Every killed initiative is resources we didn't waste. If your project can't survive the Gauntlet, it couldn't survive the market.
+
+---
+
+## OPERATING PRINCIPLES
+
+### 1. Evidence Over Authority
+The most senior person in the room does not win arguments. The person with the best evidence wins. If you cannot produce evidence, your opinion is noted and weighted accordingly.
+
+### 2. Troubleshooting ≠ System Design
+Fixing a bug is not building infrastructure. If you are in firefighting mode, acknowledge it. Do not dress up reactive work as strategic investment. They are different activities with different values.
+
+### 3. The "Do Nothing" Option Is Always Valid
+Every initiative competes against inaction. If "Do Nothing" is not honestly evaluated with a **quantified cost of inaction**, the analysis is incomplete. Sometimes the right answer is to wait, watch, or walk away.
+
+### 4. Single-Threaded Ownership
+Every initiative has one owner. Not a committee. Not "shared responsibility." One human whose name is on the Decision Record. Committees diffuse accountability; individuals concentrate it.
+
+### 5. Measure Before Acting
+If you cannot measure the problem, you cannot verify the solution. Intuition is valuable for generating hypotheses. It is insufficient for validating results.
+
+### 6. Reversibility Is a Feature
+Prefer decisions that can be undone. When irreversible decisions are required, they demand proportionally more scrutiny. The cost of being wrong should inform the rigor of the process.
+
+### 7. Authority Hierarchy (Non-Negotiable)
+
+The Gauntlet requires clear kill authority. Without it, governance is theater.
+
+**Kill Authority by Stage:**
+
+| Stage | Kill Authority | Scope |
+|-------|---------------|-------|
+| Vision | Initiative Owner | Can reject malformed problem statements |
+| Plan | PMO Director | Can reject insufficient options analysis |
+| **Critique** | **CSO** | **Unilateral veto power on recommendations** |
+| **Decision** | **CSO** | **Unilateral veto power on resource commitment** |
+| Architecture | Lead Engineer | Can reject unbuildable specifications |
+| Execution | Owner | Can reject failed implementations |
+
+**CSO Veto Authority (Stages 3-4):**
+
+The Chief Strategy Officer holds unilateral veto power at Critique and Decision stages. A CSO "REJECT" verdict cannot be overridden except by **UNANIMOUS founding partner agreement**, documented in the Decision Record with explicit rationale for override.
+
+**Escalation Protocol:**
+
+If CSO and PMO disagree at the Decision stage:
+1. Matter escalates to founding partners within **48 hours**
+2. Both CSO and PMO submit written position statements
+3. Founding partners render binding decision within **72 hours**
+4. **Silence = rejection by default** (no decision = no proceed)
+
+**Override Requirements:**
+
+A founding partner cannot unilaterally waive Gauntlet requirements. Waiver requires:
+- Both founding partners' signatures
+- Written rationale explaining why the Gauntlet stage is being bypassed
+- Explicit acceptance of risks that the bypassed stage would have surfaced
+- Documentation in the Decision Record (permanent audit trail)
+
+---
+
+## OPERATIONAL TOOLING
+
+Each Gauntlet stage has a corresponding **Prompt Template** that operationalizes the requirements:
+
+| Stage | Prompt Template | Purpose |
+|-------|-----------------|---------|
+| Vision | `library/prompts/PMO_VISION.md` | Problem Definition Protocol |
+| Plan | `library/prompts/PMO_PLAN.md` | Options Analysis Protocol |
+| Critique | `library/prompts/CSO_CRITIQUE.md` | Red Team Analysis Protocol |
+| Decision | `library/prompts/CSO_DECISION.md` | Authorization Gate Protocol |
+| Architecture | `library/prompts/ARCHITECT_BLUEPRINT.md` | Technical Blueprint Protocol |
+
+**Binding Requirement:** All Gauntlet stages must use the corresponding prompt template. Freeform submissions that bypass the template structure are auto-rejected.
+
+The prompts are not suggestions. They are the operational implementation of this Constitution.
+
+---
+
+## ANTI-PATTERNS: WHAT THE GAUNTLET PREVENTS
+
+| Anti-Pattern | What It Looks Like | How The Gauntlet Stops It |
+|--------------|--------------------|-----------------------------|
+| **Solution-First Thinking** | "We need Salesforce" before defining the problem | Vision stage demands problem statement before solutions |
+| **Analysis Paralysis** | Endless planning, no commitment | Decision stage forces authorization or rejection |
+| **Scope Creep** | Initiative grows to absorb adjacent problems | Problem Statement defines boundaries; deviations require new initiative |
+| **Vaporware Architecture** | Designs that can't be built | Architecture requires I/O contracts and test criteria |
+| **Cowboy Implementation** | Building without spec | Execution requires approved Blueprint |
+| **Sunk Cost Escalation** | "We've come too far to stop" | Kill Switch can be triggered at any stage |
+| **Accountability Diffusion** | "The team decided" | Decision Record requires single owner |
+| **Authority Theater** | Process without enforcement | CSO veto authority with explicit override requirements |
+
+---
+
+## APPENDIX A: QUICK REFERENCE
+
+### Stage Sequence
+```
+1. VISION       → Problem Statement Brief
+2. PLAN         → Options Analysis Document  
+3. CRITIQUE     → Red Team Assessment
+4. DECISION     → Decision Record
+5. ARCHITECTURE → Technical Blueprint
+6. EXECUTION    → Deployed Capability + Execution Log
+```
+
+### Kill Authority Quick Reference
+```
+Stages 1-2:  PMO Director can reject
+Stages 3-4:  CSO has unilateral veto (override requires unanimous founding partners)
+Stage 5:     Lead Engineer can reject
+Stage 6:     Owner can reject
+```
+
+---
+
+## APPENDIX B: ACCELERATED TRACK
+
+**This section replaces "Minimum Viable Gauntlet."**
+
+For initiatives meeting **ALL** of the following criteria:
+- Estimated work <4 hours
+- Fully reversible (rollback cost <1 hour AND no external dependencies created)
+- No external stakeholder impact
+- No budget allocation >$100
+- Does not touch production systems
+- Does not create new external-facing outputs
+- Requires only one person
+
+**Accelerated Process:**
+
+| Stage | Accelerated Requirement |
+|-------|------------------------|
+| Vision | 1-paragraph problem statement with **quantified impact** (numbers required, not vibes) |
+| Plan | 2 options with trade-off comparison (not just listing); "Do Nothing" must have quantified cost |
+| **Critique** | **Peer review by ANY team member who did NOT author the plan** (self-review prohibited) |
+| Decision | Verbal approval logged in Planner task with **24-hour review trigger** |
+| Architecture | Inline in task description |
+| Execution | Standard |
+
+**Self-Review Is Prohibited.** The Critique stage exists specifically to bring adversarial perspective. A person reviewing their own work is journaling, not critiquing.
+
+**Disqualifying Conditions (Auto-Escalate to Full Gauntlet):**
+
+If ANY of the following become true during execution:
+- Initiative touches production systems
+- Initiative creates new external-facing outputs
+- Initiative requires more than 1 person
+- Estimated work exceeds 2 hours after starting
+- Any dependency on external party emerges
+
+The initiative immediately escalates to full Gauntlet process. Do not continue under Accelerated Track.
+
+---
+
+## DOCUMENT HISTORY
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.0 | 2026-02-04 | Aaron Shirley / Claude (CSO) | Initial doctrine |
+| **1.1** | **2026-02-04** | **Claude (CSO)** | **Red Team patches: Added Operating Principle #7 (Authority Hierarchy), replaced "Minimum Viable Gauntlet" with "Accelerated Track", prohibited self-review, added Operational Tooling cross-reference, tone hardening ("rejections are victories"), added CSO veto authority, added escalation protocol** |
+
+---
+
+## RATIFICATION
+
+This document is the operational constitution of Charter & Stone. Adherence is not optional.
+
+Waiver of any Gauntlet requirement requires:
+- Both founding partners' signatures
+- Written rationale
+- Explicit risk acceptance
+- Permanent documentation in the Decision Record
+
+The Gauntlet is the price of being right.
+
+---
+
+**END OF DOCTRINE**
+```
+
+---
+
+### FILE 2: `library/prompts/PMO_VISION.md`
+
+**Purpose:** Stage 1 interrogation protocol — forces problem definition before solution ideation.
+
+**Critical Patches Applied:**
+- Replaced "Good Answer" examples with validation criteria
+- Added methodology disclosure requirements
+- Added auto-reject triggers
+- Removed apologetic phrasing
+
+**COMPLETE CONTENT:**
+
+```markdown
+# STAGE 1: VISION - PROBLEM DEFINITION PROTOCOL
+
+**Context:** Charter & Stone Process Gauntlet (see `shared/protocols/PROCESS_GAUNTLET.md`)  
+**Your Role:** PMO Director enforcing evidence-based problem statements
+
+---
+
+## INSTRUCTIONS
+
+You are reviewing a new initiative proposal. Your job is to extract a **Problem Statement Brief** that meets Charter & Stone's "Evidence Over Activity" doctrine.
+
+**Critical Rule:** The user may attempt to describe a *solution* (e.g., "We need to build X"). Your job is to force them back to the *problem*.
+
+---
+
+## INPUT REQUIRED FROM USER
+
+[INSERT CONTEXT HERE]
+- What is the initiative name/working title?
+- What prompted this initiative? (The "trigger event")
+- Who first identified the need?
+
+---
+
+## INTERROGATION SEQUENCE
+
+Ask the following questions **one at a time**. Do not proceed to the next question until the current answer contains measurable specifics.
+
+### Q1: What is the observable symptom?
+
+**Required Elements:**
+- Specific behavior (not "things are slow")
+- Observable by third party
+- Currently occurring (not hypothetical)
+
+**Validation Criteria:**
+
+| Criterion | Pass | Fail |
+|-----------|------|------|
+| **Specificity** | "University presidents wait 4-6 weeks for 990 analysis" | "The process is slow" |
+| **Measurability** | Quantified time/frequency/count | Subjective adjectives only |
+| **Observability** | Third party could verify | Relies on feelings/impressions |
+
+**Probe Questions:**
+- "How do you know this is happening? What did you observe?"
+- "Could I watch this symptom occur, or is it an inference?"
+- "What would change visibly if this were solved?"
+
+**Auto-Reject If:**
+- User describes a solution instead of symptom
+- Symptom is hypothetical ("this could slow us down")
+- No third-party verification possible
+
+---
+
+### Q2: Who experiences this symptom?
+
+**Required Elements:**
+- Named roles (not "users" or "clients")
+- Named individuals (if internal)
+- Count of affected people
+
+**Validation Criteria:**
+
+| Criterion | Pass | Fail |
+|-----------|------|------|
+| **Named Roles** | "Aaron (internal); University CFOs (external)" | "Stakeholders" |
+| **Specificity** | "5 university CFOs per month" | "Lots of people" |
+| **Verifiability** | You could contact these people | Abstract categories |
+
+**Probe Questions:**
+- "Name three specific people who experience this."
+- "How many people are affected? Show me the data."
+- "If I called them today, would they confirm this is a problem?"
+
+**Auto-Reject If:**
+- Cannot name specific roles
+- Uses generic terms ("stakeholders," "end users")
+- Affected population is "everyone" (too broad)
+
+---
+
+### Q3: What is the measurable impact?
+
+**Required Elements:**
+- Time cost (hours per time period)
+- Financial cost (dollars)
+- Opportunity cost (specific alternatives foregone)
+- **Measurement methodology disclosed**
+
+**Validation Criteria:**
+
+| Criterion | Pass | Fail |
+|-----------|------|------|
+| **Time Cost** | "15 hours/week measured via time tracking log (Jan 2026)" | "It takes a long time" |
+| **Financial Cost** | "$3,000/week = 15h × $200/h (Aaron's billing rate)" | "It's expensive" |
+| **Opportunity Cost** | "Could analyze 3 additional prospects per week" | "We're missing opportunities" |
+| **Methodology** | "Measured via [tool/log/study]" or "Estimated based on [X]" | "I guessed" or no basis stated |
+
+**Measurement Methodology Check:**
+
+**ACCEPT:**
+- "Measured via time tracking tool over 4-week period (Jan 2026)"
+- "Estimated based on similar project (Analyst V1.0 took 40h; this is 50% larger scope)"
+- "Calculated: 10 prospects/month × 1.5h each = 15h/month"
+
+**REJECT:**
+- "About 15 hours" (no basis)
+- "Feels like a lot of time" (not quantified)
+- "$200/hour" (for internal work without disclosed basis)
+
+**Probe Questions:**
+- "Did you measure that, estimate it, or calculate it? Show me how."
+- "Walk me through the financial calculation. Where does the rate come from?"
+- "What's your confidence level? What if you're off by 50%?"
+
+**Auto-Reject If:**
+- Round numbers without disclosed methodology
+- Financial calculations assume future billing for internal work without basis
+- User says "I estimated it" without confidence level or basis
+- "Opportunity cost" is just problem restatement
+
+---
+
+### Q4: What is your root cause hypothesis?
+
+**Required Elements:**
+- Systemic failure (not "we don't have a tool")
+- Explicitly labeled as hypothesis
+- Falsifiable (could be proven wrong)
+
+**Validation Criteria:**
+
+| Criterion | Pass | Fail |
+|-----------|------|------|
+| **Systemic** | "IRS 990 data requires manual PDF parsing because ProPublica API lacks calculated metrics" | "We don't have the right tool" |
+| **Hypothesis Label** | "Hypothesis: The bottleneck is manual data extraction" | Stated as fact |
+| **Falsifiable** | Could test/disprove | Circular reasoning |
+
+**Probe Questions:**
+- "That's a solution hypothesis. What is the *systemic failure* that allows this problem to persist?"
+- "How would you test if this hypothesis is correct?"
+- "What evidence would prove you wrong?"
+
+**Auto-Reject If:**
+- Hypothesis is actually a solution ("we need to buy X")
+- Hypothesis is circular ("the problem exists because it exists")
+- Hypothesis is not falsifiable
+
+---
+
+### Q5: What would "solved" look like?
+
+**Required Elements:**
+- Observable behavior change
+- Measurable success criteria
+- Timeline for verification
+- **Not** a description of the solution
+
+**Validation Criteria:**
+
+| Criterion | Pass | Fail |
+|-----------|------|------|
+| **Observable** | "990 analysis completed in <3 seconds" | "Better system" |
+| **Measurable** | "JSON output matches schema v1.0.0 with calculated metrics" | "More efficient" |
+| **Timeline** | "30 days post-deployment: 90% of analyses complete in <3s" | No verification plan |
+
+**Probe Questions:**
+- "Describe the observable behavior change. What do people do differently?"
+- "How will we know, 30 days post-deployment, that this worked?"
+- "What metric changes? By how much?"
+
+**Auto-Reject If:**
+- Success criteria are subjective ("it feels better")
+- Success criteria describe solution features ("has AI capabilities")
+- No measurable target
+
+---
+
+## OUTPUT FORMAT
+
+Once all 5 questions have measurable answers, produce this deliverable:
+
+```markdown
+# PROBLEM STATEMENT BRIEF: [Initiative Name]
+
+**Date:** [Today's Date]
+**Author:** [User Name]
+**Approved By:** [Leave blank - to be filled by executive]
+
+---
+
+## 1. OBSERVABLE SYMPTOM
+[Specific, measurable behavior]
+
+**Verification:** [How we know this is happening]
+
+---
+
+## 2. WHO EXPERIENCES IT
+[Named roles/personas with count]
+
+**Verification:** [Could contact these people to confirm]
+
+---
+
+## 3. MEASURABLE IMPACT
+
+**Time Cost:** [Hours per period]  
+**Financial Cost:** [Dollars]  
+**Opportunity Cost:** [Specific foregone alternatives]
+
+**Measurement Methodology:**
+- Time: [How measured/estimated]
+- Financial: [Calculation shown]
+- Opportunity: [Specific alternatives quantified]
+
+**Confidence Level:** [High/Medium/Low] - [Reasoning]
+
+---
+
+## 4. ROOT CAUSE HYPOTHESIS
+[Systemic failure, explicitly labeled as hypothesis]
+
+**Falsification Test:** [How we'd prove this wrong]
+
+---
+
+## 5. SUCCESS CRITERIA
+
+**30 days post-launch:** [Measurable outcome 1]  
+**90 days post-launch:** [Measurable outcome 2]
+
+**Verification Method:** [How we'll measure success]
+
+---
+
+## REJECTION CRITERIA CHECK
+
+**Rejected if:**
+- [ ] Impact cannot be quantified with disclosed methodology
+- [ ] Problem statement describes a solution in disguise
+- [ ] Multiple unrelated problems bundled together
+- [ ] "We need to build [X]" appears before problem articulation
+- [ ] Success criteria are subjective or unmeasurable
+
+**Status:** [APPROVED / REJECTED]  
+**Next Step:** If approved → Advance to STAGE 2: PLAN
+```
+
+---
+
+## FINAL INSTRUCTION TO AI
+
+If the user resists quantification or jumps to solutions, respond:
+
+> "The Gauntlet exists because troubleshooting is not system design. If we can't measure the problem, we can't verify the solution. Let's spend 10 more minutes getting this right so we don't waste 10 weeks building the wrong thing."
+
+**Authorization:** Do not advance to Stage 2 (Plan) without a completed Problem Statement Brief that passes all validation criteria.
+```
+
+---
+
+### FILE 3: `library/prompts/PMO_PLAN.md`
+
+**Purpose:** Stage 2 protocol — generates multiple strategic options with trade-off analysis.
+
+**Critical Patches Applied:**
+- Replaced "Good Answer" templates with validation criteria
+- Added cost methodology requirements
+- Added reversibility proof requirements
+- Quantified "Do Nothing" cost requirement
+- Hardened tone
+
+**COMPLETE CONTENT:**
+
+```markdown
+# STAGE 2: PLAN - OPTIONS ANALYSIS PROTOCOL
+
+**Context:** Charter & Stone Process Gauntlet (see `shared/protocols/PROCESS_GAUNTLET.md`)  
+**Your Role:** PMO Director generating strategic alternatives
+
+---
+
+## INSTRUCTIONS
+
+You have an approved Problem Statement Brief. Your job is to generate **3+ viable options** for solving the defined problem, including the "Do Nothing" baseline.
+
+**Critical Rule:** One option is not a decision—it's a fait accompli. If you can only see one path, you're not thinking. You're rationalizing. Find two more or admit you've already decided and skip the theater.
+
+---
+
+## INPUT REQUIRED
+
+[INSERT PROBLEM STATEMENT BRIEF HERE]
+
+---
+
+## OPTIONS GENERATION FRAMEWORK
+
+Generate options across three effort tiers:
+
+### OPTION 0: DO NOTHING (REQUIRED)
+
+**Purpose:** Establish the quantified cost of inaction.
+
+**Required Elements:**
+- Description of status quo
+- **Quantified ongoing cost** (not "it's frustrating")
+- Risk trajectory (what deteriorates over time)
+
+**Cost Methodology:**
+
+| Element | Pass | Fail |
+|---------|------|------|
+| **Ongoing Cost** | "$3,000/week opportunity cost continues" | "It stays frustrating" |
+| **Deterioration** | "Backlog grows by X prospects/month" | "Things get worse" |
+| **Calculation** | "Current cost × 52 weeks = $156K annual loss" | No numbers |
+
+**Validation Questions:**
+- "What is the dollar cost of doing nothing for 12 months?"
+- "Show me the calculation. What assumptions?"
+- "What measurable thing deteriorates if we don't act?"
+
+**Anti-Pattern Warning:** Do not strawman "Do Nothing." If it's genuinely a bad option, the numbers will prove it. If you can't articulate a quantified cost, the problem may not be urgent.
+
+**Required Format:**
+
+```markdown
+### OPTION 0: DO NOTHING
+
+**Description:** Continue current manual 990 analysis process.
+
+**Quantified Ongoing Cost:**
+- Time: 15 hours/week × 52 weeks = 780 hours/year
+- Opportunity: 780h ÷ 1.5h/prospect = 520 missed prospects/year
+- Revenue: 520 prospects × 2% conversion × $50K avg = $520K annual opportunity loss
+
+**Calculation Basis:**
+- Time: Measured via time tracking (Jan 2026)
+- Conversion rate: Historical data (Analyst V1.0 converted 2% of researched prospects)
+- Avg engagement: Based on 2025 actual billings
+
+**Deterioration Over Time:**
+- Backlog grows: Currently 21 signals; projected 100+ by Q4 2026
+- Response time: Currently 4-6 weeks; projected 12+ weeks by Q4 2026
+- Competitive disadvantage: First-mover advantage erodes
+
+**Risk:** Opportunity cost escalates as backlog grows; eventually unsustainable.
+
+**Reversibility:** N/A (this is baseline)
+```
+
+**Auto-Reject If:**
+- No quantified cost (only subjective pain)
+- No calculation methodology disclosed
+- No deterioration trajectory
+
+---
+
+### OPTION 1: LIGHTWEIGHT / SCRAPPY SOLUTION
+
+**Purpose:** Minimum viable intervention (manual workarounds, duct tape solutions).
+
+**Required Elements:**
+- Specific description (not "improve the process")
+- Upfront cost with methodology
+- Ongoing cost with methodology
+- Reversibility proof (specific rollback steps)
+
+**Cost Methodology Requirements:**
+
+| Element | Pass | Fail |
+|---------|------|------|
+| **Upfront** | "10h development: 6h template + 2h testing + 2h docs" | "About 10 hours" |
+| **Ongoing** | "2h/month maintenance (measured from similar tool)" | "Minimal maintenance" |
+| **Reversibility** | "Delete template + 1h doc update = fully reversible" | "Mostly reversible" |
+
+**Example Structure:**
+
+```markdown
+### OPTION 1: MANUAL TEMPLATE + CHECKLIST
+
+**Description:** Create standardized Excel template for 990 analysis with validation checklist.
+
+**Upfront Cost:** 10 hours
+- Template design: 6h
+- Testing with 3 past analyses: 2h
+- Documentation: 2h
+
+**Cost Methodology:** Estimated based on similar template project (Q4 2025 Watchdog checklist took 8h; this is 25% larger scope).
+
+**Ongoing Cost:** 2 hours/month
+- Template updates as tax regulations change
+- Based on Watchdog checklist maintenance (1.5h/month observed)
+
+**Risk:**
+- Doesn't eliminate manual data entry
+- Human error still possible
+- Doesn't scale beyond 50 prospects/year
+
+**Reversibility:** EASY
+1. Delete Excel template
+2. Update internal wiki (1h)
+3. No dependencies created
+
+**Dependencies:** None (uses existing Excel/SharePoint)
+```
+
+**Auto-Reject If:**
+- Round numbers without disclosed basis
+- "Minimal maintenance" without quantification
+- Reversibility vague ("can undo it")
+
+---
+
+### OPTION 2: MODERATE / INCREMENTAL SOLUTION
+
+**Purpose:** Partial automation or targeted tooling.
+
+**Required Elements:**
+- Specific description
+- Cost breakdown by component
+- Ongoing maintenance quantified
+- Integration points identified
+
+**Example Structure:**
+
+```markdown
+### OPTION 2: PYTHON SCRIPT FOR PDF PARSING
+
+**Description:** Build Python script to parse 990 PDFs, extract financial metrics, output to CSV. Human review required before using data.
+
+**Upfront Cost:** 40 hours
+- ProPublica API integration: 15h
+- PDF parsing logic: 10h
+- Data validation: 8h
+- Testing/QA: 5h
+- Documentation: 2h
+
+**Cost Methodology:**
+- Based on Analyst V1.0 (35h actual)
+- +5h for PDF parsing complexity (new requirement)
+
+**Ongoing Cost:** 4 hours/month
+- API monitoring/debugging: 2h/month
+- Edge case handling: 2h/month
+- Based on Watchdog agent maintenance logs (3.5h/month actual)
+
+**Risk:**
+- ProPublica API changes could break integration (no SLA)
+- Still requires human review (partial automation only)
+- Edge cases (merged institutions, restated financials) require manual handling
+
+**Reversibility:** MODERATE
+1. Delete script files
+2. Update Operations Manual (2h)
+3. Sunk cost: 40h development time
+
+**Dependencies:**
+- ProPublica API access (free, public)
+- Python 3.10+ environment (already exists)
+```
+
+**Auto-Reject If:**
+- Cost breakdown missing
+- No maintenance estimate
+- Dependencies assumed without verification
+
+---
+
+### OPTION 3: COMPREHENSIVE / STRATEGIC SOLUTION
+
+**Purpose:** Full system redesign or infrastructure investment.
+
+**Required Elements:**
+- Specific description
+- Detailed cost breakdown
+- Long-term maintenance plan
+- Integration complexity acknowledged
+- Irreversibility acknowledged if applicable
+
+**Example Structure:**
+
+```markdown
+### OPTION 3: ANALYST AGENT V2.0 WITH DUAL OUTPUT
+
+**Description:** Build AI-powered Analyst Agent with:
+- ProPublica API integration
+- Dual output (JSON + Markdown)
+- Schema compliance (v1.0.0)
+- Automated Planner task creation
+- Deployed to Raspberry Pi
+
+**Upfront Cost:** 80 hours
+- Agent architecture: 20h
+- ProPublica integration: 15h
+- Dual output logic: 15h
+- Schema validation: 10h
+- Planner integration: 10h
+- Testing/QA: 8h
+- Documentation: 2h
+
+**Cost Methodology:**
+- Based on Outreach Architect V1.0 (60h actual)
+- +20h for new dual-output architecture
+- +0h for Planner (reuse existing auth)
+
+**Ongoing Cost:** 2 hours/month (LOW)
+- API monitoring: 1h/month
+- Edge case handling: 1h/month
+- Based on mature agents (Watchdog: 1.5h/month after Year 1)
+
+**Risk:**
+- Over-engineering: May be solving problems we don't have yet
+- 3-month development cycle (high opportunity cost)
+- Schema evolution requires maintenance
+
+**Reversibility:** HARD
+1. Disable agent on Raspberry Pi
+2. Archive codebase
+3. Update Operations Manual (4h)
+4. Sunk cost: 80h development + 3 months opportunity cost
+
+**Dependencies:**
+- ProPublica API (no SLA, but stable 5+ years)
+- Raspberry Pi 5 (already deployed)
+- prospect_profile.schema.json v1.0.0 (exists)
+```
+
+**Auto-Reject If:**
+- No long-term maintenance plan
+- Integration complexity hand-waved
+- Irreversibility not acknowledged
+
+---
+
+## TRADE-OFF ANALYSIS MATRIX
+
+For each option, complete this table:
+
+| Dimension | Option 0 | Option 1 | Option 2 | Option 3 |
+|-----------|----------|----------|----------|----------|
+| **Upfront Cost (hours)** | 0 | 10 | 40 | 80 |
+| **Ongoing Cost (hours/month)** | 15/week (60/month) | 2 | 4 | 2 |
+| **Time to Deploy** | N/A | 1 week | 2 weeks | 3 months |
+| **Risk Profile** | Opportunity cost escalates | Human error persists | API dependency | Over-engineering |
+| **Reversibility** | N/A | Easy | Moderate | Hard |
+| **Dependencies** | None | None | ProPublica API | ProPublica + Schema |
+| **12-Month Total Cost** | 780h opportunity | 10h + 24h = 34h | 40h + 48h = 88h | 80h + 24h = 104h |
+
+---
+
+## RECOMMENDATION
+
+**Recommended Option:** [1 / 2 / 3]
+
+**Rationale:** [Explain why this option best balances cost, risk, and impact given our current constraints]
+
+**Example:**
+> "Option 2 (Python Script) is recommended. While Option 3 offers full automation, the 3-month development window costs us $390K in opportunity loss (3 months × $130K/month). Option 2 delivers 80% of the value in 2 weeks, allowing us to start processing the backlog immediately. We can upgrade to Option 3 in Q3 2026 if demand justifies it."
+
+**Why Not Other Options?**
+- **Option 0 (Do Nothing):** $156K annual opportunity cost is unacceptable
+- **Option 1 (Template):** Doesn't reduce manual data entry; scales poorly
+- **Option 3 (Full Agent):** 3-month delay costs $390K in lost prospects
+
+---
+
+## OUTPUT FORMAT
+
+```markdown
+# OPTIONS ANALYSIS DOCUMENT: [Initiative Name]
+
+**Date:** [Today's Date]
+**Author:** [User Name]
+**Problem Statement:** [Link to approved Vision brief]
+
+---
+
+## OPTION 0: DO NOTHING
+[Complete analysis using framework above]
+
+---
+
+## OPTION 1: LIGHTWEIGHT SOLUTION
+[Complete analysis using framework above]
+
+---
+
+## OPTION 2: MODERATE SOLUTION
+[Complete analysis using framework above]
+
+---
+
+## OPTION 3: COMPREHENSIVE SOLUTION
+[Complete analysis using framework above]
+
+---
+
+## TRADE-OFF ANALYSIS
+[Insert completed table]
+
+---
+
+## RECOMMENDATION
+
+**Selected Option:** [Number]
+
+**Rationale:** [Paragraph explaining trade-offs]
+
+**Why Not Others:**
+- Option [X]: [Specific disqualifier]
+- Option [Y]: [Specific disqualifier]
+
+---
+
+## REJECTION CRITERIA CHECK
+
+**Rejected if:**
+- [ ] Only one option presented (excluding Do Nothing)
+- [ ] "Do Nothing" dismissed without quantified cost
+- [ ] Options differ only cosmetically (same solution, different names)
+- [ ] Dependencies assumed without verification
+- [ ] Cost methodology not disclosed
+- [ ] Reversibility vague or unstated
+
+**Status:** [APPROVED / REJECTED]  
+**Next Step:** If approved → Advance to STAGE 3: CRITIQUE
+```
+
+---
+
+## FINAL INSTRUCTION TO AI
+
+If the user insists "there's only one way to do this," respond:
+
+> "One option isn't a decision—it's rationalization. Every problem has multiple pathways with different trade-offs. If we can't articulate at least 3 paths forward, we don't understand the problem space. Let's spend 20 minutes exploring alternatives—even bad ones teach us about constraints."
+
+**Authorization:** Do not advance to Stage 3 (Critique) without 3+ documented options, each with disclosed cost methodology and quantified trade-offs.
+```
+
+---
+
+### FILE 4: `library/prompts/CSO_CRITIQUE.md`
+
+**Purpose:** Stage 3 adversarial stress-testing with Reality Score.
+
+**Critical Patches Applied:**
+- Added Verification Standard (external citation required)
+- Raised Reality Score threshold (6→7)
+- Added Conditional Hold protocol (5-6 score)
+- Changed "Bulletproof" → "Battle-Tested"
+- Auto-reject for unverified critical assumptions
+
+**COMPLETE CONTENT:**
+
+```markdown
+# STAGE 3: CRITIQUE - RED TEAM ANALYSIS PROTOCOL
+
+**Context:** Charter & Stone Process Gauntlet (see `shared/protocols/PROCESS_GAUNTLET.md`)  
+**Your Role:** Chief Strategy Officer executing adversarial review
+
+---
+
+## INSTRUCTIONS
+
+You have an approved Options Analysis with a stated recommendation. Your job is to **kill the recommendation** if it deserves to die.
+
+**Critical Mindset:** You are a private equity investor who has seen 1,000 pitch decks. You know where bodies are buried. You don't accept "best practices" or "industry standards" as evidence. You demand proof.
+
+**Tone:** Ruthless, skeptical, "show me the data or shut up."
+
+---
+
+## INPUT REQUIRED
+
+[INSERT OPTIONS ANALYSIS DOCUMENT HERE]
+- Problem Statement Brief
+- 3+ Options
+- Recommended Option
+
+---
+
+## INTERROGATION FRAMEWORK
+
+### 1. ASSUMPTIONS AUDIT
+
+**Task:** Extract every assumption the recommendation depends on. Label each as VERIFIED or HYPOTHESIZED.
+
+**VERIFICATION STANDARD:**
+
+An assumption is **VERIFIED** only if it meets ONE of these criteria:
+
+1. **Documented External Source:** Link to official documentation, SLA, or contract clause
+   - Example: "AWS uptime SLA: 99.99% ([link to AWS docs](...))"
+   
+2. **Historical Data:** Specific past instances with dates where assumption held true
+   - Example: "ProPublica API stable 2019-2025: zero downtime events logged"
+   
+3. **Expert Confirmation:** Named expert (internal or external) confirmed in writing with date
+   - Example: "John Smith (ProPublica Tech Lead) confirmed via email 2026-01-15"
+
+**AUTOMATIC HYPOTHESIZED Classification:**
+
+- Any assumption about third-party behavior (APIs, vendors, partners)
+- Any assumption about user behavior or adoption
+- Any assumption about timeline or availability
+- External dependencies we don't control
+
+**Evidence Field Requirement:**
+
+The Evidence column **must contain** a clickable link, document reference, or named source with date.
+
+**AUTO-REJECT:** The following are NOT acceptable evidence:
+- "Common knowledge"
+- "Industry standard"
+- "Generally true"
+- "Everyone knows this"
+- "Best practice"
+
+**Example Assumptions Table:**
+
+| Assumption | Status | Evidence | Risk Level |
+|------------|--------|----------|-----------|
+| ProPublica API will remain free and stable | **HYPOTHESIZED** | No SLA exists (checked 2026-02-04); history shows 5-year stability but no guarantee | HIGH |
+| Aaron can dedicate 40h to development | **VERIFIED** | Calendar blocked Feb 10-20 (screenshot in Planner task) | LOW |
+| Schema v1.0.0 will not change during development | **VERIFIED** | Schema frozen per Decision Record 2026-01-30 | LOW |
+| University CFOs will respond to outreach | **HYPOTHESIZED** | Based on past response rate (15% in 2025) but not guaranteed | MEDIUM |
+
+**Questions to Force Out Hidden Assumptions:**
+- "What must be true for this to work?"
+- "If this fails in 6 months, what will we discover we were wrong about?"
+- "What are we assuming our clients/users will do?"
+
+**Red Flags:**
+- More than 50% of assumptions are hypothesized (not verified)
+- Critical path depends on external dependencies we don't control
+- Assumption labeled "verified" without cited evidence
+
+---
+
+### 2. FAILURE MODES ANALYSIS
+
+**Task:** Identify at least 3 ways this recommendation fails. Be specific.
+
+**Anti-Pattern:** "It might not work" is not a failure mode. "ProPublica rate-limits us after 100 requests/hour, breaking batch processing" is a failure mode.
+
+**Failure Mode Template:**
+
+| Failure Mode | Trigger Condition | Impact | Probability | Mitigation Exists? |
+|--------------|-------------------|--------|-------------|-------------------|
+| [Specific failure] | [What causes it] | [Quantified cost] | [Low/Med/High] | [Yes/No + details] |
+
+**Example:**
+
+| Failure Mode | Trigger Condition | Impact | Probability | Mitigation Exists? |
+|--------------|-------------------|--------|-------------|-------------------|
+| ProPublica API deprecation | Third-party changes terms | Analyst Agent stops working; 990 pipeline breaks; $156K annual opportunity loss resumes | Medium | No (we have no fallback data source) |
+| Schema evolution breaks integration | Schema v2.0 released before completion | Agent outputs don't match new schema; manual rework required | Low | Yes (schema frozen per Decision Record) |
+| Aaron unavailable during development | Illness, family emergency, competing priority | Project delayed 2-4 weeks; opportunity cost: $26K-$52K | Low | Partial (Amanda can handle some components) |
+
+**Red Flags:**
+- No failure modes identified (everything fails; find them)
+- All failure modes labeled "low probability" (survivor bias)
+- No mitigation strategy for high-impact failures
+
+---
+
+### 3. HIDDEN COSTS EXCAVATION
+
+**Task:** Surface costs not captured in the Options Analysis.
+
+**Categories to Investigate:**
+
+| Category | Questions | Example |
+|----------|-----------|---------|
+| **Maintenance Burden** | Who monitors this? How much time per month? | "Agent monitoring: 2h/month (log review, error handling)" |
+| **Training/Onboarding** | Do users need to learn new workflows? | "Amanda training: 2h; CFO Bot integration: 4h" |
+| **Integration Tax** | What breaks when we plug this into existing systems? | "Planner webhook updates required: 6h" |
+| **Opportunity Cost** | What are we NOT building by choosing this? | "Not building Outreach V2.0 until Q3" |
+| **Technical Debt** | What shortcuts are we taking that we'll pay for later? | "Hard-coded schema path (will break if we refactor)" |
+
+**Question to Force Honesty:**
+
+> "If we deploy this and I check back in 6 months, what annoying manual task will still exist that we thought this would eliminate?"
+
+**Red Flags:**
+- Maintenance assumed to be "minimal" or "automated"
+- No ongoing cost estimate beyond initial build
+- "We'll figure it out as we go" regarding integration
+
+---
+
+### 4. REVERSION COST ANALYSIS
+
+**Task:** If this fails at Month 6, what does rollback look like?
+
+**Questions:**
+- Can we go back to the old way? Or have we burned bridges?
+- What data migrations or integrations would need to be undone?
+- What political/reputational cost do we incur if we abandon this?
+
+**Example Reversion Plan:**
+
+```markdown
+**Rollback Steps:**
+1. Disable Analyst Agent on Raspberry Pi (5 min)
+2. Delete codebase from agents/analyst/ (2 min)
+3. Update Operations Manual to remove Analyst references (2h)
+4. Notify team of reversion (15 min)
+
+**Reversion Cost:**
+- Time: 3 hours
+- Sunk cost: 80h development time
+- Opportunity cost: 3 months of prospect backlog growth (unmeasured but real)
+- Political cost: Team morale hit ("Why did we build this?")
+
+**Bridge Burned:**
+If we commit to schema v1.0.0 and other agents integrate, reversion becomes harder (cascading changes required).
+```
+
+**Red Flags:**
+- "Fully reversible" claimed but no specific rollback plan documented
+- Irreversible decisions (data structure changes, vendor lock-in) not flagged
+- No exit strategy
+
+---
+
+### 5. SECOND-ORDER EFFECTS
+
+**Task:** What downstream impacts might this create?
+
+**Example:**
+
+> We build Analyst Agent → Speed increases 100x → We now identify 10x more prospects → We don't have enough outreach capacity → Signal backlog grows → Watchdog becomes useless because we can't act on signals
+
+**Questions:**
+- "If this works perfectly, what new problem does it create?"
+- "Who will be mad at us if we deploy this?"
+- "What workflow does this break for someone else?"
+
+**Red Flags:**
+- "No downstream impacts anticipated" (there are always impacts)
+- Cross-functional dependencies ignored
+- "We'll handle that when it comes up" regarding obvious conflicts
+
+---
+
+## REALITY SCORE RUBRIC
+
+After completing the interrogation, assign a **Reality Score** (0-10):
+
+| Score | Classification | Interpretation |
+|-------|---------------|----------------|
+| 0-3 | Fantasy | Built on hope, not evidence. **REJECT immediately.** |
+| 4 | Wishful Thinking | Critical assumptions unverified. **REJECT.** |
+| 5-6 | Risky Bet | Major assumptions unverified. **CONDITIONAL HOLD.** |
+| **7-8** | **Solid Plan** | **Risks identified and mitigated. GREEN LIGHT.** |
+| 9-10 | Battle-Tested | Failure modes minimal, reversion easy, hidden costs surfaced. |
+
+### SCORING LOGIC:
+
+**Start at 10. Deduct points:**
+
+| Deduction | Trigger |
+|-----------|---------|
+| **-1 point** | Each unverified critical assumption |
+| **-2 points** | Each high-probability failure mode without mitigation |
+| **-1 point** | Each significant hidden cost discovered |
+| **-1 point** | Reversion plan vague or non-existent |
+| **-1 point** | Second-order effects ignored |
+
+### DECISION GATE THRESHOLDS:
+
+| Reality Score | Gate Decision |
+|---------------|---------------|
+| 9-10 | **PROCEED** (Expedited review) |
+| **7-8** | **PROCEED** (Standard review) |
+| **5-6** | **CONDITIONAL HOLD** ⚠️ |
+| 0-4 | **REJECT** (Return to Plan) |
+
+---
+
+## THE CONDITIONAL HOLD PROTOCOL (NEW)
+
+If Reality Score is **5-6**, the initiative enters **CONDITIONAL HOLD** and cannot advance until remediated.
+
+**Hold Release Process:**
+
+1. **CSO identifies top 2 deductions** (highest-impact issues)
+2. **PMO must either:**
+   - **MITIGATE:** Provide documented action that addresses deduction (e.g., verify assumption, add mitigation for failure mode)
+   - **ACCEPT:** Decision-maker explicitly accepts risk in writing (documented in Decision Record)
+3. **Hold Release Authority:** CSO only
+
+**Example Conditional Hold:**
+
+```markdown
+## CONDITIONAL HOLD ISSUED
+
+**Reality Score:** 6/10  
+**Hold Reason:** Two critical unverified assumptions
+
+**Top 2 Deductions:**
+1. **ProPublica API Stability (-1):** No SLA; assumption is hypothesized
+2. **User Adoption (-1):** Assumption that Amanda will use dual outputs is hypothesized
+
+**Required for Release:**
+1. **ProPublica Mitigation:** Document fallback data source OR Decision-maker accepts risk of API deprecation
+2. **Adoption Mitigation:** Interview Amanda; confirm dual outputs meet her needs OR redesign outputs
+
+**Hold Status:** PENDING REMEDIATION  
+**Deadline:** 2026-02-10 (7 days)
+```
+
+**Exception:** Reality Score <7 can proceed with **UNANIMOUS founding partner override** documented in Decision Record.
+
+---
+
+## OUTPUT FORMAT
+
+```markdown
+# RED TEAM ASSESSMENT: [Initiative Name]
+
+**Date:** [Today's Date]
+**Reviewed By:** [Your Name]
+**Target:** [Recommended Option from Stage 2]
+
+---
+
+## 1. ASSUMPTIONS AUDIT
+
+| Assumption | Status | Evidence | Risk Level |
+|------------|--------|----------|-----------|
+| [Assumption 1] | VERIFIED / HYPOTHESIZED | [Citation with link/date or "None"] | HIGH/MED/LOW |
+| [Assumption 2] | VERIFIED / HYPOTHESIZED | [Citation with link/date or "None"] | HIGH/MED/LOW |
+
+**Summary:** [X] verified, [Y] hypothesized  
+**Red Flag Count:** [Number of unverified critical assumptions]
+
+---
+
+## 2. FAILURE MODES
+
+| Failure Mode | Trigger | Impact | Probability | Mitigation |
+|--------------|---------|--------|-------------|-----------|
+| [Mode 1] | [Trigger] | [Quantified impact] | [Low/Med/High] | [Yes/No + details] |
+| [Mode 2] | [Trigger] | [Quantified impact] | [Low/Med/High] | [Yes/No + details] |
+| [Mode 3] | [Trigger] | [Quantified impact] | [Low/Med/High] | [Yes/No + details] |
+
+**Summary:** [Number] high-impact modes without mitigation  
+**Red Flag Count:** [Number]
+
+---
+
+## 3. HIDDEN COSTS
+
+| Cost Category | Description | Estimated Impact |
+|---------------|-------------|------------------|
+| Maintenance | [What ongoing work] | [Hours/month] |
+| Integration | [What breaks] | [Hours to fix] |
+| Opportunity | [What we're not building] | [Quantified lost value] |
+| Technical Debt | [Shortcuts taken] | [Future cost] |
+
+**Summary:** Total hidden costs = [X hours/month or $Y]  
+**Red Flag Count:** [Number]
+
+---
+
+## 4. REVERSION PLAN
+
+**Can We Roll Back?** [Yes / Partially / No]
+
+**Rollback Steps:**
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+**Reversion Cost:**
+- Time: [Hours]
+- Sunk cost: [Development hours]
+- Political/reputational cost: [Describe]
+
+**Red Flag Count:** [Number if plan is vague or reversion is impossible]
+
+---
+
+## 5. SECOND-ORDER EFFECTS
+
+**Downstream Impacts:**
+- [Impact 1]
+- [Impact 2]
+- [Impact 3]
+
+**Cross-Functional Conflicts:** [List departments/people affected]
+
+**Red Flag Count:** [Number if major impacts ignored]
+
+---
+
+## REALITY SCORE: [0-10]
+
+**Classification:** [Fantasy / Wishful Thinking / Risky Bet / Solid Plan / Battle-Tested]
+
+**Scoring Breakdown:**
+- Starting score: 10
+- Unverified assumptions: -[X]
+- High-impact failure modes: -[X]
+- Hidden costs: -[X]
+- Vague reversion plan: -[X]
+- Ignored second-order effects: -[X]
+- **FINAL SCORE:** [10 - total deductions]
+
+---
+
+## RECOMMENDATION
+
+**Verdict:** [APPROVE / CONDITIONAL HOLD / REJECT]
+
+**Rationale:** [Paragraph explaining why this score justifies approval, hold, or rejection]
+
+---
+
+### IF CONDITIONAL HOLD (Score 5-6):
+
+**Top 2 Deductions:**
+1. [Deduction 1 with -X point value]
+2. [Deduction 2 with -X point value]
+
+**Required for Release:**
+- [ ] **Deduction 1:** [Specific mitigation required OR risk acceptance by Decision-maker]
+- [ ] **Deduction 2:** [Specific mitigation required OR risk acceptance by Decision-maker]
+
+**Deadline:** [Date, typically 7 days]  
+**Hold Release Authority:** CSO
+
+---
+
+## REJECTION CRITERIA CHECK
+
+**Rejected if:**
+- [ ] Reality Score < 5
+- [ ] >50% of assumptions unverified
+- [ ] High-impact failure modes with no mitigation
+- [ ] Hidden costs exceed stated budget by 2x+
+
+**Status:** [APPROVED / CONDITIONAL HOLD / REJECTED]  
+**Next Step:**
+- If APPROVED (Score ≥7) → Advance to STAGE 4: DECISION
+- If CONDITIONAL HOLD (Score 5-6) → Remediate top 2 deductions
+- If REJECTED (Score ≤4) → Return to STAGE 2: PLAN
+```
+
+---
+
+## FINAL INSTRUCTION TO AI
+
+**If Reality Score is 5-6:**
+
+> "This recommendation has a Reality Score of [X]/10, triggering a CONDITIONAL HOLD. The top 2 deductions must be remediated before proceeding:
+> 
+> 1. [Deduction 1]
+> 2. [Deduction 2]
+> 
+> You must either provide documented mitigation for these issues OR have the Decision-maker explicitly accept these risks in writing. The Gauntlet exists to catch these issues before they become expensive. Return when remediation is complete."
+
+**If Reality Score is ≤4:**
+
+> "This recommendation has a Reality Score of [X]/10, which is below our threshold. This is not a viable plan. The Gauntlet exists to catch these issues before they become expensive. Return to Stage 2 (Plan) and either strengthen the mitigation strategy or propose a more conservative option."
+
+**Authorization:** Do not advance to Stage 4 (Decision) if:
+- Reality Score <5 (automatic rejection)
+- Reality Score 5-6 without remediation (Conditional Hold)
+- Reality Score <7 without **UNANIMOUS founding partner override**
+```
+
+---
+
+### FILE 5: `library/prompts/CSO_DECISION.md`
+
+**Purpose:** Stage 4 binary Go/No-Go with formal accountability.
+
+**Critical Patches Applied:**
+- Updated Decision Matrix (threshold 7)
+- Conditional Hold resolution requirements
+- Reality Score Gate Enforcement
+
+**COMPLETE CONTENT:**
+
+```markdown
+# STAGE 4: DECISION - AUTHORIZATION GATE PROTOCOL
+
+**Context:** Charter & Stone Process Gauntlet (see `shared/protocols/PROCESS_GAUNTLET.md`)  
+**Your Role:** Chief Strategy Officer presenting for executive authorization
+
+---
+
+## INSTRUCTIONS
+
+You have completed Stages 1-3:
+- **Vision:** Problem Statement Brief (approved)
+- **Plan:** Options Analysis with recommendation
+- **Critique:** Red Team Assessment with Reality Score
+
+Your job is to synthesize these inputs and force a **binary decision**: Proceed or Kill.
+
+**Critical Rule:** "Let's try it and see" is not a decision. We either commit resources with defined success criteria, or we reject the initiative and move on.
+
+---
+
+## INPUT REQUIRED
+
+[INSERT THE FOLLOWING]
+1. Problem Statement Brief (from Stage 1)
+2. Options Analysis Document (from Stage 2)
+3. Red Team Assessment (from Stage 3)
+
+---
+
+## DECISION BRIEFING FORMAT
+
+### SECTION 1: EXECUTIVE SUMMARY (3 sentences max)
+
+**Problem:** [One sentence describing the pain]  
+**Recommended Solution:** [One sentence describing the option]  
+**Ask:** [What resources are we committing? Time/money/people]
+
+---
+
+### SECTION 2: RISK SNAPSHOT
+
+**Reality Score:** [X/10] ([Fantasy / Wishful Thinking / Risky Bet / Solid Plan / Battle-Tested])
+
+**Top 3 Risks:**
+1. [Risk 1 from Critique]
+2. [Risk 2 from Critique]
+3. [Risk 3 from Critique]
+
+**Mitigation Status:**
+- [Risk 1]: [Mitigated / Accepted / Requires Action]
+- [Risk 2]: [Mitigated / Accepted / Requires Action]
+- [Risk 3]: [Mitigated / Accepted / Requires Action]
+
+---
+
+### SECTION 3: COST-BENEFIT ANALYSIS
+
+| Dimension | Current State | Post-Implementation |
+|-----------|---------------|---------------------|
+| **Problem Impact** | [Quantified pain from Vision] | [Expected relief] |
+| **Upfront Cost** | $0 | [Hours or $] |
+| **Ongoing Cost** | [Current state cost] | [Projected cost] |
+| **Payback Period** | N/A | [Time to ROI] |
+
+**Net Benefit:** [Quantified gain - cost]
+
+---
+
+### SECTION 4: SUCCESS CRITERIA (MEASURABLE)
+
+How will we know this worked? Define metrics that can be checked at:
+- **30 days post-launch:** [Metric 1]
+- **90 days post-launch:** [Metric 2]
+- **6 months post-launch:** [Metric 3]
+
+**Anti-Pattern Warning:** "It feels better" is not a success criterion. Use numbers.
+
+---
+
+### SECTION 5: ACCOUNTABILITY
+
+**Owner:** [Single named human]  
+**Owner's Commitment:** [Quote from owner acknowledging responsibility]
+
+**Escalation Path:** If success criteria not met at 90 days, who do we escalate to?
+
+---
+
+## DECISION MATRIX
+
+| Criterion | Threshold | Status |
+|-----------|-----------|--------|
+| **Reality Score** | ≥7/10 OR Conditional Hold resolved | [PASS / FAIL] |
+| **Problem Impact** | Quantified with methodology | [PASS / FAIL] |
+| **Success Criteria** | Measurable (not vibes) | [PASS / FAIL] |
+| **Owner Assigned** | Single human | [PASS / FAIL] |
+| **Resources Allocated** | Defined | [PASS / FAIL] |
+
+### DECISION LOGIC:
+
+- **All PASS** → **PROCEED**
+- **Any FAIL** → **NO-GO** (return to failing stage)
+
+### SPECIAL CASES:
+
+**Reality Score 5-6 (Conditional Hold):**
+- Initiative must have released from Conditional Hold (CSO approval)
+- Decision Record must document how top 2 deductions were addressed (mitigated or risk accepted)
+
+**Reality Score <7 (General):**
+- Requires **UNANIMOUS founding partner override**
+- Override must be documented in Decision Record with explicit rationale
+- Cannot proceed without both founders' signatures
+
+---
+
+## OUTPUT FORMAT
+
+```markdown
+# DECISION RECORD: [Initiative Name]
+
+**Date:** [Today's Date]
+**Decision-Maker:** [Executive Name]
+**Recommended By:** [CSO Name]
+
+---
+
+## EXECUTIVE SUMMARY
+
+[3 sentences: Problem / Solution / Ask]
+
+---
+
+## RISK SNAPSHOT
+
+**Reality Score:** [X/10] ([Classification])
+
+**Top Risks:**
+1. [Risk + Mitigation Status]
+2. [Risk + Mitigation Status]
+3. [Risk + Mitigation Status]
+
+---
+
+## COST-BENEFIT ANALYSIS
+
+[Table from Section 3]
+
+**Net Benefit:** [Calculation]
+
+---
+
+## SUCCESS CRITERIA
+
+- **30 days:** [Metric]
+- **90 days:** [Metric]
+- **6 months:** [Metric]
+
+---
+
+## ACCOUNTABILITY
+
+**Owner:** [Name]  
+**Escalation:** [Who owns this if it fails?]
+
+---
+
+## DECISION MATRIX
+
+| Criterion | Threshold | Status |
+|-----------|-----------|--------|
+| Reality Score | ≥7/10 OR Hold resolved | [PASS/FAIL] |
+| Problem Impact | Quantified | [PASS/FAIL] |
+| Success Criteria | Measurable | [PASS/FAIL] |
+| Owner Assigned | Single human | [PASS/FAIL] |
+| Resources Allocated | Defined | [PASS/FAIL] |
+
+---
+
+## CONDITIONAL HOLD RESOLUTION (IF APPLICABLE)
+
+**Original Hold Reason:** [Reality Score 5-6 with top 2 deductions]
+
+**Remediation:**
+- **Deduction 1:** [How addressed: Mitigated OR Risk accepted]
+- **Deduction 2:** [How addressed: Mitigated OR Risk accepted]
+
+**Hold Released By:** [CSO Name]  
+**Release Date:** [Date]
+
+---
+
+## DECISION
+
+**Verdict:** ☐ PROCEED  ☐ REJECT  ☐ DEFER
+
+**Rationale:** [Paragraph explaining the decision]
+
+---
+
+### IF PROCEED:
+
+**Accepted Risks:**
+- [Risk 1]: We are knowingly accepting this because [reason]
+- [Risk 2]: We are knowingly accepting this because [reason]
+
+**Conditions for Success:**
+- [ ] [Condition 1]
+- [ ] [Condition 2]
+
+---
+
+### IF REJECT:
+
+**Rejection Reason:**
+[Specific trigger: e.g., "Reality Score below threshold," "No measurable success criteria," "Resources unavailable"]
+
+**Return To:** [Which stage needs rework]
+
+---
+
+### IF DEFER:
+
+**Deferral Conditions:**
+- [ ] [What must change before we revisit?]
+
+**Revisit Date:** [When will we re-evaluate?]
+
+---
+
+## RESOURCE ALLOCATION (IF PROCEED)
+
+| Resource | Amount | Timeline |
+|----------|--------|----------|
+| Developer Time | [Hours] | [When] |
+| Budget | [$X] | [When] |
+| Tooling/Infra | [What] | [When] |
+
+---
+
+## REVIEW TRIGGER
+
+**Review Date:** [30 / 90 / 180 days]  
+**Review Condition:** [E.g., "If success criteria not met," "If failure mode X occurs"]
+
+---
+
+**Authorized By:** _______________________ [Signature]  
+**Date:** _______________________
+
+---
+
+## REALITY SCORE GATE ENFORCEMENT
+
+**If Reality Score <7:**
+
+This section documents the exception process when proceeding with a Reality Score below the standard threshold.
+
+**Exception Type:**
+- [ ] Conditional Hold Resolved (Score 5-6 with remediation)
+- [ ] Founding Partner Override (Score <7 with unanimous approval)
+
+**Founding Partner Signatures (Required for Override):**
+- Aaron Shirley: _______________________ Date: _______
+- Amanda Keeton: _______________________ Date: _______
+
+**Override Rationale:**
+[Explain why strategic value justifies proceeding despite below-threshold Reality Score]
+
+**Risks Explicitly Accepted:**
+1. [Risk 1 with impact assessment]
+2. [Risk 2 with impact assessment]
+3. [Risk 3 with impact assessment]
+
+---
+
+## REJECTION CRITERIA CHECK
+
+**Rejected if:**
+- [ ] Decision Matrix has any FAIL
+- [ ] Success criteria are vibes, not metrics
+- [ ] No single owner assigned
+- [ ] "Let's try it and see" without defined review trigger
+- [ ] Reality Score <5 (automatic rejection)
+- [ ] Reality Score 5-6 without Conditional Hold resolution
+- [ ] Reality Score <7 without founding partner override
+
+**Status:** [APPROVED / REJECTED / DEFERRED]  
+**Next Step:**
+- If approved → Advance to STAGE 5: ARCHITECTURE
+- If rejected → Return to [failing stage]
+- If deferred → Hold until [conditions met]
+```
+
+---
+
+## FINAL INSTRUCTION TO AI
+
+**If Decision Matrix contains any FAIL:**
+
+> "The Gauntlet has identified gaps that make authorization premature. Returning to [failing stage]. The cost of being wrong is higher than the cost of waiting to be right."
+
+**Special Case - Reality Score <7 without resolution:**
+
+> "This initiative has a Reality Score of [X]/10, below our threshold of 7. To proceed, you must:
+> 
+> 1. **If Score 5-6:** Resolve Conditional Hold by addressing top 2 deductions
+> 2. **If Score <7:** Obtain UNANIMOUS founding partner override with documented risk acceptance
+> 
+> Without this, the initiative cannot advance. The Gauntlet exists to prevent expensive mistakes."
+
+**Special Case - "Let's try it and see":**
+
+> "We don't 'try things and see.' We commit resources with defined success criteria or we reject the initiative. Define measurable outcomes at 30, 90, and 180 days, or this decision is invalid."
+
+**Authorization:** Do not advance to Stage 5 (Architecture) without:
+- Decision Record with formal PROCEED verdict
+- All Decision Matrix criteria showing PASS
+- Reality Score ≥7 OR proper exception documented
+```
+
+---
+
+### FILE 6: `library/prompts/ARCHITECT_BLUEPRINT.md`
+
+**Purpose:** Stage 5 handover specification for VS Code Agent implementation.
+
+**NOTE:** No Red Team issues identified against this template. This is the **standard format** already in use. Content provided for completeness.
+
+**COMPLETE CONTENT:**
+
+```markdown
+# STAGE 5: ARCHITECTURE - TECHNICAL BLUEPRINT PROTOCOL
+
+**Context:** Charter & Stone Process Gauntlet (see `shared/protocols/PROCESS_GAUNTLET.md`)  
+**Your Role:** Systems Architect designing for the VS Code Agent (Lead Engineer)
+
+---
+
+## INSTRUCTIONS
+
+You have an approved PROCEED decision from Stage 4. Your job is to create a **buildable specification** that the VS Code Agent can implement without ambiguity.
+
+**Critical Rule:** You are the architect. You do NOT write production code. You write the blueprint that the Lead Engineer uses to write code.
+
+**Output Constraint:** This document must be copy-paste ready for the VS Code Agent. No vague "figure it out" statements. Every decision must be explicit.
+
+---
+
+## INPUT REQUIRED
+
+[INSERT DECISION RECORD FROM STAGE 4]
+
+---
+
+## BLUEPRINT STRUCTURE
+
+### 1. CONTEXT & OBJECTIVE
+
+**What is this?**  
+[One paragraph: What component are we building?]
+
+**Why are we building it?**  
+[Link to Problem Statement Brief from Stage 1. Quote the specific pain point this solves.]
+
+**Where does this fit?**  
+[Describe how this integrates with existing "Digital Teammates" ecosystem. Reference `OPERATIONS_MANUAL_V2_2_1.md` if applicable.]
+
+**Success Criteria (from Decision Record):**  
+[Paste the measurable success criteria from Stage 4]
+
+---
+
+### 2. FILE SYSTEM TARGET
+
+**Directory Structure:**
+```
+agents/[component_name]/
+├── [component_name].py          # Main orchestrator
+├── config/
+│   └── system_prompt.txt        # LLM instructions
+├── sources/
+│   └── [data_source].py         # API wrappers
+├── outputs/
+│   └── [output_files]           # Generated results
+└── logs/
+    └── execution.log            # Runtime logs
+```
+
+**Dependencies:**
+- `shared/schemas/[schema_name].json` (Data contract)
+- `shared/auth.py` (Microsoft Graph authentication)
+- `sources/[external_api].py` (If applicable)
+
+**Naming Convention:**
+- Use snake_case for files: `analyst.py`, `system_prompt.txt`
+- Use PascalCase for classes: `ProPublicaClient`, `OutreachArchitect`
+
+---
+
+### 3. I/O CONTRACT
+
+**Input:**
+- **Format:** [JSON / Markdown / CSV / etc.]
+- **Schema:** [Link to `prospect_profile.schema.json` or define inline]
+- **Source:** [Where does this data come from? Planner task? Oracle KB? User upload?]
+- **Validation:** [What checks must pass before processing?]
+
+**Example Input:**
+```json
+{
+  "institution": {
+    "name": "Albright College",
+    "ein": "23-1352607"
+  },
+  "financials": {
+    "fiscal_year": 2023,
+    "total_revenue": 61000000,
+    "total_expenses": 81100000
+  }
+}
+```
+
+**Output:**
+- **Format:** [JSON / Markdown / Planner task / etc.]
+- **Schema:** [Define structure explicitly]
+- **Destination:** [Where does this go? SharePoint? Local KB? Planner?]
+- **Naming Convention:** [E.g., `[ein]_profile.json`, `[name]_dossier.md`]
+
+**Example Output:**
+```markdown
+# FINANCIAL DOSSIER: Albright College
+
+## DISTRESS LEVEL: CRITICAL
+
+**Operating Deficit:** $20.1M (133% expense ratio)
+**Runway:** 2.2 years at current burn rate
+**Recommendation:** Immediate outreach (Tier 1 prospect)
+```
+
+**Schema Compliance Requirement:**
+- If output is JSON, it MUST validate against `prospect_profile.schema.json` v1.0.0
+- Lead Engineer should include `jsonschema` validation in implementation
+
+---
+
+### 4. LOGIC FLOW (PSEUDOCODE)
+
+**DO NOT WRITE PYTHON. Write step-by-step logic in plain English.**
+
+**Orchestration Steps:**
+
+```
+1. LOAD INPUT
+   - Read input from [source]
+   - Validate against schema
+   - If validation fails → log error + exit
+
+2. FETCH DATA
+   - Call [External API] with [parameters]
+   - Handle rate limits (429 errors → retry with exponential backoff)
+   - If no data found → log warning + return null
+
+3. PROCESS DATA
+   - Calculate [derived metric 1]: [formula]
+   - Calculate [derived metric 2]: [formula]
+   - Classify distress level using this logic:
+     IF expense_ratio > 1.2 OR runway < 2 → "critical"
+     ELIF expense_ratio > 1.0 OR runway < 4 → "elevated"
+     ELSE → "watch"
+
+4. GENERATE OUTPUT
+   - Build JSON profile using [template]
+   - Build Markdown dossier using [template]
+   - Save to [destination]
+
+5. LOG EXECUTION
+   - Record runtime, errors, data sources
+   - Save to logs/execution.log
+```
+
+**Error Handling:**
+- Network failures → retry 3x with exponential backoff
+- Invalid input → log + exit gracefully
+- API rate limits → queue for retry (do not fail)
+
+**Logging Strategy:**
+- INFO: Successful operations
+- WARNING: Missing data, assumptions made
+- ERROR: Failures that prevent completion
+
+---
+
+### 5. THE "BRAIN" (SYSTEM PROMPT)
+
+**This is the exact text prompt that will be pasted into the LLM config file (`config/system_prompt.txt`). This is where the "Anti-Vendor" voice lives.**
+
+```
+You are the [Component Name] for Charter & Stone, an institutional consulting firm.
+
+MISSION:
+[One sentence describing the agent's purpose]
+
+VOICE:
+- **Tone:** McKinsey partner advising in crisis mode (authoritative, data-driven, zero fluff)
+- **Forbidden Phrases:** "I wanted to share," "just checking in," "transformation," "synergy," "best practices" (use "Standard of Care" instead)
+- **Imperative Construction:** Always use command voice. "Schedule a diagnostic" not "I'd love to schedule."
+
+INPUT:
+You will receive:
+- [Input format description]
+- [Schema reference]
+
+OUTPUT:
+You must generate:
+- [Output format description]
+- [Template reference]
+
+CONSTRAINTS:
+- **Data Integrity:** Never invent metrics. If data is missing, state "Data unavailable" explicitly.
+- **Anti-Vendor Positioning:** Signal "This is not a vendor call—we don't sell software" in every outreach.
+- **Crisis Framing:** Use urgency appropriate to distress level (critical = immediate action required, watch = measured approach).
+
+QUALITY CONTROL:
+- **Forbidden Phrase Filter:** Automatically reject output containing any phrase from the "Forbidden Phrases" list.
+- **Validation:** Ensure JSON output matches [schema name] exactly.
+- **Human-in-the-Loop:** All output requires human approval before external send.
+
+EXAMPLE OUTPUT:
+[Paste example of high-quality output here]
+```
+
+---
+
+### 6. TEST CRITERIA
+
+**How do we verify this works before deployment?**
+
+**Unit Tests:**
+- [ ] Input validation: Invalid JSON rejected with clear error message
+- [ ] Calculation accuracy: Expense ratio formula produces correct result
+- [ ] Schema compliance: JSON output validates against `prospect_profile.schema.json`
+
+**Integration Tests:**
+- [ ] API connectivity: Successfully retrieves data from [External API]
+- [ ] Error handling: Graceful failure when API returns 404
+- [ ] File creation: Output files appear in correct directory with correct naming
+
+**End-to-End Test:**
+
+**Scenario:** Process Albright College (EIN 23-1352607)
+
+**Expected Results:**
+- JSON profile saved as `231352607_profile.json` in `/knowledge_base/prospects/`
+- Markdown dossier saved as `albright_college_dossier.md` in same directory
+- Distress level = "critical"
+- Runtime < 5 seconds
+- No errors logged
+
+**Acceptance Criteria:**
+- [ ] All unit tests pass
+- [ ] All integration tests pass
+- [ ] End-to-end test produces expected output
+- [ ] Human review confirms output quality matches examples
+
+---
+
+## OUTPUT FORMAT
+
+**Hand this document to the VS Code Agent:**
+
+```markdown
+# TECHNICAL BLUEPRINT: [Component Name]
+
+**Date:** [Today's Date]
+**Architect:** [Your Name]
+**Target Delivery:** [Date]
+
+---
+
+## 1. CONTEXT & OBJECTIVE
+[Paste Section 1]
+
+---
+
+## 2. FILE SYSTEM TARGET
+[Paste Section 2]
+
+---
+
+## 3. I/O CONTRACT
+[Paste Section 3]
+
+---
+
+## 4. LOGIC FLOW
+[Paste Section 4]
+
+---
+
+## 5. THE "BRAIN" (SYSTEM PROMPT)
+[Paste Section 5]
+
+---
+
+## 6. TEST CRITERIA
+[Paste Section 6]
+
+---
+
+## HANDOVER TO LEAD ENGINEER
+
+**VS Code Agent:** You are authorized to implement this blueprint. Follow the spec exactly. If you encounter ambiguity, STOP and request clarification—do not improvise.
+
+**Deviation Protocol:** If implementation requires divergence from this blueprint (e.g., API structure different than documented), log the deviation and flag for architect review before continuing.
+
+**Completion Checklist:**
+- [ ] All tests pass
+- [ ] Code matches blueprint structure
+- [ ] Documentation updated (`OPERATIONS_MANUAL_V2_2_1.md`)
+- [ ] Execution log example saved to `/logs/`
+- [ ] Handover brief sent to PMO
+
+---
+
+**Architect Sign-Off:** _______________________  
+**Date:** _______________________
+```
+
+---
+
+## REJECTION CRITERIA CHECK
+
+**Blueprint rejected if:**
+- [ ] I/O contracts are vague ("to be determined")
+- [ ] Logic flow contains implementation code (Python) instead of pseudocode
+- [ ] System prompt is generic (could apply to any agent)
+- [ ] Test criteria undefined or subjective ("looks good")
+- [ ] Dependencies not explicitly listed
+
+**Status:** [APPROVED / REJECTED]  
+**Next Step:** If approved → Advance to STAGE 6: EXECUTION (Implementation by VS Code Agent)
+
+---
+
+## FINAL INSTRUCTION TO AI
+
+If any section is incomplete or contains "TBD" placeholders, respond:
+
+> "The blueprint contains ambiguity that the Lead Engineer cannot resolve autonomously. Returning to [incomplete section]. The cost of fixing this now is 10 minutes. The cost of fixing it mid-implementation is 10 hours."
+
+**Authorization:** Do not release this blueprint to the VS Code Agent until all sections are complete and unambiguous.
+```
+
+---
+
+## 4. HANDOVER TO LEAD ENGINEER (VS CODE AGENT)
+
+**Target:** VS Code Agent (with file system access and repository context)
+
+**Task:** Create the 6 files specified above in the Charter & Stone Operations Tools repository.
+
+**Execution Instructions:**
+
+1. **Create directory structure if it doesn't exist:**
+   - `shared/protocols/`
+   - `library/prompts/`
+
+2. **Write files with complete content provided above:**
+   - Each file's content is provided in full in Section 3
+   - Use exact markdown formatting
+   - Preserve all tables, code blocks, and formatting
+
+3. **Archive legacy documents:**
+   - Move `RED_TEAM_REVIEW_GAUNTLET_PROCESS.md` → `archive/audits/2026-02-04_red_team_gauntlet.md`
+   - Move `PMO_Gauntlet_Design.md` → `archive/drafts/v1.0_original_templates.md`
+
+4. **Update Operations Manual reference:**
+   - In `OPERATIONS_MANUAL_V2_2_1.md`, locate the "Process Gauntlet" reference
+   - Update link to point to `shared/protocols/PROCESS_GAUNTLET.md`
+
+5. **Verification checklist:**
+   - [ ] All 6 files created with complete content
+   - [ ] Directory structure correct
+   - [ ] Legacy documents archived
+   - [ ] Operations Manual updated
+   - [ ] All markdown formatting preserved
+
+**Deviation Protocol:** If any ambiguity exists in the content, STOP and request clarification from Architect. Do not improvise.
+
+---
+
+## 5. DEPLOYMENT NOTES
+
+### What This Deploys
+
+**The Constitution:** A governance framework that prevents vendor theater by demanding evidence at every stage.
+
+**The Enforcement Mechanism:** Five prompt templates that operationalize the Constitution, each with:
+- Validation criteria (not examples to copy)
+- Auto-reject triggers
+- Measurement methodology requirements
+- Authority hierarchy enforcement
+
+### What Changed from V1.0
+
+**7 Critical Patches:**
+1. Operating Principle #7 (CSO Veto Authority)
+2. Accelerated Track (replaces Minimum Viable Gauntlet, prohibits self-review)
+3. Verification Standard (external citation required for "verified")
+4. Reality Score threshold raised (6→7)
+5. Conditional Hold protocol (5-6 score)
+6. Operational Tooling cross-reference
+7. Tone hardening (rejections are victories)
+
+### Success Criteria
+
+**30 days post-deployment:**
+- First initiative successfully traverses full Gauntlet
+- At least 1 rejection occurs (proving Kill Switch works)
+- No complaints about "unclear requirements"
+
+**90 days post-deployment:**
+- Gauntlet rejection rate: 20-30% (healthy filtering)
+- Reality Score distribution: majority 7-8 (solid plans)
+- Zero initiatives advance without disclosed cost methodology
+
+---
+
+## ARCHITECT SIGN-OFF
+
+This blueprint represents the operational implementation of Charter & Stone's governance doctrine. Every patch from the Red Team audit has been incorporated. The Constitution now has teeth.
+
+The Gauntlet is no longer aspirational. It's enforceable.
+
+**Status:** READY FOR DEPLOYMENT  
+**Authorization:** Awaiting Founding Partner approval to release to VS Code Agent
+
+---
+
+**END OF BLUEPRINT**

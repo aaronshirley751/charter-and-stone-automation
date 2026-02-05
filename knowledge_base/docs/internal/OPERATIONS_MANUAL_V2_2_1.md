@@ -17,6 +17,10 @@ Version: 2.2 (Analyst V1.1 + Outreach Architect V1.0)
 Last Updated: February 3, 2026  
 Platform: Raspberry Pi 5 (Heath, TX) + Microsoft 365 Cloud Services
 
+## Process Gauntlet
+
+Governance protocol: [shared/protocols/PROCESS_GAUNTLET.md](shared/protocols/PROCESS_GAUNTLET.md)
+
 ---
 
 ## 1. SYSTEM ARCHITECTURE
